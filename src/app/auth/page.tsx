@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useAuth, useUser } from '@/firebase';
@@ -12,24 +13,25 @@ export default function AuthPage() {
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      router.replace('/');
+    }
+  }, [user, isUserLoading, router]);
+
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
       toast({ title: "Connecté", description: "Bienvenue !" });
-      router.push('/');
+      // The useEffect will handle the redirect
     } catch (error: any) {
       toast({ variant: 'destructive', title: "Erreur de connexion Google", description: error.message });
     }
   };
 
-  if (isUserLoading) {
+  if (isUserLoading || user) {
     return <div>Chargement...</div>;
-  }
-
-  if (user) {
-    router.replace('/');
-    return null;
   }
 
   return (
