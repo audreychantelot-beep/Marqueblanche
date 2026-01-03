@@ -50,9 +50,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6">
-        <div className="flex h-16 items-center justify-between gap-4">
+        <div className="relative flex h-16 items-center justify-between gap-4">
           {/* Logo Section */}
-          <div className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12">
+          <div className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12 z-10">
             <Link href="/" className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
                 <span className="font-headline text-xs font-bold text-primary-foreground">M</span>
@@ -62,7 +62,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Navigation Section */}
-          <div className="flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm h-12">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm h-12">
             <nav className="flex items-center gap-4 lg:gap-6">
               {navItems.map((item) => (
                 <Link
@@ -80,7 +80,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Actions Section */}
-          <div className="flex items-center gap-2 md:gap-3 bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12">
+          <div className="flex items-center gap-2 md:gap-3 bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12 z-10">
             <div className="relative hidden lg:block">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
