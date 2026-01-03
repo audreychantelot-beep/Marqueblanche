@@ -1,0 +1,140 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model. All user-specific
+ * data is private and can only be accessed by the authenticated owner. Publicly readable
+ * data is stored in a separate, top-level collection with write access locked down.
+ *
+ * Data Structure: The data is organized hierarchically. All private user content, such as
+ * theme preferences and sidebar state, is nested within a user-specific document tree,
+ * e.g., /users/{userId}/themes/{themeId}. This path-based ownership is the primary
+ * security mechanism. Global application data, like navigation links, resides in its own
+ * top-level collection.
+ *
+ * Key Security Decisions:
+ * - User Data Privacy: A user can only access documents located under their own
+ *   /users/{userId} path.
+ * - No User Listing: It is not possible for any client to list all documents in the
+ *   top-level /users collection, protecting user privacy.
+ * - Public Read-Only Data: The /links collection is readable by anyone (including
+ *   unauthenticated users) but is not writable by any client. This provides a secure
+ *   default for data that needs to be public for consumption but managed externally
+ *   (e.g., via the Firebase Console or a trusted backend).
+ *
+ * Denormalization for Authorization: The rules rely entirely on the document path
+ * (`/users/{userId}`) to determine ownership, which is fast and efficient. For documents
+ * in subcollections, a `userId` field is also required in the data itself to maintain
+ * relational integrity upon creation and prevent it from being changed on update.
+ *
+ * Structural Segregation: User-private data (/users) and public data (/links) are
+ * stored in separate top-level collections. This is a secure and performant pattern that
+ * prevents accidental data exposure and simplifies rules for list operations.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------------------
+
+    /**
+     * Returns true if the user is signed in.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the primary function for validating ownership based on the document path.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * For update and delete operations, confirms the user is the owner AND the
+     * document already exists. This prevents modifying or deleting non-existent data.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    // ----------------------------------------------------------------------
+    // User Data Rules
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description Controls access to a user's own root document. A user can create their
+     *              own record, and then only they can read, update, or delete it.
+     * @path /users/{userId}
+     * @allow (create) An authenticated user with UID 'user_abc' creating their own user
+     *        document at /users/user_abc.
+     * @deny (get) A user with UID 'user_xyz' trying to read the document at /users/user_abc.
+     * @principle Restricts access to a user's own data tree using path-based ownership.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Secures the user-specific theme settings. Only the owner of the parent
+       *              user document can manage their theme.
+       * @path /users/{userId}/themes/{themeId}
+       * @allow (create) User 'user_abc' creating a theme document under /users/user_abc/themes/.
+       * @deny (list) User 'user_xyz' trying to list themes under /users/user_abc/themes.
+       * @principle Enforces inherited ownership from the parent document's path.
+       */
+      match /themes/{themeId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Secures the user's sidebar state. Only the owner of the parent
+       *              user document can manage their sidebar state.
+       * @path /users/{userId}/sidebarState/{sidebarStateId}
+       * @allow (get) User 'user_abc' reading their sidebar state at /users/user_abc/sidebarState/some_id.
+       * @deny (update) User 'user_xyz' trying to update the document at /users/user_abc/sidebarState/some_id.
+       * @principle Enforces inherited ownership from the parent document's path.
+       */
+      match /sidebarState/{sidebarStateId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+
+    // ----------------------------------------------------------------------
+    // Public Data Rules
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description Controls access to the public navigation links. This data is intended
+     *              to be readable by anyone, including unauthenticated users, but cannot
+     *              be modified by any client.
+     * @path /links/{linkId}
+     * @allow (get) Any user, signed in or not, reading a document at /links/some_link.
+     * @deny (create) Any authenticated user trying to create a new link document.
+     * @principle Provides public read access while preventing all client-side writes,
+     *            ensuring data is managed from a trusted environment.
+     */
+    match /links/{linkId} {
+      allow get: if true;
+      allow list: if true;
+      // CRITICAL: Cannot implement admin-only writes because the 'Link' entity in the
+      // schema is missing an 'ownerId', 'adminId', or similar field to identify who has
+      // permission to write. Writes are disabled until the schema is updated.
+      allow create: if false; // TODO: Add admin validation once an ownership field is added to the 'Link' entity.
+      allow update: if false; // TODO: Add admin validation once an ownership field is added to the 'Link' entity.
+      allow delete: if false; // TODO: Add admin validation once an ownership field is added to the 'Link' entity.
+    }
+  }
+}

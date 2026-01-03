@@ -1,0 +1,194 @@
+{
+  "entities": {
+    "Theme": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Theme",
+      "type": "object",
+      "description": "Represents a user's theme preference (light or dark).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Theme entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Theme)"
+        },
+        "themePreference": {
+          "type": "string",
+          "description": "The user's preferred theme (e.g., 'light', 'dark')."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "themePreference"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's username."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email"
+      ]
+    },
+    "SidebarState": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SidebarState",
+      "type": "object",
+      "description": "Represents the state of the sidebar (collapsed or expanded) for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SidebarState entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 SidebarState)"
+        },
+        "isCollapsed": {
+          "type": "boolean",
+          "description": "Indicates whether the sidebar is collapsed (true) or expanded (false)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "isCollapsed"
+      ]
+    },
+    "Link": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Link",
+      "type": "object",
+      "description": "Represents a link within the application's navigation.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Link entity."
+        },
+        "label": {
+          "type": "string",
+          "description": "The display label for the link."
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL the link points to.",
+          "format": "uri"
+        },
+        "icon": {
+          "type": "string",
+          "description": "The name or identifier of the icon associated with the link."
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "url",
+        "icon"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores core user data. Uses path-based ownership.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/themes/{themeId}",
+        "definition": {
+          "entityName": "Theme",
+          "schema": {
+            "$ref": "#/backend/entities/Theme"
+          },
+          "description": "Stores user-specific theme preferences. Path-based ownership ensures only the user can access their theme.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "themeId",
+              "description": "The unique identifier of the theme document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/sidebarState/{sidebarStateId}",
+        "definition": {
+          "entityName": "SidebarState",
+          "schema": {
+            "$ref": "#/backend/entities/SidebarState"
+          },
+          "description": "Stores the user's sidebar state. Path-based ownership applies here as well.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "sidebarStateId",
+              "description": "The unique identifier of the sidebar state document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/links/{linkId}",
+        "definition": {
+          "entityName": "Link",
+          "schema": {
+            "$ref": "#/backend/entities/Link"
+          },
+          "description": "Stores application links, which can be read by all users but only managed by admins (if any).",
+          "params": [
+            {
+              "name": "linkId",
+              "description": "The unique identifier of the link."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to ensure authorization independence and support secure list operations (QAPs). It leverages path-based ownership for user-specific data like themes and sidebar states.  Each user's data is stored under their unique ID, providing a clear ownership structure.  This eliminates the need for `get()` calls in security rules, enabling atomic operations.\n\nSpecifically:\n\n*   **/users/{userId}**: Stores core user data.\n*   **/users/{userId}/themes/{themeId}**: Stores user-specific theme preferences. Path-based ownership ensures only the user can access their theme.\n*   **/users/{userId}/sidebarState/{sidebarStateId}**: Stores the user's sidebar state. Path-based ownership applies here as well.\n\nThe chosen structure prioritizes simplicity, security, and scalability, aligning with the core design principles of authorization independence, clarity of intent, and DBAC (Database-Based Access Control). QAPs are supported via structural segregation, preventing listing of data outside the scope of ownership defined by path-based rules."
+  }
+}
