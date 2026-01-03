@@ -9,97 +9,93 @@ import { MoreHorizontal, PlusCircle, Upload } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AppLayout } from "@/components/AppLayout";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const clients = [
   {
-    name: "Liam Johnson",
-    email: "liam@example.com",
+    identifiantInterne: "C001",
+    siren: "123456789",
+    raisonSociale: "Johnson & Co",
+    formeJuridique: "SARL",
+    contactPrincipal: {
+      nom: "Johnson",
+      prenom: "Liam",
+      email: "liam@example.com",
+    },
     avatar: "https://picsum.photos/seed/1/40/40",
-    company: "Johnson & Co",
+    missionsActuelles: {
+      collaborateurReferent: "Alice Martin",
+      expertComptableResponsable: "Bob Durand",
+      typeMission: "Tenue",
+    },
+    activites: {
+      codeAPE: "6201Z",
+      secteurActivites: "Conseil en systèmes et logiciels informatiques",
+      regimeTVA: "Débit",
+      regimeFiscal: "IS régime réel normal",
+      typologieClientele: "B to B",
+    },
+    obligationsLegales: {},
     status: "Active",
   },
   {
-    name: "Olivia Smith",
-    email: "olivia@example.com",
+    identifiantInterne: "C002",
+    siren: "987654321",
+    raisonSociale: "Smith Enterprises",
+    formeJuridique: "SAS",
+    contactPrincipal: {
+      nom: "Smith",
+      prenom: "Olivia",
+      email: "olivia@example.com",
+    },
     avatar: "https://picsum.photos/seed/2/40/40",
-    company: "Smith Enterprises",
+    missionsActuelles: {
+      collaborateurReferent: "Charles Dupont",
+      expertComptableResponsable: "David Petit",
+      typeMission: "Révision",
+    },
+    activites: {
+      codeAPE: "7022Z",
+      secteurActivites: "Conseil pour les affaires et autres conseils de gestion",
+      regimeTVA: "Encaissement",
+      regimeFiscal: "IS régime simplifié",
+      typologieClientele: "B to C",
+    },
+    obligationsLegales: {},
     status: "Active",
   },
   {
-    name: "Noah Williams",
-    email: "noah@example.com",
+    identifiantInterne: "C003",
+    siren: "112233445",
+    raisonSociale: "Williams Solutions",
+    formeJuridique: "EURL",
+    contactPrincipal: {
+      nom: "Williams",
+      prenom: "Noah",
+      email: "noah@example.com",
+    },
     avatar: "https://picsum.photos/seed/3/40/40",
-    company: "Williams Solutions",
-    status: "Inactive",
-  },
-  {
-    name: "Emma Brown",
-    email: "emma@example.com",
-    avatar: "https://picsum.photos/seed/4/40/40",
-    company: "Brown Logistics",
-    status: "Active",
-  },
-  {
-    name: "Oliver Jones",
-    email: "oliver@example.com",
-    avatar: "https://picsum.photos/seed/5/40/40",
-    company: "Jones Group",
-    status: "Archived",
-  },
-  {
-    name: "Ava Garcia",
-    email: "ava@example.com",
-    avatar: "https://picsum.photos/seed/6/40/40",
-    company: "Garcia Inc.",
-    status: "Active",
-  },
-  {
-    name: "William Martinez",
-    email: "william@example.com",
-    avatar: "https://picsum.photos/seed/7/40/40",
-    company: "Martinez Corp",
-    status: "Inactive",
-  },
-  {
-    name: "Sophia Rodriguez",
-    email: "sophia@example.com",
-    avatar: "https://picsum.photos/seed/8/40/40",
-    company: "Rodriguez LLC",
-    status: "Active",
-  },
-  {
-    name: "James Wilson",
-    email: "james@example.com",
-    avatar: "https://picsum.photos/seed/9/40/40",
-    company: "Wilson & Sons",
-    status: "Archived",
-  },
-  {
-    name: "Isabella Anderson",
-    email: "isabella@example.com",
-    avatar: "https://picsum.photos/seed/10/40/40",
-    company: "Anderson Ltd",
-    status: "Active",
-  },
-  {
-    name: "Benjamin Taylor",
-    email: "benjamin@example.com",
-    avatar: "https://picsum.photos/seed/11/40/40",
-    company: "Taylor Industries",
-    status: "Active",
-  },
-  {
-    name: "Mia Thomas",
-    email: "mia@example.com",
-    avatar: "https://picsum.photos/seed/12/40/40",
-    company: "Thomas Co",
+    missionsActuelles: {
+      collaborateurReferent: "Alice Martin",
+      expertComptableResponsable: "Bob Durand",
+      typeMission: "Autres",
+    },
+    activites: {
+      codeAPE: "4791A",
+      secteurActivites: "Vente à distance sur catalogue général",
+      regimeTVA: "Non concerné",
+      regimeFiscal: "Micro BIC",
+      typologieClientele: "Mixtes",
+    },
+    obligationsLegales: {},
     status: "Inactive",
   },
 ];
 
+
 function ClientsContent() {
   return (
-    <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full h-[calc(100vh-4rem)]">
+    <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-full mx-auto w-full h-[calc(100vh-4rem)]">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-headline text-2xl font-semibold md:text-3xl">Clients</h1>
@@ -117,68 +113,200 @@ function ClientsContent() {
         </div>
       </div>
       <Card className="flex-1 flex flex-col overflow-hidden">
-        <CardHeader>
-          <CardTitle>Liste des clients</CardTitle>
-          <CardDescription>
-            Une liste de tous les clients de votre compte.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto">
-          <ScrollArea className="h-full">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="hidden w-[100px] sm:table-cell">
-                    <span className="sr-only">Avatar</span>
-                  </TableHead>
-                  <TableHead>Nom</TableHead>
-                  <TableHead>Entreprise</TableHead>
-                  <TableHead className="hidden md:table-cell">Email</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>
-                    <span className="sr-only">Actions</span>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {clients.map((client) => (
-                  <TableRow key={client.email}>
-                    <TableCell className="hidden sm:table-cell">
-                      <Avatar className="h-9 w-9">
-                        <AvatarImage src={client.avatar} alt="Avatar" />
-                        <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                    </TableCell>
-                    <TableCell className="font-medium">{client.name}</TableCell>
-                    <TableCell>{client.company}</TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {client.email}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={client.status === 'Active' ? 'default' : 'secondary'}>
-                        {client.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Modifier</DropdownMenuItem>
-                          <DropdownMenuItem>Supprimer</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
+        <CardContent className="flex-1 flex flex-col p-0">
+          <Tabs defaultValue="general" className="flex-1 flex flex-col">
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle>Liste des clients</CardTitle>
+                  <CardDescription>
+                    Une liste de tous les clients de votre compte.
+                  </CardDescription>
+                </div>
+                <TabsList>
+                  <TabsTrigger value="general">Général</TabsTrigger>
+                  <TabsTrigger value="missions">Missions</TabsTrigger>
+                  <TabsTrigger value="activites">Activités</TabsTrigger>
+                  <TabsTrigger value="obligations">Obligations</TabsTrigger>
+                </TabsList>
+              </div>
+            </CardHeader>
+            <div className="flex-1 overflow-y-auto">
+              <ScrollArea className="h-full">
+                <Table>
+                  <TabsContent value="general" className="m-0">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Identifiant interne</TableHead>
+                        <TableHead>SIREN</TableHead>
+                        <TableHead>Raison sociale</TableHead>
+                        <TableHead>Forme juridique</TableHead>
+                        <TableHead>Contact principal</TableHead>
+                        <TableHead>
+                          <span className="sr-only">Actions</span>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {clients.map((client) => (
+                        <TableRow key={client.identifiantInterne}>
+                          <TableCell className="font-medium">{client.identifiantInterne}</TableCell>
+                          <TableCell>{client.siren}</TableCell>
+                          <TableCell>{client.raisonSociale}</TableCell>
+                          <TableCell>{client.formeJuridique}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-9 w-9">
+                                <AvatarImage src={client.avatar} alt="Avatar" />
+                                <AvatarFallback>{client.contactPrincipal.prenom.charAt(0)}{client.contactPrincipal.nom.charAt(0)}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div>{client.contactPrincipal.prenom} {client.contactPrincipal.nom}</div>
+                                <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Toggle menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem>Modifier</DropdownMenuItem>
+                                <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </TabsContent>
+                  <TabsContent value="missions" className="m-0">
+                     <TableHeader>
+                      <TableRow>
+                        <TableHead>Raison sociale</TableHead>
+                        <TableHead>Collaborateur référent</TableHead>
+                        <TableHead>Expert-comptable responsable</TableHead>
+                        <TableHead>Type de mission</TableHead>
+                        <TableHead>
+                          <span className="sr-only">Actions</span>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {clients.map((client) => (
+                        <TableRow key={client.identifiantInterne}>
+                          <TableCell className="font-medium">{client.raisonSociale}</TableCell>
+                          <TableCell>{client.missionsActuelles.collaborateurReferent}</TableCell>
+                          <TableCell>{client.missionsActuelles.expertComptableResponsable}</TableCell>
+                          <TableCell>
+                             <Badge variant={client.missionsActuelles.typeMission === 'Tenue' ? 'default' : client.missionsActuelles.typeMission === 'Révision' ? 'secondary' : 'outline'}>
+                              {client.missionsActuelles.typeMission}
+                            </Badge>
+                          </TableCell>
+                           <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Toggle menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem>Modifier</DropdownMenuItem>
+                                <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </TabsContent>
+                  <TabsContent value="activites" className="m-0">
+                     <TableHeader>
+                      <TableRow>
+                        <TableHead>Raison sociale</TableHead>
+                        <TableHead>Code APE</TableHead>
+                        <TableHead>Secteur d’activités</TableHead>
+                        <TableHead>Régime de TVA</TableHead>
+                        <TableHead>Régime fiscal</TableHead>
+                        <TableHead>Typologie de clientèle</TableHead>
+                         <TableHead>
+                          <span className="sr-only">Actions</span>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                       {clients.map((client) => (
+                        <TableRow key={client.identifiantInterne}>
+                          <TableCell className="font-medium">{client.raisonSociale}</TableCell>
+                          <TableCell>{client.activites.codeAPE}</TableCell>
+                          <TableCell>{client.activites.secteurActivites}</TableCell>
+                          <TableCell>{client.activites.regimeTVA}</TableCell>
+                          <TableCell>{client.activites.regimeFiscal}</TableCell>
+                          <TableCell>{client.activites.typologieClientele}</TableCell>
+                           <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Toggle menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem>Modifier</DropdownMenuItem>
+                                <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </TabsContent>
+                  <TabsContent value="obligations" className="m-0">
+                     <TableHeader>
+                      <TableRow>
+                         <TableHead>Raison sociale</TableHead>
+                         <TableHead>Obligations légales</TableHead>
+                         <TableHead>
+                          <span className="sr-only">Actions</span>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {clients.map((client) => (
+                        <TableRow key={client.identifiantInterne}>
+                           <TableCell className="font-medium">{client.raisonSociale}</TableCell>
+                           <TableCell>À définir</TableCell>
+                           <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Toggle menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem>Modifier</DropdownMenuItem>
+                                <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </TabsContent>
+                </Table>
+              </ScrollArea>
+            </div>
+          </Tabs>
         </CardContent>
       </Card>
     </main>
