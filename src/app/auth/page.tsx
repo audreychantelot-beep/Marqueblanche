@@ -12,27 +12,6 @@ export default function AuthPage() {
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
 
-  const testimonials = [
-    {
-      avatarSrc: "https://randomuser.me/api/portraits/men/32.jpg",
-      name: "Marc B.",
-      handle: "@marcb",
-      text: "This platform has revolutionized my workflow. The AI-powered features are a game changer!",
-    },
-    {
-      avatarSrc: "https://randomuser.me/api/portraits/women/44.jpg",
-      name: "Sophie D.",
-      handle: "@sophied",
-      text: "Incredible user experience and top-notch support. I couldn't be happier with the results.",
-    },
-    {
-      avatarSrc: "https://randomuser.me/api/portraits/men/56.jpg",
-      name: "Alex T.",
-      handle: "@alext",
-      text: "A must-have tool for any serious developer. It saved me countless hours.",
-    },
-  ];
-
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -55,8 +34,8 @@ export default function AuthPage() {
 
   return (
     <SignInPage
-      heroImageSrc="https://picsum.photos/seed/auth-hero/1200/900"
-      testimonials={testimonials}
+      heroImageSrc="https://cdn.dribbble.com/userupload/45105322/file/45444425e7999da2b7789c065730c4f6.jpg?resize=1504x1128&vertical=center"
+      testimonials={[]}
       onGoogleSignIn={handleGoogleSignIn}
     />
   );
