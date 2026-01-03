@@ -323,8 +323,8 @@ function ClientsContent() {
               </TableHeader>
               <TableBody>
                 {clientList.map((client) => (
-                  <TableRow key={client.identifiantInterne}>
-                    <TableCell>
+                  <TableRow key={client.identifiantInterne} onClick={() => handleEditClick(client)} className="cursor-pointer">
+                    <TableCell onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button aria-haspopup="true" size="icon" variant="ghost">
