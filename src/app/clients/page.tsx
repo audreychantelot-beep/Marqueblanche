@@ -98,7 +98,7 @@ const clients = [
 
 export default function ClientsPage() {
   return (
-    <main className="flex flex-col flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full h-[calc(100vh-4rem)]">
+    <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full h-[calc(100vh-4rem)]">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-headline text-2xl font-semibold md:text-3xl">Clients</h1>
@@ -109,14 +109,14 @@ export default function ClientsPage() {
           Ajouter un client
         </Button>
       </div>
-      <Card className="flex-1 flex flex-col">
+      <Card className="flex-1 flex flex-col overflow-hidden">
         <CardHeader>
           <CardTitle>Liste des clients</CardTitle>
           <CardDescription>
             Une liste de tous les clients de votre compte.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex-1 overflow-hidden">
+        <CardContent className="flex-1 overflow-y-auto">
           <ScrollArea className="h-full">
             <Table>
               <TableHeader>
