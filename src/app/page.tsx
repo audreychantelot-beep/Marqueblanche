@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Bell, Home, LineChart, Users, FileText, Search } from "lucide-react";
+import { Bell, Home, LineChart, Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,9 +12,8 @@ export default function DashboardPage() {
 
   const navItems = [
     { name: "Dashboard", icon: Home, href: "#", active: true },
-    { name: "Analytics", icon: LineChart, href: "#" },
-    { name: "Customers", icon: Users, href: "#" },
-    { name: "Reports", icon: FileText, href: "#" },
+    { name: "Suivi migration", icon: LineChart, href: "#" },
+    { name: "Clients", icon: Users, href: "#" },
   ];
 
   return (
