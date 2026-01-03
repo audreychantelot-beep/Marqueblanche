@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Bell, Home, LineChart, LogOut, Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -21,7 +20,6 @@ import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 
 export default function DashboardPage() {
-  const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
   const { user } = useUser();
   const auth = useAuth();
   const router = useRouter();
@@ -29,6 +27,17 @@ export default function DashboardPage() {
   const handleSignOut = async () => {
     await signOut(auth);
     router.push('/auth');
+  };
+
+  const getUserInitials = () => {
+    if (user?.displayName) {
+      const names = user.displayName.split(' ');
+      if (names.length > 1) {
+        return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+      }
+      return user.displayName.charAt(0).toUpperCase();
+    }
+    return user?.email?.charAt(0).toUpperCase() || 'U';
   };
 
   const navItems = [
@@ -49,7 +58,7 @@ export default function DashboardPage() {
             <span className="font-headline text-sm font-semibold hidden md:inline-block">Marque blanche</span>
           </div>
 
-          <div className="ml-auto flex items-center gap-4">
+          <div className="flex items-center gap-4">
             {/* Navigation Section */}
             <div className="flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm h-12">
               <nav className="flex items-center gap-4 lg:gap-6">
@@ -88,8 +97,8 @@ export default function DashboardPage() {
                   <DropdownMenuTrigger asChild>
                     <div className="flex items-center justify-center h-10 w-10 cursor-pointer">
                       <Avatar className="h-8 w-8 border">
-                        {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User avatar" data-ai-hint={userAvatar.imageHint} />}
-                        <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                        {user?.photoURL && <AvatarImage src={user.photoURL} alt="User avatar" />}
+                        <AvatarFallback>{getUserInitials()}</AvatarFallback>
                       </Avatar>
                     </div>
                   </DropdownMenuTrigger>
