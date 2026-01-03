@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MoreHorizontal, PlusCircle, Upload } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { AppLayout } from "@/components/AppLayout";
 
 const clients = [
@@ -94,7 +93,7 @@ const clients = [
 
 function ClientsContent() {
   return (
-    <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-full mx-auto w-full h-[calc(100vh-4rem)]">
+    <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-full mx-auto w-full">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-headline text-2xl font-semibold md:text-3xl">Clients</h1>
@@ -111,90 +110,88 @@ function ClientsContent() {
           </Button>
         </div>
       </div>
-      <Card className="flex-1 flex flex-col overflow-hidden">
+      <Card className="flex-1 flex flex-col">
         <CardHeader>
           <CardTitle>Liste des clients</CardTitle>
           <CardDescription>
             Une liste de tous les clients de votre compte.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-          <div className="flex-1 overflow-y-auto">
-            <ScrollArea className="h-full w-full">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Identifiant interne</TableHead>
-                    <TableHead>SIREN</TableHead>
-                    <TableHead>Raison sociale</TableHead>
-                    <TableHead>Forme juridique</TableHead>
-                    <TableHead>Contact principal</TableHead>
-                    <TableHead>Collaborateur référent</TableHead>
-                    <TableHead>Expert-comptable responsable</TableHead>
-                    <TableHead>Type de mission</TableHead>
-                    <TableHead>Code APE</TableHead>
-                    <TableHead>Secteur d’activités</TableHead>
-                    <TableHead>Régime de TVA</TableHead>
-                    <TableHead>Régime fiscal</TableHead>
-                    <TableHead>Typologie de clientèle</TableHead>
-                    <TableHead>Obligations légales</TableHead>
-                    <TableHead>
-                      <span className="sr-only">Actions</span>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {clients.map((client) => (
-                    <TableRow key={client.identifiantInterne}>
-                      <TableCell className="font-medium">{client.identifiantInterne}</TableCell>
-                      <TableCell>{client.siren}</TableCell>
-                      <TableCell>{client.raisonSociale}</TableCell>
-                      <TableCell>{client.formeJuridique}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-9 w-9">
-                            <AvatarImage src={client.avatar} alt="Avatar" />
-                            <AvatarFallback>{client.contactPrincipal.prenom.charAt(0)}{client.contactPrincipal.nom.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div>{client.contactPrincipal.prenom} {client.contactPrincipal.nom}</div>
-                            <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
-                          </div>
+        <CardContent className="flex-1 p-0 overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="whitespace-nowrap">Identifiant interne</TableHead>
+                  <TableHead className="whitespace-nowrap">SIREN</TableHead>
+                  <TableHead className="whitespace-nowrap">Raison sociale</TableHead>
+                  <TableHead className="whitespace-nowrap">Forme juridique</TableHead>
+                  <TableHead className="whitespace-nowrap">Contact principal</TableHead>
+                  <TableHead className="whitespace-nowrap">Collaborateur référent</TableHead>
+                  <TableHead className="whitespace-nowrap">Expert-comptable responsable</TableHead>
+                  <TableHead className="whitespace-nowrap">Type de mission</TableHead>
+                  <TableHead className="whitespace-nowrap">Code APE</TableHead>
+                  <TableHead className="whitespace-nowrap">Secteur d’activités</TableHead>
+                  <TableHead className="whitespace-nowrap">Régime de TVA</TableHead>
+                  <TableHead className="whitespace-nowrap">Régime fiscal</TableHead>
+                  <TableHead className="whitespace-nowrap">Typologie de clientèle</TableHead>
+                  <TableHead className="whitespace-nowrap">Obligations légales</TableHead>
+                  <TableHead>
+                    <span className="sr-only">Actions</span>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {clients.map((client) => (
+                  <TableRow key={client.identifiantInterne}>
+                    <TableCell className="font-medium whitespace-nowrap">{client.identifiantInterne}</TableCell>
+                    <TableCell className="whitespace-nowrap">{client.siren}</TableCell>
+                    <TableCell className="whitespace-nowrap">{client.raisonSociale}</TableCell>
+                    <TableCell className="whitespace-nowrap">{client.formeJuridique}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={client.avatar} alt="Avatar" />
+                          <AvatarFallback>{client.contactPrincipal.prenom.charAt(0)}{client.contactPrincipal.nom.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div>{client.contactPrincipal.prenom} {client.contactPrincipal.nom}</div>
+                          <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
                         </div>
-                      </TableCell>
-                      <TableCell>{client.missionsActuelles.collaborateurReferent}</TableCell>
-                      <TableCell>{client.missionsActuelles.expertComptableResponsable}</TableCell>
-                      <TableCell>
-                         <Badge variant={client.missionsActuelles.typeMission === 'Tenue' ? 'default' : client.missionsActuelles.typeMission === 'Révision' ? 'secondary' : 'outline'}>
-                          {client.missionsActuelles.typeMission}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{client.activites.codeAPE}</TableCell>
-                      <TableCell>{client.activites.secteurActivites}</TableCell>
-                      <TableCell>{client.activites.regimeTVA}</TableCell>
-                      <TableCell>{client.activites.regimeFiscal}</TableCell>
-                      <TableCell>{client.activites.typologieClientele}</TableCell>
-                      <TableCell>À définir</TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button aria-haspopup="true" size="icon" variant="ghost">
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Toggle menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Modifier</DropdownMenuItem>
-                            <DropdownMenuItem>Supprimer</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </ScrollArea>
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">{client.missionsActuelles.collaborateurReferent}</TableCell>
+                    <TableCell className="whitespace-nowrap">{client.missionsActuelles.expertComptableResponsable}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                       <Badge variant={client.missionsActuelles.typeMission === 'Tenue' ? 'default' : client.missionsActuelles.typeMission === 'Révision' ? 'secondary' : 'outline'}>
+                        {client.missionsActuelles.typeMission}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">{client.activites.codeAPE}</TableCell>
+                    <TableCell className="whitespace-nowrap">{client.activites.secteurActivites}</TableCell>
+                    <TableCell className="whitespace-nowrap">{client.activites.regimeTVA}</TableCell>
+                    <TableCell className="whitespace-nowrap">{client.activites.regimeFiscal}</TableCell>
+                    <TableCell className="whitespace-nowrap">{client.activites.typologieClientele}</TableCell>
+                    <TableCell className="whitespace-nowrap">À définir</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem>Modifier</DropdownMenuItem>
+                          <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
