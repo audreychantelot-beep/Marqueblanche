@@ -133,177 +133,183 @@ function ClientsContent() {
             </CardHeader>
             <div className="flex-1 overflow-y-auto">
               <ScrollArea className="h-full">
-                <Table>
                   <TabsContent value="general" className="m-0">
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Identifiant interne</TableHead>
-                        <TableHead>SIREN</TableHead>
-                        <TableHead>Raison sociale</TableHead>
-                        <TableHead>Forme juridique</TableHead>
-                        <TableHead>Contact principal</TableHead>
-                        <TableHead>
-                          <span className="sr-only">Actions</span>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {clients.map((client) => (
-                        <TableRow key={client.identifiantInterne}>
-                          <TableCell className="font-medium">{client.identifiantInterne}</TableCell>
-                          <TableCell>{client.siren}</TableCell>
-                          <TableCell>{client.raisonSociale}</TableCell>
-                          <TableCell>{client.formeJuridique}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Avatar className="h-9 w-9">
-                                <AvatarImage src={client.avatar} alt="Avatar" />
-                                <AvatarFallback>{client.contactPrincipal.prenom.charAt(0)}{client.contactPrincipal.nom.charAt(0)}</AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <div>{client.contactPrincipal.prenom} {client.contactPrincipal.nom}</div>
-                                <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button aria-haspopup="true" size="icon" variant="ghost">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                  <span className="sr-only">Toggle menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem>Modifier</DropdownMenuItem>
-                                <DropdownMenuItem>Supprimer</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Identifiant interne</TableHead>
+                          <TableHead>SIREN</TableHead>
+                          <TableHead>Raison sociale</TableHead>
+                          <TableHead>Forme juridique</TableHead>
+                          <TableHead>Contact principal</TableHead>
+                          <TableHead>
+                            <span className="sr-only">Actions</span>
+                          </TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
+                      </TableHeader>
+                      <TableBody>
+                        {clients.map((client) => (
+                          <TableRow key={client.identifiantInterne}>
+                            <TableCell className="font-medium">{client.identifiantInterne}</TableCell>
+                            <TableCell>{client.siren}</TableCell>
+                            <TableCell>{client.raisonSociale}</TableCell>
+                            <TableCell>{client.formeJuridique}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-9 w-9">
+                                  <AvatarImage src={client.avatar} alt="Avatar" />
+                                  <AvatarFallback>{client.contactPrincipal.prenom.charAt(0)}{client.contactPrincipal.nom.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <div>{client.contactPrincipal.prenom} {client.contactPrincipal.nom}</div>
+                                  <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button aria-haspopup="true" size="icon" variant="ghost">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    <span className="sr-only">Toggle menu</span>
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuItem>Modifier</DropdownMenuItem>
+                                  <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </TabsContent>
                   <TabsContent value="missions" className="m-0">
-                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Raison sociale</TableHead>
-                        <TableHead>Collaborateur référent</TableHead>
-                        <TableHead>Expert-comptable responsable</TableHead>
-                        <TableHead>Type de mission</TableHead>
-                        <TableHead>
-                          <span className="sr-only">Actions</span>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {clients.map((client) => (
-                        <TableRow key={client.identifiantInterne}>
-                          <TableCell className="font-medium">{client.raisonSociale}</TableCell>
-                          <TableCell>{client.missionsActuelles.collaborateurReferent}</TableCell>
-                          <TableCell>{client.missionsActuelles.expertComptableResponsable}</TableCell>
-                          <TableCell>
-                             <Badge variant={client.missionsActuelles.typeMission === 'Tenue' ? 'default' : client.missionsActuelles.typeMission === 'Révision' ? 'secondary' : 'outline'}>
-                              {client.missionsActuelles.typeMission}
-                            </Badge>
-                          </TableCell>
-                           <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button aria-haspopup="true" size="icon" variant="ghost">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                  <span className="sr-only">Toggle menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem>Modifier</DropdownMenuItem>
-                                <DropdownMenuItem>Supprimer</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
+                    <Table>
+                       <TableHeader>
+                        <TableRow>
+                          <TableHead>Raison sociale</TableHead>
+                          <TableHead>Collaborateur référent</TableHead>
+                          <TableHead>Expert-comptable responsable</TableHead>
+                          <TableHead>Type de mission</TableHead>
+                          <TableHead>
+                            <span className="sr-only">Actions</span>
+                          </TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
+                      </TableHeader>
+                      <TableBody>
+                        {clients.map((client) => (
+                          <TableRow key={client.identifiantInterne}>
+                            <TableCell className="font-medium">{client.raisonSociale}</TableCell>
+                            <TableCell>{client.missionsActuelles.collaborateurReferent}</TableCell>
+                            <TableCell>{client.missionsActuelles.expertComptableResponsable}</TableCell>
+                            <TableCell>
+                               <Badge variant={client.missionsActuelles.typeMission === 'Tenue' ? 'default' : client.missionsActuelles.typeMission === 'Révision' ? 'secondary' : 'outline'}>
+                                {client.missionsActuelles.typeMission}
+                              </Badge>
+                            </TableCell>
+                             <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button aria-haspopup="true" size="icon" variant="ghost">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    <span className="sr-only">Toggle menu</span>
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuItem>Modifier</DropdownMenuItem>
+                                  <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </TabsContent>
                   <TabsContent value="activites" className="m-0">
-                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Raison sociale</TableHead>
-                        <TableHead>Code APE</TableHead>
-                        <TableHead>Secteur d’activités</TableHead>
-                        <TableHead>Régime de TVA</TableHead>
-                        <TableHead>Régime fiscal</TableHead>
-                        <TableHead>Typologie de clientèle</TableHead>
-                         <TableHead>
-                          <span className="sr-only">Actions</span>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                       {clients.map((client) => (
-                        <TableRow key={client.identifiantInterne}>
-                          <TableCell className="font-medium">{client.raisonSociale}</TableCell>
-                          <TableCell>{client.activites.codeAPE}</TableCell>
-                          <TableCell>{client.activites.secteurActivites}</TableCell>
-                          <TableCell>{client.activites.regimeTVA}</TableCell>
-                          <TableCell>{client.activites.regimeFiscal}</TableCell>
-                          <TableCell>{client.activites.typologieClientele}</TableCell>
-                           <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button aria-haspopup="true" size="icon" variant="ghost">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                  <span className="sr-only">Toggle menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem>Modifier</DropdownMenuItem>
-                                <DropdownMenuItem>Supprimer</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
+                     <Table>
+                       <TableHeader>
+                        <TableRow>
+                          <TableHead>Raison sociale</TableHead>
+                          <TableHead>Code APE</TableHead>
+                          <TableHead>Secteur d’activités</TableHead>
+                          <TableHead>Régime de TVA</TableHead>
+                          <TableHead>Régime fiscal</TableHead>
+                          <TableHead>Typologie de clientèle</TableHead>
+                           <TableHead>
+                            <span className="sr-only">Actions</span>
+                          </TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
+                      </TableHeader>
+                      <TableBody>
+                         {clients.map((client) => (
+                          <TableRow key={client.identifiantInterne}>
+                            <TableCell className="font-medium">{client.raisonSociale}</TableCell>
+                            <TableCell>{client.activites.codeAPE}</TableCell>
+                            <TableCell>{client.activites.secteurActivites}</TableCell>
+                            <TableCell>{client.activites.regimeTVA}</TableCell>
+                            <TableCell>{client.activites.regimeFiscal}</TableCell>
+                            <TableCell>{client.activites.typologieClientele}</TableCell>
+                             <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button aria-haspopup="true" size="icon" variant="ghost">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    <span className="sr-only">Toggle menu</span>
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuItem>Modifier</DropdownMenuItem>
+                                  <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </TabsContent>
                   <TabsContent value="obligations" className="m-0">
-                     <TableHeader>
-                      <TableRow>
-                         <TableHead>Raison sociale</TableHead>
-                         <TableHead>Obligations légales</TableHead>
-                         <TableHead>
-                          <span className="sr-only">Actions</span>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {clients.map((client) => (
-                        <TableRow key={client.identifiantInterne}>
-                           <TableCell className="font-medium">{client.raisonSociale}</TableCell>
-                           <TableCell>À définir</TableCell>
-                           <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button aria-haspopup="true" size="icon" variant="ghost">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                  <span className="sr-only">Toggle menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem>Modifier</DropdownMenuItem>
-                                <DropdownMenuItem>Supprimer</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
+                    <Table>
+                       <TableHeader>
+                        <TableRow>
+                           <TableHead>Raison sociale</TableHead>
+                           <TableHead>Obligations légales</TableHead>
+                           <TableHead>
+                            <span className="sr-only">Actions</span>
+                          </TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
+                      </TableHeader>
+                      <TableBody>
+                        {clients.map((client) => (
+                          <TableRow key={client.identifiantInterne}>
+                             <TableCell className="font-medium">{client.raisonSociale}</TableCell>
+                             <TableCell>À définir</TableCell>
+                             <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button aria-haspopup="true" size="icon" variant="ghost">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    <span className="sr-only">Toggle menu</span>
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuItem>Modifier</DropdownMenuItem>
+                                  <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </TabsContent>
-                </Table>
               </ScrollArea>
             </div>
           </Tabs>
