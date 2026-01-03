@@ -16,13 +16,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth, useUser } from "@/firebase";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "firebase/auth";
 
 export default function DashboardPage() {
   const { user } = useUser();
   const auth = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -41,9 +42,9 @@ export default function DashboardPage() {
   };
 
   const navItems = [
-    { name: "Dashboard", icon: Home, href: "#", active: true },
+    { name: "Dashboard", icon: Home, href: "/" },
     { name: "Suivi migration", icon: LineChart, href: "#" },
-    { name: "Clients", icon: Users, href: "#" },
+    { name: "Clients", icon: Users, href: "/clients" },
   ];
 
   return (
@@ -51,14 +52,16 @@ export default function DashboardPage() {
       <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6">
         <div className="flex h-16 items-center gap-4">
           {/* Logo Section */}
-          <div className="flex items-center gap-2 mr-auto bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
-              <span className="font-headline text-xs font-bold text-primary-foreground">M</span>
-            </div>
-            <span className="font-headline text-sm font-semibold hidden md:inline-block">Marque blanche</span>
+          <div className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
+                <span className="font-headline text-xs font-bold text-primary-foreground">M</span>
+              </div>
+              <span className="font-headline text-sm font-semibold hidden md:inline-block">Marque blanche</span>
+            </Link>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 ml-auto">
             {/* Navigation Section */}
             <div className="flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm h-12">
               <nav className="flex items-center gap-4 lg:gap-6">
@@ -67,7 +70,7 @@ export default function DashboardPage() {
                     key={item.name}
                     href={item.href}
                     className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
-                      item.active ? "text-primary" : "text-muted-foreground"
+                      pathname === item.href ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
                     <item.icon className="h-4 w-4" />
