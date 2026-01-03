@@ -110,7 +110,7 @@ function ClientsContent() {
           </Button>
         </div>
       </div>
-      <Card className="flex-1 flex flex-col">
+      <Card className="flex-1 flex flex-col rounded-3xl">
         <CardHeader>
           <CardTitle>Liste des clients</CardTitle>
           <CardDescription>
