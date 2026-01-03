@@ -1,10 +1,11 @@
 
 'use client';
 
+import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Users } from "lucide-react";
 
-export default function DashboardPage() {
+function DashboardContent() {
   return (
     <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full">
       <div className="mb-6">
@@ -57,5 +58,14 @@ export default function DashboardPage() {
         </Card>
       </div>
     </main>
+  );
+}
+
+
+export default function DashboardPage() {
+  return (
+    <AppLayout>
+      <DashboardContent />
+    </AppLayout>
   );
 }
