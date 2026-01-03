@@ -3,6 +3,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase';
+import React from 'react';
 
 export const metadata: Metadata = {
   title: 'Marque blanche',
@@ -26,7 +27,7 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <FirebaseClientProvider>
           <ThemeProvider storageKey="marque-blanche-theme">
-            {children}
+              {children}
             <Toaster />
           </ThemeProvider>
         </FirebaseClientProvider>
