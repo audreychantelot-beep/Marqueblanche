@@ -50,7 +50,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6">
-        <div className="flex h-16 items-center gap-4">
+        <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo Section */}
           <div className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12">
             <Link href="/" className="flex items-center gap-2">
@@ -61,64 +61,62 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
 
-          <div className="flex items-center gap-4 ml-auto">
-            {/* Navigation Section */}
-            <div className="flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm h-12">
-              <nav className="flex items-center gap-4 lg:gap-6">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
-                      pathname === item.href ? "text-primary" : "text-muted-foreground"
-                    }`}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span className="hidden sm:inline-block">{item.name}</span>
-                  </Link>
-                ))}
-              </nav>
-            </div>
+          {/* Navigation Section */}
+          <div className="flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm h-12">
+            <nav className="flex items-center gap-4 lg:gap-6">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
+                    pathname === item.href ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span className="hidden sm:inline-block">{item.name}</span>
+                </Link>
+              ))}
+            </nav>
+          </div>
 
-            {/* Actions Section */}
-            <div className="flex items-center gap-2 md:gap-3 bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12">
-              <div className="relative hidden lg:block">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Rechercher un client..."
-                  className="h-8 w-[200px] lg:w-[250px] pl-9 bg-muted/50 border-none rounded-2xl focus-visible:ring-1"
-                />
-              </div>
-              <div className="flex items-center gap-1 md:gap-2">
-                <ThemeToggle />
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
-                  <Bell className="h-5 w-5" />
-                  <span className="sr-only">Toggle notifications</span>
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <div className="flex items-center justify-center h-10 w-10 cursor-pointer">
-                      <Avatar className="h-8 w-8 border">
-                        {user?.photoURL && <AvatarImage src={user.photoURL} alt="User avatar" />}
-                        <AvatarFallback>{getUserInitials()}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onSelect={() => router.push('#')}>Profil</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => router.push('#')}>Facturation</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => router.push('#')}>Paramètres</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onSelect={handleSignOut}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Se déconnecter</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+          {/* Actions Section */}
+          <div className="flex items-center gap-2 md:gap-3 bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12">
+            <div className="relative hidden lg:block">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Rechercher un client..."
+                className="h-8 w-[200px] lg:w-[250px] pl-9 bg-muted/50 border-none rounded-2xl focus-visible:ring-1"
+              />
+            </div>
+            <div className="flex items-center gap-1 md:gap-2">
+              <ThemeToggle />
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+                <Bell className="h-5 w-5" />
+                <span className="sr-only">Toggle notifications</span>
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex items-center justify-center h-10 w-10 cursor-pointer">
+                    <Avatar className="h-8 w-8 border">
+                      {user?.photoURL && <AvatarImage src={user.photoURL} alt="User avatar" />}
+                      <AvatarFallback>{getUserInitials()}</AvatarFallback>
+                    </Avatar>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={() => router.push('#')}>Profil</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => router.push('#')}>Facturation</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => router.push('#')}>Paramètres</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Se déconnecter</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
