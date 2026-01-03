@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Upload } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -104,10 +104,16 @@ export default function ClientsPage() {
           <h1 className="font-headline text-2xl font-semibold md:text-3xl">Clients</h1>
           <p className="text-muted-foreground">Gérez vos clients et visualisez leurs informations.</p>
         </div>
-        <Button className="rounded-3xl">
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Ajouter un client
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline">
+            <Upload className="mr-2 h-4 w-4" />
+            Importer des clients
+          </Button>
+          <Button className="rounded-3xl">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Ajouter un client
+          </Button>
+        </div>
       </div>
       <Card className="flex-1 flex flex-col overflow-hidden">
         <CardHeader>
