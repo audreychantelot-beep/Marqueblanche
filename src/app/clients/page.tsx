@@ -34,6 +34,7 @@ const clients = [
       typologieClientele: "B to B",
     },
     obligationsLegales: {},
+    outils: "QuickBooks",
     status: "Active",
   },
   {
@@ -60,6 +61,7 @@ const clients = [
       typologieClientele: "B to C",
     },
     obligationsLegales: {},
+    outils: "Xero",
     status: "Active",
   },
   {
@@ -86,6 +88,7 @@ const clients = [
       typologieClientele: "Mixtes",
     },
     obligationsLegales: {},
+    outils: "Sage",
     status: "Inactive",
   },
 ];
@@ -135,6 +138,7 @@ function ClientsContent() {
                   <TableHead className="whitespace-nowrap">Régime de TVA</TableHead>
                   <TableHead className="whitespace-nowrap">Régime fiscal</TableHead>
                   <TableHead className="whitespace-nowrap">Typologie de clientèle</TableHead>
+                  <TableHead className="whitespace-nowrap">Outils</TableHead>
                   <TableHead className="whitespace-nowrap">Obligations légales</TableHead>
                   <TableHead>
                     <span className="sr-only">Actions</span>
@@ -172,6 +176,7 @@ function ClientsContent() {
                     <TableCell className="whitespace-nowrap">{client.activites.regimeTVA}</TableCell>
                     <TableCell className="whitespace-nowrap">{client.activites.regimeFiscal}</TableCell>
                     <TableCell className="whitespace-nowrap">{client.activites.typologieClientele}</TableCell>
+                    <TableCell className="whitespace-nowrap">{client.outils}</TableCell>
                     <TableCell className="whitespace-nowrap">À définir</TableCell>
                     <TableCell>
                       <DropdownMenu>
