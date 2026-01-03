@@ -1,17 +1,38 @@
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Bell, Home, LineChart, Users, Search } from "lucide-react";
+import { Bell, Home, LineChart, LogOut, Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth, useUser } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { signOut } from "firebase/auth";
 
 export default function DashboardPage() {
   const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
+  const { user } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/auth');
+  };
 
   const navItems = [
-    { name: "Tableau de bord", icon: Home, href: "#", active: true },
+    { name: "Dashboard", icon: Home, href: "#", active: true },
     { name: "Suivi migration", icon: LineChart, href: "#" },
     { name: "Clients", icon: Users, href: "#" },
   ];
@@ -21,14 +42,14 @@ export default function DashboardPage() {
       <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6">
         <div className="flex h-16 items-center gap-4">
           {/* Logo Section */}
-          <div className="flex items-center gap-2 mr-4 bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12">
+          <div className="flex items-center gap-2 mr-auto bg-card px-3 py-1.5 rounded-3xl border shadow-sm h-12">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
               <span className="font-headline text-xs font-bold text-primary-foreground">M</span>
             </div>
             <span className="font-headline text-sm font-semibold hidden md:inline-block">Marque blanche</span>
           </div>
 
-          <div className="flex items-center gap-4 ml-auto">
+          <div className="flex items-center gap-4 ml-4">
             {/* Navigation Section */}
             <div className="flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm h-12">
               <nav className="flex items-center gap-4 lg:gap-6">
@@ -63,12 +84,28 @@ export default function DashboardPage() {
                   <Bell className="h-5 w-5" />
                   <span className="sr-only">Toggle notifications</span>
                 </Button>
-                <div className="flex items-center justify-center h-10 w-10">
-                  <Avatar className="h-8 w-8 border">
-                    {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User avatar" data-ai-hint={userAvatar.imageHint} />}
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="flex items-center justify-center h-10 w-10 cursor-pointer">
+                      <Avatar className="h-8 w-8 border">
+                        {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User avatar" data-ai-hint={userAvatar.imageHint} />}
+                        <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                      </Avatar>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={() => router.push('#')}>Profil</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => router.push('#')}>Facturation</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => router.push('#')}>Paramètres</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Se déconnecter</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </div>
