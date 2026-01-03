@@ -125,6 +125,9 @@ function ClientsContent() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>
+                    <span className="sr-only">Actions</span>
+                  </TableHead>
                   <TableHead className="whitespace-nowrap">Identifiant interne</TableHead>
                   <TableHead className="whitespace-nowrap">SIREN</TableHead>
                   <TableHead className="whitespace-nowrap">Raison sociale</TableHead>
@@ -140,14 +143,26 @@ function ClientsContent() {
                   <TableHead className="whitespace-nowrap">Typologie de clientèle</TableHead>
                   <TableHead className="whitespace-nowrap">Outils</TableHead>
                   <TableHead className="whitespace-nowrap">Obligations légales</TableHead>
-                  <TableHead>
-                    <span className="sr-only">Actions</span>
-                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {clients.map((client) => (
                   <TableRow key={client.identifiantInterne}>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem>Modifier</DropdownMenuItem>
+                          <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
                     <TableCell className="font-medium whitespace-nowrap">{client.identifiantInterne}</TableCell>
                     <TableCell className="whitespace-nowrap">{client.siren}</TableCell>
                     <TableCell className="whitespace-nowrap">{client.raisonSociale}</TableCell>
@@ -178,21 +193,6 @@ function ClientsContent() {
                     <TableCell className="whitespace-nowrap">{client.activites.typologieClientele}</TableCell>
                     <TableCell className="whitespace-nowrap">{client.outils}</TableCell>
                     <TableCell className="whitespace-nowrap">À définir</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Modifier</DropdownMenuItem>
-                          <DropdownMenuItem>Supprimer</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
