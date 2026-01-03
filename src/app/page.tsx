@@ -49,7 +49,7 @@ export default function DashboardPage() {
             <span className="font-headline text-sm font-semibold hidden md:inline-block">Marque blanche</span>
           </div>
 
-          <div className="flex items-center gap-4 ml-4">
+          <div className="ml-auto flex items-center gap-4">
             {/* Navigation Section */}
             <div className="flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm h-12">
               <nav className="flex items-center gap-4 lg:gap-6">

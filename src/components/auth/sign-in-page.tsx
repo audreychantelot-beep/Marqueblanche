@@ -49,8 +49,8 @@ export const SignInPage: React.FC<SignInPageProps> = ({
   testimonials = [],
   onGoogleSignIn,
 }) => {
-  const title = <span className="font-light text-foreground tracking-tighter">Welcome Back</span>;
-  const description = "Sign in with Google to continue";
+  const title = <span className="font-light text-foreground tracking-tighter">Heureux de vous revoir</span>;
+  const description = "Connectez-vous avec Google pour continuer";
 
   return (
     <div className="h-[100dvh] flex flex-col md:flex-row font-body w-[100dvw] overflow-hidden">
@@ -62,9 +62,9 @@ export const SignInPage: React.FC<SignInPageProps> = ({
             <p className="animate-element animate-delay-200 text-muted-foreground">{description}</p>
             
             <div className="animate-element animate-delay-400 pt-4">
-              <Button onClick={onGoogleSignIn} className="w-full max-w-xs mx-auto flex items-center justify-center gap-3 border border-border rounded-2xl py-6 text-lg hover:bg-secondary transition-colors">
+              <Button onClick={onGoogleSignIn} className="w-full max-w-xs mx-auto flex items-center justify-center gap-3 border border-border rounded-2xl py-6 text-lg transition-colors">
                   <GoogleIcon />
-                  Continue with Google
+                  Continuer avec Google
               </Button>
             </div>
           </div>

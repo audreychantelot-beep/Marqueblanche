@@ -16,15 +16,15 @@ export default function AuthPage() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      toast({ title: "Signed In", description: "Welcome!" });
+      toast({ title: "Connecté", description: "Bienvenue !" });
       router.push('/');
     } catch (error: any) {
-      toast({ variant: 'destructive', title: "Google Sign-In Error", description: error.message });
+      toast({ variant: 'destructive', title: "Erreur de connexion Google", description: error.message });
     }
   };
 
   if (isUserLoading) {
-    return <div>Loading...</div>;
+    return <div>Chargement...</div>;
   }
 
   if (user) {
