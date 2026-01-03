@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { MoreHorizontal, PlusCircle, Upload } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { AppLayout } from "@/components/AppLayout";
 
 const clients = [
   {
@@ -96,7 +97,7 @@ const clients = [
   },
 ];
 
-export default function ClientsPage() {
+function ClientsContent() {
   return (
     <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full h-[calc(100vh-4rem)]">
       <div className="flex items-center justify-between mb-6">
@@ -181,5 +182,13 @@ export default function ClientsPage() {
         </CardContent>
       </Card>
     </main>
+  );
+}
+
+export default function ClientsPage() {
+  return (
+    <AppLayout>
+      <ClientsContent />
+    </AppLayout>
   );
 }
