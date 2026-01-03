@@ -53,7 +53,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
   const description = "Connectez-vous avec Google pour continuer";
 
   return (
-    <div className="h-[100dvh] flex flex-col md:flex-row font-body w-[100dvw] overflow-hidden">
+    <div className="h-[100dvh] flex flex-col md:flex-row font-body w-[100dvw] overflow-hidden bg-white dark:bg-zinc-950">
       {/* Left column: sign-in form */}
       <section className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
