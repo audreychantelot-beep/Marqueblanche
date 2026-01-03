@@ -8,6 +8,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { MoreHorizontal, PlusCircle, Upload } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
+import React, { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const clients = [
   {
@@ -93,8 +97,180 @@ const clients = [
   },
 ];
 
+type Client = typeof clients[0];
+
+function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Client | null, isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onSave: (updatedClient: Client) => void }) {
+  const [editedClient, setEditedClient] = useState<Client | null>(client);
+
+  React.useEffect(() => {
+    setEditedClient(client);
+  }, [client]);
+
+  if (!editedClient) return null;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const keys = name.split('.');
+    
+    setEditedClient(prev => {
+      if (!prev) return null;
+      const newClient = { ...prev };
+      let current: any = newClient;
+      for (let i = 0; i < keys.length - 1; i++) {
+        current = current[keys[i]];
+      }
+      current[keys[keys.length - 1]] = value;
+      return newClient;
+    });
+  };
+
+  const handleSave = () => {
+    if (editedClient) {
+      onSave(editedClient);
+      onOpenChange(false);
+    }
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-full w-full h-full max-h-full sm:max-w-[95vw] sm:max-h-[95vh] rounded-3xl flex flex-col">
+        <DialogHeader>
+          <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
+          <DialogDescription>
+            Modifiez les informations du client ci-dessous.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex-1 overflow-y-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* General Info */}
+          <Card>
+            <CardHeader><CardTitle>Informations Générales</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="identifiantInterne">Identifiant interne</Label>
+                <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="siren">SIREN</Label>
+                <Input id="siren" name="siren" value={editedClient.siren} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="raisonSociale">Raison sociale</Label>
+                <Input id="raisonSociale" name="raisonSociale" value={editedClient.raisonSociale} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="formeJuridique">Forme juridique</Label>
+                <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique} onChange={handleChange} />
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Contact Principal */}
+          <Card>
+            <CardHeader><CardTitle>Contact Principal</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="contactPrincipal.nom">Nom</Label>
+                <Input id="contactPrincipal.nom" name="contactPrincipal.nom" value={editedClient.contactPrincipal.nom} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contactPrincipal.prenom">Prénom</Label>
+                <Input id="contactPrincipal.prenom" name="contactPrincipal.prenom" value={editedClient.contactPrincipal.prenom} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contactPrincipal.email">Email</Label>
+                <Input id="contactPrincipal.email" name="contactPrincipal.email" type="email" value={editedClient.contactPrincipal.email} onChange={handleChange} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Missions Actuelles */}
+          <Card>
+            <CardHeader><CardTitle>Missions Actuelles</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="missionsActuelles.collaborateurReferent">Collaborateur référent</Label>
+                <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent} onChange={handleChange} />
+              </div>
+               <div className="space-y-2">
+                <Label htmlFor="missionsActuelles.expertComptableResponsable">Expert-comptable responsable</Label>
+                <Input id="missionsActuelles.expertComptableResponsable" name="missionsActuelles.expertComptableResponsable" value={editedClient.missionsActuelles.expertComptableResponsable} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="missionsActuelles.typeMission">Type de mission</Label>
+                <Input id="missionsActuelles.typeMission" name="missionsActuelles.typeMission" value={editedClient.missionsActuelles.typeMission} onChange={handleChange} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Activités */}
+          <Card className="md:col-span-2 lg:col-span-1">
+            <CardHeader><CardTitle>Activités du client</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="activites.codeAPE">Code APE</Label>
+                <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="activites.secteurActivites">Secteur d’activités</Label>
+                <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="activites.regimeTVA">Régime de TVA</Label>
+                <Input id="activites.regimeTVA" name="activites.regimeTVA" value={editedClient.activites.regimeTVA} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="activites.regimeFiscal">Régime fiscal</Label>
+                <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal} onChange={handleChange} />
+              </div>
+               <div className="space-y-2">
+                <Label htmlFor="activites.typologieClientele">Typologie de clientèle</Label>
+                <Input id="activites.typologieClientele" name="activites.typologieClientele" value={editedClient.activites.typologieClientele} onChange={handleChange} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Outils & Obligations */}
+          <Card>
+            <CardHeader><CardTitle>Outils & Obligations</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+               <div className="space-y-2">
+                <Label htmlFor="outils">Outils</Label>
+                <Input id="outils" name="outils" value={editedClient.outils} onChange={handleChange} />
+              </div>
+               <div className="space-y-2">
+                <Label htmlFor="obligationsLegales">Obligations légales</Label>
+                <Input id="obligationsLegales" name="obligationsLegales" value={"À définir"} onChange={handleChange} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <DialogFooter className="p-4 border-t">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+          <Button onClick={handleSave}>Sauvegarder</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 
 function ClientsContent() {
+  const [clientList, setClientList] = useState(clients);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+
+  const handleEditClick = (client: Client) => {
+    setSelectedClient(client);
+    setIsDialogOpen(true);
+  };
+  
+  const handleSaveClient = (updatedClient: Client) => {
+    setClientList(prevList => 
+      prevList.map(c => c.identifiantInterne === updatedClient.identifiantInterne ? updatedClient : c)
+    );
+  };
+
+
   return (
     <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-full mx-auto w-full">
       <div className="flex items-center justify-between mb-6">
@@ -146,7 +322,7 @@ function ClientsContent() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {clients.map((client) => (
+                {clientList.map((client) => (
                   <TableRow key={client.identifiantInterne}>
                     <TableCell>
                       <DropdownMenu>
@@ -158,7 +334,7 @@ function ClientsContent() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Modifier</DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => handleEditClick(client)}>Modifier</DropdownMenuItem>
                           <DropdownMenuItem>Supprimer</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -200,6 +376,12 @@ function ClientsContent() {
           </div>
         </CardContent>
       </Card>
+      <ClientEditDialog 
+        client={selectedClient} 
+        isOpen={isDialogOpen} 
+        onOpenChange={setIsDialogOpen}
+        onSave={handleSaveClient}
+      />
     </main>
   );
 }
