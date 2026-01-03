@@ -104,7 +104,7 @@ export default function ClientsPage() {
           <h1 className="font-headline text-2xl font-semibold md:text-3xl">Clients</h1>
           <p className="text-muted-foreground">Gérez vos clients et visualisez leurs informations.</p>
         </div>
-        <Button>
+        <Button className="rounded-3xl">
           <PlusCircle className="mr-2 h-4 w-4" />
           Ajouter un client
         </Button>
