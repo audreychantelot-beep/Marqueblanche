@@ -29,7 +29,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Navigation Section */}
-          <div className="flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm max-w-fit h-12">
+          <div className="flex items-center gap-1 bg-card px-4 py-1.5 rounded-3xl border shadow-sm h-12">
             <nav className="flex items-center gap-4 lg:gap-6">
               {navItems.map((item) => (
                 <Link
