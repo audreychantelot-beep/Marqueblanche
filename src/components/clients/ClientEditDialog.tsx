@@ -54,7 +54,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     const totalFields = fields.length;
     const fieldsProgress = (filledFields / totalFields) * 50;
 
-    const obligationsDefined = editedClient.obligationsLegales && Object.keys(editedClient.obligationsLegales).length > 0;
+    const obligationsDefined = editedClient.obligationsLegales && Object.values(editedClient.obligationsLegales).every(val => val !== "À définir" && val !== undefined);
     const obligationsProgress = obligationsDefined ? 25 : 0;
 
     const questionnaireProgress = isQuestionnaireCompleted ? 25 : 0;
@@ -89,6 +89,15 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
   
   const inputStyle = "bg-white dark:bg-zinc-800 border-none";
   const completionPercentage = calculateProfileCompletion;
+
+  const obligationFields = [
+    { id: "assujettiReforme", label: "Assujetti à la réforme" },
+    { id: "eInvoicing", label: "Concerné par le e-invoicing" },
+    { id: "eReportingTransaction", label: "Concerné par le e-reporting transaction" },
+    { id: "eReportingPaiement", label: "Concerné par le e-reporting paiement" },
+    { id: "paEmission", label: "Obligation PA émission" },
+    { id: "paReception", label: "Obligation PA réception" },
+  ];
 
   return (
     <>
@@ -217,11 +226,21 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
 
             <Card className="rounded-3xl">
               <CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="w-5 h-5 text-muted-foreground" />Obligations</CardTitle></CardHeader>
-              <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
-                 <div className="space-y-2">
-                  <Label htmlFor="obligationsLegales" className="text-muted-foreground">Obligations légales</Label>
-                  <Input id="obligationsLegales" name="obligationsLegales" value={"À définir"} onChange={handleChange} className={inputStyle} />
-                </div>
+              <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-left">
+                {obligationFields.map(field => (
+                  <div key={field.id} className="flex items-center justify-between space-y-2 text-sm">
+                    <Label htmlFor={`obligationsLegales.${field.id}`} className="text-muted-foreground">{field.label}</Label>
+                    <Input 
+                      id={`obligationsLegales.${field.id}`} 
+                      name={`obligationsLegales.${field.id}`} 
+                      // @ts-ignore
+                      value={editedClient.obligationsLegales[field.id] || "À définir"} 
+                      onChange={handleChange} 
+                      className={`${inputStyle} text-right max-w-[100px]`} 
+                      disabled 
+                    />
+                  </div>
+                ))}
               </CardContent>
             </Card>
           </div>
