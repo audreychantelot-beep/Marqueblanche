@@ -195,7 +195,10 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
-                 <DialogDescription className="text-muted-foreground mt-2 flex items-center gap-4">
+                 <DialogDescription>
+                  Gérez les informations de votre client.
+                </DialogDescription>
+                 <div className="text-muted-foreground mt-2 flex items-center gap-4">
                   <div>
                     {completionPercentage === 100 ? (
                       <div className="flex items-center gap-2 text-sm text-green-600">
@@ -203,11 +206,11 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
                         <span>Profil complet</span>
                       </div>
                     ) : (
-                      <span>Profil complet à {Math.round(completionPercentage)}%</span>
+                      <span className='text-sm'>Profil complet à {Math.round(completionPercentage)}%</span>
                     )}
                     <Progress value={completionPercentage} className="mt-1 h-2" />
                   </div>
-                </DialogDescription>
+                </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Button variant="outline" onClick={() => setIsQuestionnaireOpen(true)}>
