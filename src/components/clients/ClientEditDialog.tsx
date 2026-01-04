@@ -10,6 +10,7 @@ import { Info, User, Briefcase, Activity, Wrench, FileQuestion, CheckCircle } fr
 import { QuestionnaireDialog } from "@/components/clients/QuestionnaireDialog";
 import { Progress } from "@/components/ui/progress";
 import { type Client } from "@/lib/clients-data";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ClientEditDialogProps {
   client: Client | null;
@@ -64,8 +65,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
 
   if (!editedClient) return null;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleValueChange = (name: string, value: string) => {
     const keys = name.split('.');
     
     setEditedClient(prev => {
@@ -78,6 +78,10 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
       current[keys[keys.length - 1]] = value;
       return newClient;
     });
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleValueChange(e.target.name, e.target.value);
   };
 
   const handleSave = () => {
@@ -211,7 +215,16 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="activites.regimeTVA" className="text-muted-foreground">Régime de TVA</Label>
-                  <Input id="activites.regimeTVA" name="activites.regimeTVA" value={editedClient.activites.regimeTVA} onChange={handleChange} className={inputStyle} />
+                  <Select name="activites.regimeTVA" value={editedClient.activites.regimeTVA} onValueChange={(value) => handleValueChange("activites.regimeTVA", value)}>
+                    <SelectTrigger className={inputStyle}>
+                      <SelectValue placeholder="Sélectionner..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Débit">Débit</SelectItem>
+                      <SelectItem value="Encaissement">À l’encaissement</SelectItem>
+                      <SelectItem value="Non concerné">Non concerné</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="activites.regimeFiscal" className="text-muted-foreground">Régime fiscal</Label>
