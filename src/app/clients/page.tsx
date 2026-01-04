@@ -9,11 +9,11 @@ import { MoreHorizontal, PlusCircle, Upload, Settings2, GripVertical } from "luc
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
 import React, { useState, useEffect, useRef } from "react";
-import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
-import { doc } from "firebase/firestore";
+import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection } from "@/firebase";
+import { doc, collection } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { cn } from "@/lib/utils";
-import { clients, type Client, allColumns } from "@/lib/clients-data";
+import { type Client, allColumns } from "@/lib/clients-data";
 import { ClientEditDialog } from "@/components/clients/ClientEditDialog";
 
 type ColumnKeys = keyof typeof allColumns;
@@ -23,12 +23,18 @@ const defaultVisibleColumns = Object.keys(allColumns).reduce((acc, key) => ({ ..
 const defaultColumnOrder = Object.keys(allColumns) as ColumnKeys[];
 
 function ClientsContent() {
-  const [clientList, setClientList] = useState(clients);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-
   const { user } = useUser();
   const firestore = useFirestore();
+
+  const clientsQuery = useMemoFirebase(() => {
+    if (!user) return null;
+    return collection(firestore, 'users', user.uid, 'clients');
+  }, [firestore, user]);
+
+  const { data: clientList, isLoading: isLoadingClients } = useCollection<Client>(clientsQuery);
+  
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
 
   const preferencesQuery = useMemoFirebase(() => {
     if (!user) return null;
@@ -66,9 +72,10 @@ function ClientsContent() {
   };
   
   const handleSaveClient = (updatedClient: Client) => {
-    setClientList(prevList => 
-      prevList.map(c => c.identifiantInterne === updatedClient.identifiantInterne ? updatedClient : c)
-    );
+    if (user && firestore) {
+      const clientDocRef = doc(firestore, 'users', user.uid, 'clients', updatedClient.identifiantInterne);
+      setDocumentNonBlocking(clientDocRef, updatedClient, { merge: true });
+    }
   };
 
   const savePreferences = (newVisibleColumns: Record<ColumnKeys, boolean>, newColumnOrder: ColumnKeys[]) => {
@@ -142,10 +149,10 @@ function ClientsContent() {
                     <DropdownMenuCheckboxItem
                       className="flex-1"
                       checked={visibleColumns[key]}
-                      onCheckedChange={() => toggleColumn(key)}
+                      onCheckedChange={() => toggleColumn(key as ColumnKeys)}
                       onSelect={(e) => e.preventDefault()}
                     >
-                      {allColumns[key]}
+                      {allColumns[key as ColumnKeys]}
                     </DropdownMenuCheckboxItem>
                   </div>
                 ))}
@@ -178,12 +185,18 @@ function ClientsContent() {
                     <span className="sr-only">Actions</span>
                   </TableHead>
                   {columnOrder.map(key => 
-                    visibleColumns[key] && <TableHead key={key} className="whitespace-nowrap">{allColumns[key]}</TableHead>
+                    visibleColumns[key as ColumnKeys] && <TableHead key={key} className="whitespace-nowrap">{allColumns[key as ColumnKeys]}</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {clientList.map((client) => (
+                {isLoadingClients && Array.from({length: 3}).map((_, i) => (
+                    <TableRow key={`loading-${i}`}>
+                        <TableCell><MoreHorizontal className="h-4 w-4" /></TableCell>
+                        {columnOrder.map(key => visibleColumns[key as ColumnKeys] && <TableCell key={key}>...</TableCell>)}
+                    </TableRow>
+                ))}
+                {clientList && clientList.map((client) => (
                   <TableRow key={client.identifiantInterne} onClick={() => handleEditClick(client)} className="cursor-pointer">
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
@@ -200,7 +213,7 @@ function ClientsContent() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                    {columnOrder.map(key => visibleColumns[key] && (
+                    {columnOrder.map(key => visibleColumns[key as ColumnKeys] && (
                         <TableCell key={key} className={cn("whitespace-nowrap", key === 'raisonSociale' && "font-medium")}>
                             {
                                 key === 'contactPrincipal' ? (
@@ -226,7 +239,7 @@ function ClientsContent() {
                                 : key === 'regimeFiscal' ? client.activites.regimeFiscal
                                 : key === 'typologieClientele' ? client.activites.typologieClientele
                                 : key === 'obligationsLegales' ? "À définir"
-                                : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'>]
+                                : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'|'questionnaire'|'id'>]
                             }
                         </TableCell>
                     ))}

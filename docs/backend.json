@@ -141,6 +141,36 @@
         }
       },
       "required": ["id", "userId", "page", "columns"]
+    },
+    "Questionnaire": {
+      "title": "Questionnaire",
+      "type": "object",
+      "description": "Represents the responses to the client questionnaire.",
+      "properties": {
+        "q1": { "type": "string", "description": "Response to question 1" },
+        "q2": { "type": "string", "description": "Response to question 2" },
+        "q3": { "type": "string", "description": "Response to question 3" },
+        "q4": { "type": "string", "description": "Response to question 4 (yes/no)" },
+        "q4_software": { "type": "string", "description": "Software for question 4" },
+        "q4_method": { "type": "string", "description": "Method for question 4" },
+        "q5": { "type": "string", "description": "Response to question 5 (yes/no)" },
+        "q5_software": { "type": "string", "description": "Software for question 5" },
+        "q5_method": { "type": "string", "description": "Method for question 5" },
+        "q6": { "type": "string", "description": "Response to question 6 (yes/no)" },
+        "q6_software": { "type": "string", "description": "Software for question 6" },
+        "q7": { "type": "string", "description": "Response to question 7 (yes/no)" },
+        "q7_software": { "type": "string", "description": "Software for question 7" },
+        "q8": { "type": "string", "description": "Response to question 8 (yes/no)" },
+        "q8_software": { "type": "string", "description": "Software for question 8" },
+        "q9": { "type": "string", "description": "Response to question 9" },
+        "q10": { "type": "string", "description": "Response to question 10 (yes/no)" },
+        "q10_function": { "type": "string", "description": "Function for question 10" },
+        "q11": { "type": "string", "description": "Response to question 11" },
+        "q12": { "type": "string", "description": "Response to question 12 (yes/no)" },
+        "q12_actions": { "type": "string", "description": "Actions for question 12" },
+        "q13": { "type": "string", "description": "Response to question 13 (yes/no)" },
+        "q13_project": { "type": "string", "description": "Project for question 13" }
+      }
     }
   },
   "auth": {
@@ -229,6 +259,20 @@
         }
       },
       {
+        "path": "/users/{userId}/clients/{clientId}",
+        "definition": {
+          "entityName": "Client",
+          "schema": {
+            "$ref": "#/backend/entities/Client"
+          },
+          "description": "Stores client data for a specific user.",
+          "params": [
+            { "name": "userId", "description": "The user's ID." },
+            { "name": "clientId", "description": "The client's ID." }
+          ]
+        }
+      },
+      {
         "path": "/links/{linkId}",
         "definition": {
           "entityName": "Link",
@@ -245,6 +289,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to ensure authorization independence and support secure list operations (QAPs). It leverages path-based ownership for user-specific data like themes and sidebar states. Each user's data is stored under their unique ID, providing a clear ownership structure. This eliminates the need for `get()` calls in security rules, enabling atomic operations.\n\nSpecifically:\n\n*   **/users/{userId}**: Stores core user data.\n*   **/users/{userId}/themes/{themeId}**: Stores user-specific theme preferences. Path-based ownership ensures only the user can access their theme.\n*   **/users/{userId}/sidebarState/{sidebarStateId}**: Stores the user's sidebar state. Path-based ownership applies here as well.\n*   **/users/{userId}/columnPreferences/{preferenceId}**: Stores user-specific column visibility preferences.\n\nThe chosen structure prioritizes simplicity, security, and scalability, aligning with the core design principles of authorization independence, clarity of intent, and DBAC (Database-Based Access Control). QAPs are supported via structural segregation, preventing listing of data outside the scope of ownership defined by path-based rules."
+    "reasoning": "The Firestore data structure is designed to ensure authorization independence and support secure list operations (QAPs). It leverages path-based ownership for user-specific data like themes and sidebar states. Each user's data is stored under their unique ID, providing a clear ownership structure. This eliminates the need for `get()` calls in security rules, enabling atomic operations.\n\nSpecifically:\n\n*   **/users/{userId}**: Stores core user data.\n*   **/users/{userId}/themes/{themeId}**: Stores user-specific theme preferences. Path-based ownership ensures only the user can access their theme.\n*   **/users/{userId}/sidebarState/{sidebarStateId}**: Stores the user's sidebar state. Path-based ownership applies here as well.\n*   **/users/{userId}/columnPreferences/{preferenceId}**: Stores user-specific column visibility preferences.\n*   **/users/{userId}/clients/{clientId}**: Stores client data specific to a user.\n\nThe chosen structure prioritizes simplicity, security, and scalability, aligning with the core design principles of authorization independence, clarity of intent, and DBAC (Database-Based Access Control). QAPs are supported via structural segregation, preventing listing of data outside the scope of ownership defined by path-based rules."
   }
 }

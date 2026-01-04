@@ -125,6 +125,19 @@ service cloud.firestore {
         allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
         allow delete: if isExistingOwner(userId);
       }
+
+       /**
+       * @description Secures client data for a specific user.
+       * @path /users/{userId}/clients/{clientId}
+       * @principle Enforces inherited ownership from the parent user document's path.
+       */
+      match /clients/{clientId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
     }
 
     // ----------------------------------------------------------------------

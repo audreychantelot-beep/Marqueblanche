@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Info, User, Briefcase, Activity, Wrench, FileQuestion, CheckCircle, Construction } from "lucide-react";
 import { QuestionnaireDialog } from "@/components/clients/QuestionnaireDialog";
 import { Progress } from "@/components/ui/progress";
-import { type Client } from "@/lib/clients-data";
+import { type Client, type Questionnaire } from "@/lib/clients-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ClientEditDialogProps {
@@ -26,8 +26,21 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
 
   useEffect(() => {
     setEditedClient(client);
-    setIsQuestionnaireCompleted(Math.random() > 0.5);
+    if(client?.questionnaire) {
+        const answeredQuestions = Object.keys(client.questionnaire).filter(key => !key.endsWith('_software') && !key.endsWith('_method') && !key.endsWith('_function') && !key.endsWith('_actions') && !key.endsWith('_project') && (client.questionnaire as any)[key]).length;
+        setIsQuestionnaireCompleted(answeredQuestions >= 13);
+    } else {
+        setIsQuestionnaireCompleted(false);
+    }
   }, [client]);
+
+  const handleQuestionnaireSave = (data: Questionnaire) => {
+    if (editedClient) {
+      const updatedClient = { ...editedClient, questionnaire: data };
+      setEditedClient(updatedClient);
+      onSave(updatedClient); // also save the main client object
+    }
+  };
 
   const calculateProfileCompletion = useMemo(() => {
     if (!editedClient) return 0;
@@ -413,12 +426,12 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                     {field.type === 'questionnaire' ? (
                        <div className="flex items-center gap-2 max-w-[200px]">
                         <Input
-                            value={editedClient.questionnaire?.q4_reponse || "N/A"}
+                            value={editedClient.questionnaire?.q4 || "N/A"}
                             disabled
                             className={`${inputStyle} w-16 text-center`}
                         />
                         <Input
-                            value={editedClient.questionnaire?.q4_reponse === 'Oui' ? editedClient.questionnaire?.q4_software : editedClient.questionnaire?.q4_method}
+                            value={editedClient.questionnaire?.q4 === 'Oui' ? editedClient.questionnaire?.q4_software : editedClient.questionnaire?.q4_method}
                             disabled
                             className={`${inputStyle} flex-1`}
                         />
@@ -465,6 +478,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
           isOpen={isQuestionnaireOpen} 
           onOpenChange={setIsQuestionnaireOpen} 
           onCompleteChange={setIsQuestionnaireCompleted}
+          onSaveSuccess={handleQuestionnaireSave}
         />}
     </>
   );

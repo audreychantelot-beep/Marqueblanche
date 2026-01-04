@@ -1,4 +1,65 @@
-export const clients = [
+
+export interface Questionnaire {
+    q1?: string;
+    q2?: string;
+    q3?: string;
+    q4?: string;
+    q4_software?: string;
+    q4_method?: string;
+    q5?: string;
+    q5_software?: string;
+    q5_method?: string;
+    q6?: string;
+    q6_software?: string;
+    q7?: string;
+    q7_software?: string;
+    q8?: string;
+    q8_software?: string;
+    q9?: string;
+    q10?: string;
+    q10_function?: string;
+    q11?: string;
+    q12?: string;
+    q12_actions?: string;
+    q13?: string;
+    q13_project?: string;
+}
+
+export type Client = {
+  identifiantInterne: string;
+  siren: string;
+  raisonSociale: string;
+  formeJuridique: string;
+  contactPrincipal: {
+    nom: string;
+    prenom: string;
+    email: string;
+  };
+  avatar: string;
+  missionsActuelles: {
+    collaborateurReferent: string;
+    expertComptable: string;
+    typeMission: string;
+  };
+  activites: {
+    codeAPE: string;
+    secteurActivites: string;
+    regimeTVA: string;
+    regimeFiscal: string;
+    typologieClientele: string;
+  };
+  obligationsLegales: {
+    assujettiReforme?: string;
+    eInvoicing?: string;
+    eReportingTransaction?: string;
+    eReportingPaiement?: string;
+    paEmission?: string;
+    paReception?: string;
+  };
+  questionnaire?: Questionnaire;
+};
+
+export const clients: Client[] = [
     {
       identifiantInterne: "C001",
       siren: "123456789",
@@ -22,18 +83,10 @@ export const clients = [
         regimeFiscal: "IS régime réel normal",
         typologieClientele: "B to B",
       },
-      obligationsLegales: {
-        assujettiReforme: "À définir",
-        eInvoicing: "À définir",
-        eReportingTransaction: "À définir",
-        eReportingPaiement: "À définir",
-        paEmission: "À définir",
-        paReception: "À définir",
-      },
+      obligationsLegales: {},
       questionnaire: {
-        q4_reponse: "Oui",
+        q4: "Oui",
         q4_software: "Cegid",
-        q4_method: ""
       }
     },
     {
@@ -59,17 +112,9 @@ export const clients = [
         regimeFiscal: "IS régime simplifié",
         typologieClientele: "B to C",
       },
-      obligationsLegales: {
-        assujettiReforme: "À définir",
-        eInvoicing: "À définir",
-        eReportingTransaction: "À définir",
-        eReportingPaiement: "À définir",
-        paEmission: "À définir",
-        paReception: "À définir",
-      },
+      obligationsLegales: {},
       questionnaire: {
-        q4_reponse: "Non",
-        q4_software: "",
+        q4: "Non",
         q4_method: "Excel"
       }
     },
@@ -96,23 +141,13 @@ export const clients = [
         regimeFiscal: "Micro BIC",
         typologieClientele: "Mixtes",
       },
-      obligationsLegales: {
-        assujettiReforme: "À définir",
-        eInvoicing: "À définir",
-        eReportingTransaction: "À définir",
-        eReportingPaiement: "À définir",
-        paEmission: "À définir",
-        paReception: "À définir",
-      },
+      obligationsLegales: {},
       questionnaire: {
-        q4_reponse: "Oui",
+        q4: "Oui",
         q4_software: "SumUp",
-        q4_method: ""
       }
     },
   ];
-  
-  export type Client = typeof clients[0];
   
   export const allColumns = {
     identifiantInterne: "Identifiant interne",
