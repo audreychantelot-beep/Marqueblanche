@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from '@/components/ui/separator';
 import { GeneralInfoSection } from "./GeneralInfoSection";
 import { ContactSection } from "./ContactSection";
-import { ActivitiesSection } from "./ActivitiesSection";
 import { MissionsSection } from "./MissionsSection";
 import { type Client } from "@/lib/clients-data";
 
@@ -21,17 +20,14 @@ export function MainInfoSection({ editedClient, handleChange, handleValueChange 
     return (
         <Card className="rounded-3xl p-0">
             <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                     <div className="space-y-6">
-                        <GeneralInfoSection editedClient={editedClient} handleChange={handleChange} />
+                        <GeneralInfoSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
                     </div>
                     <div className="space-y-6">
                         <ContactSection editedClient={editedClient} handleChange={handleChange} />
                         <Separator />
                         <MissionsSection editedClient={editedClient} handleChange={handleChange} />
-                    </div>
-                    <div className="space-y-6">
-                       <ActivitiesSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
                     </div>
                 </div>
             </CardContent>
