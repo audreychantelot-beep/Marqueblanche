@@ -180,8 +180,8 @@ export function ClientForm({ client }: ClientFormProps) {
             />
         </div>
         <div className="space-y-6 flex flex-col">
-          <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
           <DigitalMaturityScore questionnaire={editedClient.questionnaire} setEditedClient={setEditedClient} />
+          <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
         </div>
         <div className="lg:col-span-3">
           <ToolsSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
