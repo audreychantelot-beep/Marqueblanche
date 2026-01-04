@@ -28,6 +28,15 @@ const getObligationColor = (value: string | undefined) => {
     return 'text-muted-foreground';
 };
 
+const getCartographieStyle = (cartographie: string) => {
+    if (cartographie.startsWith('Priorité haute')) return { text: 'text-green-800 dark:text-green-200', bg: 'bg-green-100 dark:bg-green-900/50' };
+    if (cartographie.startsWith('Priorité minimale')) return { text: 'text-blue-800 dark:text-blue-200', bg: 'bg-blue-100 dark:bg-blue-900/50' };
+    if (cartographie.startsWith('Priorité intermédiaire')) return { text: 'text-yellow-800 dark:text-yellow-200', bg: 'bg-yellow-100 dark:bg-yellow-900/50' };
+    if (cartographie.startsWith('Priorité faible')) return { text: 'text-orange-800 dark:text-orange-200', bg: 'bg-orange-100 dark:bg-orange-900/50' };
+    return { text: 'text-muted-foreground', bg: 'bg-muted' };
+};
+
+
 export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysisProps) {
 
     const digitalMaturity = useMemo(() => {
@@ -77,23 +86,39 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
         return { score, level };
     }, [editedClient.activites]);
 
+    const cartographieClient = useMemo(() => {
+        const maturite = digitalMaturity.level;
+        const obligation = obligationScore.level;
+        
+        if (maturite === 'Faible' && obligation === 'Fortes') return 'Priorité haute - Clients en risque de non conformité';
+        if (maturite === 'Élevée' && obligation === 'Fortes') return 'Priorité minimale - Clients équipés sous contraintes';
+        if (maturite === 'Faible' && obligation === 'Faibles') return 'Priorité intermédiaire - Clients à opportunités émergentes';
+        if (maturite === 'Élevée' && obligation === 'Faibles') return 'Priorité faible - Clients innovants et stratégiques';
+
+        // Gérer les cas intermédiaires plus tard
+        return 'À définir';
+    }, [digitalMaturity.level, obligationScore.level]);
+
     useEffect(() => {
         setEditedClient(prev => {
             if (!prev) return null;
-            if (prev.maturiteDigitale === digitalMaturity.level && prev.obligationsLegales.niveauObligation === obligationScore.level) return prev;
+            if (prev.maturiteDigitale === digitalMaturity.level && prev.obligationsLegales.niveauObligation === obligationScore.level && prev.cartographieClient === cartographieClient) return prev;
             
             const newClient = JSON.parse(JSON.stringify(prev));
             newClient.maturiteDigitale = digitalMaturity.level;
             newClient.obligationsLegales.niveauObligation = obligationScore.level;
+            newClient.cartographieClient = cartographieClient;
             return newClient;
         });
-    }, [digitalMaturity.level, obligationScore.level, setEditedClient]);
+    }, [digitalMaturity.level, obligationScore.level, cartographieClient, setEditedClient]);
+
+    const cartoStyle = getCartographieStyle(cartographieClient);
 
     return (
         <Card className="rounded-3xl">
             <CardHeader><CardTitle className="flex items-center gap-2"><Activity className="w-5 h-5 text-muted-foreground" />Analyse du client</CardTitle></CardHeader>
             <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-6">
                     <div>
                         <div className="flex items-center justify-between text-sm">
                             <Label className="font-semibold">Niveau de maturité Digitale</Label>
@@ -117,6 +142,15 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
                         <div className="flex items-center justify-between text-sm mt-1">
                             <Label className="text-muted-foreground">Score</Label>
                             <p className="font-medium">{obligationScore.score}</p>
+                        </div>
+                    </div>
+                    <div className='border-b'></div>
+                    <div>
+                        <Label className="font-semibold text-sm">Cartographie du client</Label>
+                        <div className={cn("mt-2 rounded-lg p-3 text-center", cartoStyle.bg)}>
+                            <p className={cn("font-semibold text-sm", cartoStyle.text)}>
+                                {cartographieClient}
+                            </p>
                         </div>
                     </div>
                 </div>

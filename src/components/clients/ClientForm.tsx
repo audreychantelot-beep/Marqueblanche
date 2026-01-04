@@ -46,6 +46,7 @@ const emptyClientTemplate: Omit<Client, 'identifiantInterne'> = {
   questionnaire: {},
   outils: {},
   maturiteDigitale: "À définir",
+  cartographieClient: "À définir",
 };
 
 

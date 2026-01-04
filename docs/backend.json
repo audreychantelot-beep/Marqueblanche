@@ -235,7 +235,8 @@
           }
         },
         "questionnaire": { "$ref": "#/entities/Questionnaire" },
-        "maturiteDigitale": { "type": "string", "description": "Client's digital maturity level (Faible, Intermédiaire, Élevée)." }
+        "maturiteDigitale": { "type": "string", "description": "Client's digital maturity level (Faible, Intermédiaire, Élevée)." },
+        "cartographieClient": { "type": "string", "description": "The client's mapping based on digital maturity and legal obligations." }
       }
     }
   },
