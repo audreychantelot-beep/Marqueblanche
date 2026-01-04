@@ -11,8 +11,8 @@ import { doc, collection } from 'firebase/firestore';
 import { ClientPageHeader } from "./dialog/ClientDialogHeader";
 import { MainInfoSection } from "./dialog/MainInfoSection";
 import { ObligationsSection } from "./dialog/ObligationsSection";
+import { ClientAnalysis } from "./dialog/ClientAnalysis";
 import { ToolsSection } from "./dialog/ToolsSection";
-import { DigitalMaturityScore } from "./dialog/DigitalMaturityScore";
 
 type ClientWithId = Client & { id: string };
 
@@ -180,7 +180,7 @@ export function ClientForm({ client }: ClientFormProps) {
             />
         </div>
         <div className="space-y-6 flex flex-col">
-          <DigitalMaturityScore questionnaire={editedClient.questionnaire} setEditedClient={setEditedClient} />
+          <ClientAnalysis editedClient={editedClient} setEditedClient={setEditedClient} />
           <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
         </div>
         <div className="lg:col-span-3">
