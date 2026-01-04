@@ -8,10 +8,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { MoreHorizontal, PlusCircle, Upload, Info, User, Briefcase, Activity, Wrench, Settings2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { doc, collection } from "firebase/firestore";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 const clients = [
   {
@@ -274,15 +277,37 @@ const allColumns = {
 };
 
 type ColumnKeys = keyof typeof allColumns;
+const PAGE_ID = 'clients';
 
+const defaultVisibleColumns = Object.keys(allColumns).reduce((acc, key) => ({ ...acc, [key]: true }), {} as Record<ColumnKeys, boolean>);
 
 function ClientsContent() {
   const [clientList, setClientList] = useState(clients);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [visibleColumns, setVisibleColumns] = useState<Record<ColumnKeys, boolean>>(
-    Object.keys(allColumns).reduce((acc, key) => ({ ...acc, [key]: true }), {} as Record<ColumnKeys, boolean>)
-  );
+
+  const { user } = useUser();
+  const firestore = useFirestore();
+
+  const preferencesQuery = useMemoFirebase(() => {
+    if (!user) return null;
+    return collection(firestore, 'users', user.uid, 'columnPreferences');
+  }, [firestore, user]);
+  
+  const { data: preferencesData, isLoading: isLoadingPreferences } = useCollection(preferencesQuery);
+
+  const [visibleColumns, setVisibleColumns] = useState<Record<ColumnKeys, boolean>>(defaultVisibleColumns);
+
+  useEffect(() => {
+    if (preferencesData) {
+      const clientPagePref = preferencesData.find(p => p.id === PAGE_ID);
+      if (clientPagePref) {
+        setVisibleColumns(clientPagePref.columns);
+      } else {
+        setVisibleColumns(defaultVisibleColumns);
+      }
+    }
+  }, [preferencesData]);
 
   const handleEditClick = (client: Client) => {
     setSelectedClient(client);
@@ -296,7 +321,17 @@ function ClientsContent() {
   };
 
   const toggleColumn = (column: ColumnKeys) => {
-    setVisibleColumns(prev => ({ ...prev, [column]: !prev[column] }));
+    const newVisibleColumns = { ...visibleColumns, [column]: !visibleColumns[column] };
+    setVisibleColumns(newVisibleColumns);
+    if (user && firestore) {
+      const prefDocRef = doc(firestore, 'users', user.uid, 'columnPreferences', PAGE_ID);
+      setDocumentNonBlocking(prefDocRef, {
+        id: PAGE_ID,
+        userId: user.uid,
+        page: PAGE_ID,
+        columns: newVisibleColumns
+      }, { merge: true });
+    }
   };
 
 

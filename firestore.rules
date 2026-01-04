@@ -110,6 +110,21 @@ service cloud.firestore {
         allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
         allow delete: if isExistingOwner(userId);
       }
+      
+      /**
+       * @description Secures user-specific column visibility preferences.
+       * @path /users/{userId}/columnPreferences/{preferenceId}
+       * @allow (create) User 'user_abc' creating their preferences at /users/user_abc/columnPreferences/clients.
+       * @deny (list) User 'user_xyz' trying to list preferences under /users/user_abc/columnPreferences.
+       * @principle Enforces inherited ownership from the parent document's path.
+       */
+      match /columnPreferences/{preferenceId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        allow delete: if isExistingOwner(userId);
+      }
     }
 
     // ----------------------------------------------------------------------

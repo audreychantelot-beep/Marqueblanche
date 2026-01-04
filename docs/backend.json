@@ -106,6 +106,34 @@
         "url",
         "icon"
       ]
+    },
+    "ColumnPreference": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ColumnPreference",
+      "type": "object",
+      "description": "Stores user-specific column visibility preferences for a specific page.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the preference document, typically matching the page identifier."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 ColumnPreference)"
+        },
+        "page": {
+          "type": "string",
+          "description": "The page to which these preferences apply (e.g., 'clients')."
+        },
+        "columns": {
+          "type": "object",
+          "description": "A map of column keys to boolean visibility states.",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        }
+      },
+      "required": ["id", "userId", "page", "columns"]
     }
   },
   "auth": {
@@ -174,6 +202,26 @@
         }
       },
       {
+        "path": "/users/{userId}/columnPreferences/{preferenceId}",
+        "definition": {
+          "entityName": "ColumnPreference",
+          "schema": {
+            "$ref": "#/backend/entities/ColumnPreference"
+          },
+          "description": "Stores user-specific column visibility preferences. Path-based ownership applies.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "preferenceId",
+              "description": "A unique ID for the preference set, often matching the page name."
+            }
+          ]
+        }
+      },
+      {
         "path": "/links/{linkId}",
         "definition": {
           "entityName": "Link",
@@ -190,6 +238,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to ensure authorization independence and support secure list operations (QAPs). It leverages path-based ownership for user-specific data like themes and sidebar states.  Each user's data is stored under their unique ID, providing a clear ownership structure.  This eliminates the need for `get()` calls in security rules, enabling atomic operations.\n\nSpecifically:\n\n*   **/users/{userId}**: Stores core user data.\n*   **/users/{userId}/themes/{themeId}**: Stores user-specific theme preferences. Path-based ownership ensures only the user can access their theme.\n*   **/users/{userId}/sidebarState/{sidebarStateId}**: Stores the user's sidebar state. Path-based ownership applies here as well.\n\nThe chosen structure prioritizes simplicity, security, and scalability, aligning with the core design principles of authorization independence, clarity of intent, and DBAC (Database-Based Access Control). QAPs are supported via structural segregation, preventing listing of data outside the scope of ownership defined by path-based rules."
+    "reasoning": "The Firestore data structure is designed to ensure authorization independence and support secure list operations (QAPs). It leverages path-based ownership for user-specific data like themes and sidebar states. Each user's data is stored under their unique ID, providing a clear ownership structure. This eliminates the need for `get()` calls in security rules, enabling atomic operations.\n\nSpecifically:\n\n*   **/users/{userId}**: Stores core user data.\n*   **/users/{userId}/themes/{themeId}**: Stores user-specific theme preferences. Path-based ownership ensures only the user can access their theme.\n*   **/users/{userId}/sidebarState/{sidebarStateId}**: Stores the user's sidebar state. Path-based ownership applies here as well.\n*   **/users/{userId}/columnPreferences/{preferenceId}**: Stores user-specific column visibility preferences.\n\nThe chosen structure prioritizes simplicity, security, and scalability, aligning with the core design principles of authorization independence, clarity of intent, and DBAC (Database-Based Access Control). QAPs are supported via structural segregation, preventing listing of data outside the scope of ownership defined by path-based rules."
   }
 }
