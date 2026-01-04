@@ -6,16 +6,15 @@ import { useUser } from "@/firebase";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Hand } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+import { WeekCalendar } from "@/components/ui/week-calendar";
 import React from "react";
 
 function DashboardContent() {
   const { user } = useUser();
   const dashboardImage = PlaceHolderImages.find(p => p.id === 'dashboard-hero');
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   return (
-    <main className="flex flex-col flex-1 p-4 md:p-6 max-w-full mx-auto w-full">
+    <main className="flex flex-col flex-1 p-4 md:px-6 max-w-full mx-auto w-full">
       <div className="flex-1 flex gap-6">
         <div className="w-1/2 flex flex-col gap-6">
           <div className="h-1/2">
@@ -40,20 +39,8 @@ function DashboardContent() {
               <CardHeader>
                 <CardTitle>Échéances à venir</CardTitle>
               </CardHeader>
-              <CardContent className="flex-1 flex items-center justify-center p-0">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  className="p-0"
-                  classNames={{
-                    root: "w-full h-full border-none",
-                    months: "w-full h-full flex items-center justify-center",
-                    month: "w-full space-y-0",
-                    table: "w-full",
-                    caption_label: "text-lg",
-                  }}
-                />
+              <CardContent className="flex-1 flex items-center justify-center p-6">
+                <WeekCalendar />
               </CardContent>
             </Card>
           </div>
