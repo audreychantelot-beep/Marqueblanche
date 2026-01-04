@@ -29,10 +29,9 @@ const getObligationColor = (value: string | undefined) => {
 };
 
 const getCartographieStyle = (cartographie: string) => {
-    if (cartographie.startsWith('Priorité haute')) return { text: 'text-green-800 dark:text-green-200', bg: 'bg-green-100 dark:bg-green-900/50' };
-    if (cartographie.startsWith('Priorité minimale')) return { text: 'text-blue-800 dark:text-blue-200', bg: 'bg-blue-100 dark:bg-blue-900/50' };
-    if (cartographie.startsWith('Priorité intermédiaire')) return { text: 'text-yellow-800 dark:text-yellow-200', bg: 'bg-yellow-100 dark:bg-yellow-900/50' };
-    if (cartographie.startsWith('Priorité faible')) return { text: 'text-orange-800 dark:text-orange-200', bg: 'bg-orange-100 dark:bg-orange-900/50' };
+    if (cartographie.startsWith('Priorité haute')) return { text: 'text-red-800 dark:text-red-200', bg: 'bg-red-100 dark:bg-red-900/50' };
+    if (cartographie.startsWith('Priorité intermédiaire')) return { text: 'text-orange-800 dark:text-orange-200', bg: 'bg-orange-100 dark:bg-orange-900/50' };
+    if (cartographie.startsWith('Priorité faible')) return { text: 'text-green-800 dark:text-green-200', bg: 'bg-green-100 dark:bg-green-900/50' };
     return { text: 'text-muted-foreground', bg: 'bg-muted' };
 };
 
@@ -89,13 +88,32 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
     const cartographieClient = useMemo(() => {
         const maturite = digitalMaturity.level;
         const obligation = obligationScore.level;
-        
-        if (maturite === 'Faible' && obligation === 'Fortes') return 'Priorité haute - Clients en risque de non conformité';
-        if (maturite === 'Élevée' && obligation === 'Fortes') return 'Priorité minimale - Clients équipés sous contraintes';
-        if (maturite === 'Faible' && obligation === 'Faibles') return 'Priorité intermédiaire - Clients à opportunités émergentes';
-        if (maturite === 'Élevée' && obligation === 'Faibles') return 'Priorité faible - Clients innovants et stratégiques';
 
-        // Gérer les cas intermédiaires plus tard
+        if (maturite === 'À définir' || obligation === 'À définir') return 'À définir';
+
+        const isObligationHighOrMedium = obligation === 'Fortes' || obligation === 'Intermédiaire';
+        const isMaturiteLowOrMedium = maturite === 'Faible' || maturite === 'Intermédiaire';
+
+        if (isObligationHighOrMedium && maturite === 'Faible') {
+            return 'Priorité haute - Clients en risques de non conformité';
+        }
+        
+        if (isObligationHighOrMedium && maturite === 'Intermédiaire') {
+            return 'Priorité intermédiaire - clients à opportunités émergentes';
+        }
+
+        if (isObligationHighOrMedium && maturite === 'Élevée') {
+            return 'Priorité faible - clients innovants et stratégiques';
+        }
+
+        if (obligation === 'Faibles' && maturite === 'Élevée') {
+            return 'Priorité faible - Clients innovants et stratégiques';
+        }
+
+        if (obligation === 'Faibles' && isMaturiteLowOrMedium) {
+            return 'Priorité intermédiaire - clients à opportunités émergentes';
+        }
+
         return 'À définir';
     }, [digitalMaturity.level, obligationScore.level]);
 
