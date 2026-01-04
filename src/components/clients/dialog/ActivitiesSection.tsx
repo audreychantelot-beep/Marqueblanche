@@ -22,11 +22,18 @@ export function ActivitiesSection({ editedClient, handleValueChange, handleChang
     return (
         <div>
             <CardTitle className="flex items-center gap-2 mb-4"><Activity className="w-5 h-5 text-muted-foreground" />Activités du client</CardTitle>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
-                <div className="space-y-2">
-                    <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>
-                    <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE || ''} onChange={handleChange} className={inputStyle} />
+            <div className="space-y-4 text-left">
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>
+                        <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE || ''} onChange={handleChange} className={inputStyle} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="activites.regimeFiscal" className="text-muted-foreground">Régime fiscal</Label>
+                        <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal || ''} onChange={handleChange} className={inputStyle} />
+                    </div>
                 </div>
+
                 <div className="space-y-2">
                     <Label htmlFor="activites.secteurActivites" className="text-muted-foreground">Secteur d’activités</Label>
                     <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites || ''} onChange={handleChange} className={inputStyle} />
@@ -45,10 +52,6 @@ export function ActivitiesSection({ editedClient, handleValueChange, handleChang
                     </Select>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="activites.regimeFiscal" className="text-muted-foreground">Régime fiscal</Label>
-                    <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal || ''} onChange={handleChange} className={inputStyle} />
-                </div>
-                <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="activites.typologieClientele" className="text-muted-foreground">Typologie de clientèle</Label>
                     <Select name="activites.typologieClientele" value={editedClient.activites.typologieClientele} onValueChange={(value) => handleValueChange("activites.typologieClientele", value)}>
                         <SelectTrigger className="bg-white dark:bg-zinc-800 border-none rounded-3xl hover:bg-accent">

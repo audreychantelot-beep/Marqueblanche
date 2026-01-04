@@ -20,22 +20,24 @@ export function GeneralInfoSection({ editedClient, handleChange }: GeneralInfoSe
     return (
         <div>
             <CardTitle className="flex items-center gap-2 mb-4"><Info className="w-5 h-5 text-muted-foreground" />Informations Générales</CardTitle>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+            <div className="space-y-4 text-left">
                 <div className="space-y-2">
                     <Label htmlFor="identifiantInterne" className="text-muted-foreground">Identifiant interne</Label>
                     <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne || ''} onChange={handleChange} className={inputStyle} />
                 </div>
-                <div className="space-y-2">
-                    <Label htmlFor="siren" className="text-muted-foreground">SIREN</Label>
-                    <Input id="siren" name="siren" value={editedClient.siren || ''} onChange={handleChange} className={inputStyle} />
-                </div>
-                <div className="space-y-2">
+                 <div className="space-y-2">
                     <Label htmlFor="raisonSociale" className="text-muted-foreground">Raison sociale</Label>
                     <Input id="raisonSociale" name="raisonSociale" value={editedClient.raisonSociale || ''} onChange={handleChange} className={inputStyle} />
                 </div>
-                <div className="space-y-2">
-                    <Label htmlFor="formeJuridique" className="text-muted-foreground">Forme juridique</Label>
-                    <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique || ''} onChange={handleChange} className={inputStyle} />
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="siren" className="text-muted-foreground">SIREN</Label>
+                        <Input id="siren" name="siren" value={editedClient.siren || ''} onChange={handleChange} className={inputStyle} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="formeJuridique" className="text-muted-foreground">Forme juridique</Label>
+                        <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique || ''} onChange={handleChange} className={inputStyle} />
+                    </div>
                 </div>
             </div>
         </div>
