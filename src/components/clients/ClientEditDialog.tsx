@@ -11,6 +11,7 @@ import { QuestionnaireDialog } from "@/components/clients/QuestionnaireDialog";
 import { Progress } from "@/components/ui/progress";
 import { type Client, type Questionnaire } from "@/lib/clients-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 type ClientWithId = Client & { id: string };
 
@@ -253,6 +254,12 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     { id: "logicielNotesFrais", label: "Logiciel de gestion des notes de frais", type: "select" },
   ];
 
+  const getStatusColor = (value: string | undefined) => {
+    if (value === 'Oui') return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+    if (value === 'Non') return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+    return '';
+  };
+
 
   return (
     <>
@@ -397,27 +404,29 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
             <Card className="rounded-3xl">
               <CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="w-5 h-5 text-muted-foreground" />Obligations</CardTitle></CardHeader>
               <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-left">
-                {obligationFields.map(field => (
-                  <div key={field.id} className="flex items-center justify-between space-y-2 text-sm">
-                    <Label htmlFor={`obligationsLegales.${field.id}`} className="text-muted-foreground">{field.label}</Label>
-                    <Input
-                      id={`obligationsLegales.${field.id}`}
-                      name={`obligationsLegales.${field.id}`}
-                      value={
+                {obligationFields.map(field => {
+                  const value = 
                         field.id === 'assujettiReforme' ? assujettiReformeValue :
                         field.id === 'eInvoicing' ? eInvoicingValue :
                         field.id === 'eReportingTransaction' ? eReportingTransactionValue :
                         field.id === 'eReportingPaiement' ? eReportingPaiementValue :
                         field.id === 'paEmission' ? paEmissionValue :
                         field.id === 'paReception' ? paReceptionValue :
-                        (editedClient.obligationsLegales as any)[field.id] || "À définir"
-                      }
+                        (editedClient.obligationsLegales as any)[field.id] || "À définir";
+
+                  return (
+                  <div key={field.id} className="flex items-center justify-between space-y-2 text-sm">
+                    <Label htmlFor={`obligationsLegales.${field.id}`} className="text-muted-foreground">{field.label}</Label>
+                    <Input
+                      id={`obligationsLegales.${field.id}`}
+                      name={`obligationsLegales.${field.id}`}
+                      value={value}
                       onChange={handleChange}
-                      className={`${inputStyle} text-right max-w-[100px]`}
+                      className={cn(inputStyle, "text-right max-w-[100px]", getStatusColor(value))}
                       disabled
                     />
                   </div>
-                ))}
+                )})}
               </CardContent>
             </Card>
 
@@ -427,15 +436,15 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                 {toolFields.map(field => {
                   if (field.type === 'questionnaire') {
                     const qKey = field.question as keyof Questionnaire;
-                    const qSoftwareKey = `${qKey}_software` as keyof Questionnaire;
-                    const qMethodKey = `${qKey}_method` as keyof Questionnaire;
                     const answer = editedClient.questionnaire?.[qKey] || "N/A";
                     let detail: string | undefined;
 
                     if (answer === 'Oui') {
-                        detail = editedClient.questionnaire?.[qSoftwareKey]
+                        const softwareKey = `${qKey}_software` as keyof Questionnaire;
+                        detail = editedClient.questionnaire?.[softwareKey]
                     } else if (answer === 'Non') {
-                        detail = editedClient.questionnaire?.[qMethodKey]
+                        const methodKey = `${qKey}_method` as keyof Questionnaire;
+                        detail = editedClient.questionnaire?.[methodKey]
                     }
 
 
@@ -446,12 +455,12 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                            <Input
                                value={answer.toString()}
                                disabled
-                               className={`${inputStyle} w-16 text-center`}
+                               className={cn(inputStyle, "w-16 text-center", getStatusColor(answer.toString()))}
                            />
                            <Input
                                value={detail || ''}
                                disabled
-                               className={`${inputStyle} flex-1`}
+                               className={cn(inputStyle, "flex-1")}
                            />
                          </div>
                        </div>
@@ -467,21 +476,22 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                           name={`outils.${field.id}`}
                           value={(editedClient.outils as any)?.[field.id] || ''}
                           onChange={handleChange}
-                          className={`${inputStyle} max-w-[200px]`}
+                          className={cn(inputStyle, "max-w-[200px]")}
                         />
                        </div>
                     )
                   }
-
+                  
+                  const selectValue = (editedClient.outils as any)?.[field.id] || "À définir";
                   return (
                     <div key={field.id} className="flex items-center justify-between">
                       <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
                       <Select 
                           name={`outils.${field.id}`} 
-                          value={(editedClient.outils as any)?.[field.id] || "À définir"}
+                          value={selectValue}
                           onValueChange={(value) => handleValueChange(`outils.${field.id}`, value)}
                         >
-                          <SelectTrigger className={`${inputStyle} max-w-[120px] rounded-xl text-right`}>
+                          <SelectTrigger className={cn(inputStyle, "max-w-[120px] rounded-xl text-right", getStatusColor(selectValue))}>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
