@@ -70,6 +70,7 @@ export type Client = {
     logicielNotesFrais?: string;
   };
   questionnaire?: Questionnaire;
+  maturiteDigitale?: string;
 };
 
 export const clients: (Client & { id: string })[] = [
@@ -283,4 +284,3 @@ export const clients: (Client & { id: string })[] = [
     obligationsLegales: "Obligations légales",
   };
   
-

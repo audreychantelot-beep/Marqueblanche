@@ -14,6 +14,7 @@ import { ClientPageHeader } from "./dialog/ClientDialogHeader";
 import { MainInfoSection } from "./dialog/MainInfoSection";
 import { ObligationsSection } from "./dialog/ObligationsSection";
 import { ToolsSection } from "./dialog/ToolsSection";
+import { DigitalMaturityScore } from "./dialog/DigitalMaturityScore";
 import { FileQuestion } from "lucide-react";
 
 type ClientWithId = Client & { id: string };
@@ -47,6 +48,7 @@ const emptyClientTemplate: Omit<Client, 'identifiantInterne'> = {
   obligationsLegales: {},
   questionnaire: {},
   outils: {},
+  maturiteDigitale: "À définir",
 };
 
 
@@ -172,7 +174,7 @@ export function ClientForm({ client }: ClientFormProps) {
          isNewClient={isNewClient}
       />
       <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 flex flex-col">
+        <div className="lg:col-span-2 flex flex-col h-full">
             <MainInfoSection 
               editedClient={editedClient}
               handleChange={handleChange}
@@ -198,6 +200,7 @@ export function ClientForm({ client }: ClientFormProps) {
               </Button>
           </div>
           <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
+          <DigitalMaturityScore questionnaire={editedClient.questionnaire} setEditedClient={setEditedClient} />
         </div>
         <div className="lg:col-span-3">
           <ToolsSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />

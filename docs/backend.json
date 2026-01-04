@@ -171,6 +171,72 @@
         "q13": { "type": "string", "description": "Response to question 13 (yes/no)" },
         "q13_project": { "type": "string", "description": "Project for question 13" }
       }
+    },
+    "Client": {
+      "title": "Client",
+      "type": "object",
+      "properties": {
+        "identifiantInterne": { "type": "string" },
+        "siren": { "type": "string" },
+        "raisonSociale": { "type": "string" },
+        "formeJuridique": { "type": "string" },
+        "contactPrincipal": {
+          "type": "object",
+          "properties": {
+            "nom": { "type": "string" },
+            "prenom": { "type": "string" },
+            "email": { "type": "string" }
+          }
+        },
+        "avatar": { "type": "string" },
+        "missionsActuelles": {
+          "type": "object",
+          "properties": {
+            "collaborateurReferent": { "type": "string" },
+            "expertComptable": { "type": "string" },
+            "typeMission": { "type": "string" }
+          }
+        },
+        "activites": {
+          "type": "object",
+          "properties": {
+            "codeAPE": { "type": "string" },
+            "secteurActivites": { "type": "string" },
+            "regimeTVA": { "type": "string" },
+            "regimeFiscal": { "type": "string" },
+            "typologieClientele": { "type": "string" }
+          }
+        },
+        "obligationsLegales": {
+          "type": "object",
+          "properties": {
+            "assujettiReforme": { "type": "string" },
+            "eInvoicing": { "type": "string" },
+            "eReportingTransaction": { "type": "string" },
+            "eReportingPaiement": { "type": "string" },
+            "paEmission": { "type": "string" },
+            "paReception": { "type": "string" },
+            "niveauObligation": { "type": "string" }
+          }
+        },
+        "outils": {
+          "type": "object",
+          "properties": {
+            "logicielCaisse": { "type": "string" },
+            "genereEReporting": { "type": "string" },
+            "logicielFacturation": { "type": "string" },
+            "conformeFacturationElectronique": { "type": "string" },
+            "logicielGestionCommerciale": { "type": "string" },
+            "interoperableComptable": { "type": "string" },
+            "interoperablePaEmission": { "type": "string" },
+            "logicielComptableClient": { "type": "string" },
+            "interoperableAutresLogiciels": { "type": "string" },
+            "logicielNotesFrais": { "type": "string" }
+          }
+        },
+        "questionnaire": { "$ref": "#/entities/Questionnaire" },
+        "maturiteDigitale": { "type": "string", "description": "Client's digital maturity level (Faible, Intermédiaire, Élevée)." }
+      }
     }
   },
   "auth": {
@@ -263,7 +329,7 @@
         "definition": {
           "entityName": "Client",
           "schema": {
-            "$ref": "#/backend/entities/Client"
+            "$ref": "#/entities/Client"
           },
           "description": "Stores client data for a specific user.",
           "params": [
