@@ -108,6 +108,16 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     return "Non";
   }, [editedClient]);
 
+  const paEmissionValue = useMemo(() => {
+    if (eInvoicingValue === "Oui") {
+      return "Oui";
+    }
+    if (eInvoicingValue === "Non") {
+      return "Non";
+    }
+    return "À définir";
+  }, [eInvoicingValue]);
+
 
   useEffect(() => {
     if (editedClient) {
@@ -138,6 +148,12 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
         newObligations.eReportingPaiement = eReportingPaiementValue;
         changed = true;
       }
+      // @ts-ignore
+      if (newObligations.paEmission !== paEmissionValue) {
+        // @ts-ignore
+        newObligations.paEmission = paEmissionValue;
+        changed = true;
+      }
 
       if (changed) {
         setEditedClient(prev => {
@@ -148,7 +164,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
         });
       }
     }
-  }, [editedClient, assujettiReformeValue, eInvoicingValue, eReportingTransactionValue, eReportingPaiementValue]);
+  }, [editedClient, assujettiReformeValue, eInvoicingValue, eReportingTransactionValue, eReportingPaiementValue, paEmissionValue]);
 
 
   if (!editedClient) return null;
@@ -349,6 +365,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                         field.id === 'eInvoicing' ? eInvoicingValue :
                         field.id === 'eReportingTransaction' ? eReportingTransactionValue :
                         field.id === 'eReportingPaiement' ? eReportingPaiementValue :
+                        field.id === 'paEmission' ? paEmissionValue :
                         (editedClient.obligationsLegales as any)[field.id] || "À définir"
                       }
                       onChange={handleChange}
