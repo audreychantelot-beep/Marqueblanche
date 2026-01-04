@@ -14,6 +14,7 @@ import { ClientPageHeader } from "./dialog/ClientDialogHeader";
 import { MainInfoSection } from "./dialog/MainInfoSection";
 import { ObligationsSection } from "./dialog/ObligationsSection";
 import { ToolsSection } from "./dialog/ToolsSection";
+import { FileQuestion } from "lucide-react";
 
 type ClientWithId = Client & { id: string };
 
@@ -167,7 +168,6 @@ export function ClientForm({ client }: ClientFormProps) {
          client={client || null}
          raisonSociale={editedClient.raisonSociale}
          completionPercentage={completionPercentage}
-         setIsQuestionnaireOpen={setIsQuestionnaireOpen}
          handleSave={() => handleSave()}
          isNewClient={isNewClient}
       />
@@ -180,13 +180,23 @@ export function ClientForm({ client }: ClientFormProps) {
             />
         </div>
         <div className="space-y-6">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl group">
               <Image
                 src="https://cdn.dribbble.com/userupload/14986251/file/original-9e0aef456b3c8bf1c6a70ee6d9eb27a8.png?resize=1024x771&vertical=center"
                 alt="Obligations illustration"
                 fill
                 className="object-cover"
               />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
+              <Button 
+                variant="secondary" 
+                onClick={() => setIsQuestionnaireOpen(true)} 
+                disabled={isNewClient}
+                className="absolute bottom-4 left-4 rounded-3xl bg-black/70 text-white hover:bg-black"
+                >
+                <FileQuestion className="mr-2 h-4 w-4" />
+                Questionnaire
+              </Button>
           </div>
           <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
           <ToolsSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
