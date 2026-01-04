@@ -75,19 +75,47 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     return "À définir";
   }, [editedClient]);
 
+  const eInvoicingValue = useMemo(() => {
+    if (!editedClient) return "À définir";
+    const typologie = editedClient.activites.typologieClientele;
+    if (typologie === "B to B" || typologie === "Mixtes") {
+      return "Oui";
+    }
+    if (typologie === "B to C" || typologie === "Organismes publics") {
+      return "Non";
+    }
+    return "À définir";
+  }, [editedClient]);
+
   useEffect(() => {
     if (editedClient) {
+      const newObligations = { ...editedClient.obligationsLegales };
+      let changed = false;
+
       // @ts-ignore
-      if (editedClient.obligationsLegales.assujettiReforme !== assujettiReformeValue) {
+      if (newObligations.assujettiReforme !== assujettiReformeValue) {
+        // @ts-ignore
+        newObligations.assujettiReforme = assujettiReformeValue;
+        changed = true;
+      }
+      // @ts-ignore
+      if (newObligations.eInvoicing !== eInvoicingValue) {
+        // @ts-ignore
+        newObligations.eInvoicing = eInvoicingValue;
+        changed = true;
+      }
+
+      if (changed) {
         setEditedClient(prev => {
           if (!prev) return null;
           const newClient = JSON.parse(JSON.stringify(prev));
-          newClient.obligationsLegales.assujettiReforme = assujettiReformeValue;
+          newClient.obligationsLegales = newObligations;
           return newClient;
         });
       }
     }
-  }, [editedClient, assujettiReformeValue]);
+  }, [editedClient, assujettiReformeValue, eInvoicingValue]);
+
 
   if (!editedClient) return null;
 
@@ -282,7 +310,11 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                     <Input
                       id={`obligationsLegales.${field.id}`}
                       name={`obligationsLegales.${field.id}`}
-                      value={field.id === 'assujettiReforme' ? assujettiReformeValue : (editedClient.obligationsLegales as any)[field.id] || "À définir"}
+                      value={
+                        field.id === 'assujettiReforme' ? assujettiReformeValue :
+                        field.id === 'eInvoicing' ? eInvoicingValue :
+                        (editedClient.obligationsLegales as any)[field.id] || "À définir"
+                      }
                       onChange={handleChange}
                       className={`${inputStyle} text-right max-w-[100px]`}
                       disabled
@@ -307,5 +339,3 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     </>
   );
 }
-
-    
