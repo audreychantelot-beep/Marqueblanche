@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Info, User, Briefcase, Activity, Wrench, FileQuestion, CheckCircle } from "lucide-react";
+import { Info, User, Briefcase, Activity, Wrench, FileQuestion, CheckCircle, Construction } from "lucide-react";
 import { QuestionnaireDialog } from "@/components/clients/QuestionnaireDialog";
 import { Progress } from "@/components/ui/progress";
 import { type Client } from "@/lib/clients-data";
@@ -37,7 +37,6 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
       editedClient.siren,
       editedClient.raisonSociale,
       editedClient.formeJuridique,
-      editedClient.outils,
       editedClient.contactPrincipal.nom,
       editedClient.contactPrincipal.prenom,
       editedClient.contactPrincipal.email,
@@ -222,6 +221,21 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     { id: "paEmission", label: "Obligation PA émission" },
     { id: "paReception", label: "Obligation PA réception" },
   ];
+  
+  const
+   toolFields = [
+    { id: "logicielCaisse", label: "Logiciel de caisse", type: "text" },
+    { id: "genereEReporting", label: "Génère le e-reporting", type: "select" },
+    { id: "logicielFacturation", label: "Logiciel de facturation", type: "text" },
+    { id: "conformeFacturationElectronique", label: "Conforme facturation électronique", type: "select" },
+    { id: "logicielGestionAchats", label: "Logiciel de gestion des achats", type: "text" },
+    { id: "interoperableComptable", label: "Interopérable avec le logiciel comptable", type: "select" },
+    { id: "interoperablePaEmission", label: "Interopérable avec la PA en émission", type: "select" },
+    { id: "logicielComptableClient", label: "Logiciel comptable du client", type: "text" },
+    { id: "interoperableAutresLogiciels", label: "Interopérable avec les autres logiciels", type: "select" },
+    { id: "logicielNotesFrais", label: "Logiciel de gestion des notes de frais", type: "select" },
+  ];
+
 
   return (
     <>
@@ -278,10 +292,6 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                 <div className="space-y-2">
                   <Label htmlFor="formeJuridique" className="text-muted-foreground">Forme juridique</Label>
                   <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique} onChange={handleChange} className={inputStyle} />
-                </div>
-                 <div className="space-y-2">
-                  <Label htmlFor="outils" className="text-muted-foreground">Outils</Label>
-                  <Input id="outils" name="outils" value={editedClient.outils} onChange={handleChange} className={inputStyle} />
                 </div>
               </CardContent>
             </Card>
@@ -393,6 +403,43 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                 ))}
               </CardContent>
             </Card>
+
+             <Card className="rounded-3xl">
+              <CardHeader><CardTitle className="flex items-center gap-2"><Construction className="w-5 h-5 text-muted-foreground" />Outils</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-1 gap-y-4 text-left text-sm">
+                {toolFields.map(field => (
+                  <div key={field.id} className="flex items-center justify-between">
+                    <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
+                    {field.type === 'text' ? (
+                       <Input
+                        id={`outils.${field.id}`}
+                        name={`outils.${field.id}`}
+                        // @ts-ignore
+                        value={editedClient.outils?.[field.id] || ''}
+                        onChange={handleChange}
+                        className={`${inputStyle} max-w-[200px]`}
+                      />
+                    ) : (
+                      <Select 
+                        name={`outils.${field.id}`} 
+                        // @ts-ignore
+                        value={editedClient.outils?.[field.id] || "À définir"}
+                        onValueChange={(value) => handleValueChange(`outils.${field.id}`, value)}
+                      >
+                        <SelectTrigger className={`${inputStyle} max-w-[120px] rounded-xl text-right`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Oui">Oui</SelectItem>
+                          <SelectItem value="Non">Non</SelectItem>
+                          <SelectItem value="À définir">À définir</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           </div>
           <DialogFooter className="p-4 border-t sr-only">
             <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
@@ -409,3 +456,5 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     </>
   );
 }
+
+    
