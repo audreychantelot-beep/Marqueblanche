@@ -131,10 +131,10 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
     const cartoStyle = getCartographieStyle(cartographieClient);
 
     return (
-        <Card className="rounded-3xl">
+        <Card className="rounded-3xl h-full flex flex-col">
             <CardHeader><CardTitle className="flex items-center gap-2"><Activity className="w-5 h-5 text-muted-foreground" />Analyse du client</CardTitle></CardHeader>
-            <CardContent>
-                <div className="space-y-6">
+            <CardContent className="flex-1 flex flex-col">
+                <div className="space-y-6 flex-1 flex flex-col justify-between">
                     <div>
                         <div className="flex items-center justify-between text-sm">
                             <Label className="font-semibold">Niveau de maturité Digitale</Label>

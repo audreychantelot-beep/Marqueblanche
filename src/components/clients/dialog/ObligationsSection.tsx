@@ -32,13 +32,6 @@ const getStatusColorText = (value: string | undefined) => {
     return 'text-orange-500 dark:text-orange-400';
 };
 
-const getScoringColor = (value: string | undefined) => {
-    if (value === 'Fortes') return 'text-green-600 dark:text-green-500';
-    if (value === 'Intermédiaire') return 'text-orange-500 dark:text-orange-400';
-    if (value === 'Faibles') return 'text-blue-600 dark:text-blue-500';
-    return 'text-orange-500 dark:text-orange-400';
-};
-
 export function ObligationsSection({ editedClient, setEditedClient }: ObligationsSectionProps) {
 
     const assujettiReformeValue = useMemo(() => {
@@ -90,14 +83,12 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
         let score = 0;
         const { regimeTVA, typologieClientele } = editedClient.activites;
 
-        // Scoring for regimeTVA
         if (regimeTVA === "Débit") {
             score += 1;
         } else if (regimeTVA === "Encaissement") {
             score += 2;
         }
 
-        // Scoring for typologieClientele
         if (typologieClientele === "Mixtes") {
             score += 3;
         } else if (["B to B", "B to C", "Organismes publics"].includes(typologieClientele)) {
@@ -109,10 +100,7 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
             level = "Fortes";
         } else if (score === 2) {
             level = "Intermédiaire";
-        } else if (score === 1) {
-            level = "Faibles";
-        } else if (score === 0 && (regimeTVA || typologieClientele)) {
-             // If we have data but score is 0, it's considered low.
+        } else if (score <= 1 && (regimeTVA || typologieClientele)) {
              level = "Faibles";
         }
         
@@ -143,10 +131,10 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
     }, [editedClient, assujettiReformeValue, eInvoicingValue, eReportingTransactionValue, eReportingPaiementValue, paEmissionValue, paReceptionValue, obligationScore.level, setEditedClient]);
     
     return (
-        <Card className="rounded-3xl">
+        <Card className="rounded-3xl h-full flex flex-col">
             <CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="w-5 h-5 text-muted-foreground" />Obligations</CardTitle></CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-1 gap-x-4 gap-y-2 text-left">
+            <CardContent className="flex-1 flex flex-col">
+                <div className="grid grid-cols-1 sm:grid-cols-1 gap-x-4 gap-y-2 text-left flex-1">
                     {obligationFields.map(field => {
                         const value = (editedClient.obligationsLegales as any)?.[field.id] || "À définir";
                         return (

@@ -90,11 +90,11 @@ export function ClientForm({ client }: ClientFormProps) {
       if (user && firestore) {
           const clientDocRef = doc(firestore, 'users', user.uid, 'clients', updatedClient.id);
           setDocumentNonBlocking(clientDocRef, { questionnaire: data }, { merge: true });
-          toast({
-              title: "Questionnaire sauvegardé",
-              description: `Les réponses pour ${updatedClient.raisonSociale} ont été enregistrées.`,
-          });
       }
+      toast({
+          title: "Questionnaire sauvegardé",
+          description: `Les réponses pour ${updatedClient.raisonSociale} ont été enregistrées.`,
+      });
     }
   };
 
@@ -194,10 +194,10 @@ export function ClientForm({ client }: ClientFormProps) {
               handleValueChange={handleValueChange}
             />
         </div>
-        <div className="lg:col-span-1 space-y-6 flex flex-col">
+        <div className="lg:col-span-1 flex flex-col h-full">
           <ClientAnalysis editedClient={editedClient} setEditedClient={setEditedClient} />
         </div>
-        <div className="lg:col-span-2 space-y-6 flex flex-col">
+        <div className="lg:col-span-2 flex flex-col h-full">
           <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
         </div>
         <div className="lg:col-span-3">
