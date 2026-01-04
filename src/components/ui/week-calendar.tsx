@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
+import { format, addDays, isSameDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -11,10 +11,8 @@ interface WeekCalendarProps {
 }
 
 export function WeekCalendar({ currentDate }: WeekCalendarProps) {
-  const startOfCurrentWeek = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday
-
   const days = Array.from({ length: 5 }).map((_, i) =>
-    addDays(startOfCurrentWeek, i)
+    addDays(currentDate, i)
   );
   
   const today = new Date();
