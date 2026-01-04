@@ -248,7 +248,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     { id: "logicielGestionAchats", label: "Logiciel de gestion des achats", type: "questionnaire", question: "q6" },
     { id: "interoperableComptable", label: "Interopérable avec le logiciel comptable", type: "select" },
     { id: "interoperablePaEmission", label: "Interopérable avec la PA en émission", type: "select" },
-    { id: "logicielComptableClient", label: "Logiciel comptable du client", type: "text" },
+    { id: "logicielComptableClient", label: "Logiciel comptable du client", type: "questionnaire", question: "q7" },
     { id: "interoperableAutresLogiciels", label: "Interopérable avec les autres logiciels", type: "select" },
     { id: "logicielNotesFrais", label: "Logiciel de gestion des notes de frais", type: "select" },
   ];
@@ -430,9 +430,14 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                     const qSoftwareKey = `${qKey}_software` as keyof Questionnaire;
                     const qMethodKey = `${qKey}_method` as keyof Questionnaire;
                     const answer = editedClient.questionnaire?.[qKey] || "N/A";
-                    const detail = answer === 'Oui' 
-                        ? editedClient.questionnaire?.[qSoftwareKey] 
-                        : editedClient.questionnaire?.[qMethodKey];
+                    let detail: string | undefined;
+
+                    if (answer === 'Oui') {
+                        detail = editedClient.questionnaire?.[qSoftwareKey]
+                    } else if (answer === 'Non') {
+                        detail = editedClient.questionnaire?.[qMethodKey]
+                    }
+
 
                     return (
                        <div key={field.id} className="flex items-center justify-between">
@@ -453,19 +458,25 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                     )
                   }
                   
-                  return (
-                    <div key={field.id} className="flex items-center justify-between">
-                      <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
-                      {field.type === 'text' ? (
-                         <Input
+                  if (field.type === 'text') {
+                    return (
+                       <div key={field.id} className="flex items-center justify-between">
+                        <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
+                        <Input
                           id={`outils.${field.id}`}
                           name={`outils.${field.id}`}
                           value={(editedClient.outils as any)?.[field.id] || ''}
                           onChange={handleChange}
                           className={`${inputStyle} max-w-[200px]`}
                         />
-                      ) : (
-                        <Select 
+                       </div>
+                    )
+                  }
+
+                  return (
+                    <div key={field.id} className="flex items-center justify-between">
+                      <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
+                      <Select 
                           name={`outils.${field.id}`} 
                           value={(editedClient.outils as any)?.[field.id] || "À définir"}
                           onValueChange={(value) => handleValueChange(`outils.${field.id}`, value)}
@@ -479,7 +490,6 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                             <SelectItem value="À définir">À définir</SelectItem>
                           </SelectContent>
                         </Select>
-                      )}
                     </div>
                   )
                 })}
