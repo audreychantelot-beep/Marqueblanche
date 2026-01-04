@@ -131,6 +131,13 @@
           "additionalProperties": {
             "type": "boolean"
           }
+        },
+        "order": {
+          "type": "array",
+          "description": "An array of column keys representing the display order.",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": ["id", "userId", "page", "columns"]

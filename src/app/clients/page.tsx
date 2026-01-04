@@ -5,16 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle, Upload, Info, User, Briefcase, Activity, Wrench, Settings2 } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Upload, Info, User, Briefcase, Activity, Wrench, Settings2, GripVertical } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { cn } from "@/lib/utils";
 
 const clients = [
   {
@@ -280,6 +281,7 @@ type ColumnKeys = keyof typeof allColumns;
 const PAGE_ID = 'clients';
 
 const defaultVisibleColumns = Object.keys(allColumns).reduce((acc, key) => ({ ...acc, [key]: true }), {} as Record<ColumnKeys, boolean>);
+const defaultColumnOrder = Object.keys(allColumns) as ColumnKeys[];
 
 function ClientsContent() {
   const [clientList, setClientList] = useState(clients);
@@ -297,14 +299,24 @@ function ClientsContent() {
   const { data: preferencesData, isLoading: isLoadingPreferences } = useDoc(preferencesQuery);
 
   const [visibleColumns, setVisibleColumns] = useState<Record<ColumnKeys, boolean>>(defaultVisibleColumns);
+  const [columnOrder, setColumnOrder] = useState<ColumnKeys[]>(defaultColumnOrder);
+  
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isLoadingPreferences) {
-      if (preferencesData?.columns) {
+      if (preferencesData) {
         const mergedColumns = { ...defaultVisibleColumns, ...preferencesData.columns };
         setVisibleColumns(mergedColumns);
+        if(preferencesData.order) {
+            setColumnOrder(preferencesData.order);
+        } else {
+            setColumnOrder(defaultColumnOrder);
+        }
       } else {
         setVisibleColumns(defaultVisibleColumns);
+        setColumnOrder(defaultColumnOrder);
       }
     }
   }, [preferencesData, isLoadingPreferences]);
@@ -320,20 +332,44 @@ function ClientsContent() {
     );
   };
 
-  const toggleColumn = (column: ColumnKeys) => {
-    const newVisibleColumns = { ...visibleColumns, [column]: !visibleColumns[column] };
-    setVisibleColumns(newVisibleColumns);
+  const savePreferences = (newVisibleColumns: Record<ColumnKeys, boolean>, newColumnOrder: ColumnKeys[]) => {
     if (user && firestore) {
       const prefDocRef = doc(firestore, 'users', user.uid, 'columnPreferences', PAGE_ID);
       setDocumentNonBlocking(prefDocRef, {
         id: PAGE_ID,
         userId: user.uid,
         page: PAGE_ID,
-        columns: newVisibleColumns
+        columns: newVisibleColumns,
+        order: newColumnOrder,
       }, { merge: true });
     }
   };
 
+  const toggleColumn = (column: ColumnKeys) => {
+    const newVisibleColumns = { ...visibleColumns, [column]: !visibleColumns[column] };
+    setVisibleColumns(newVisibleColumns);
+    savePreferences(newVisibleColumns, columnOrder);
+  };
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, position: number) => {
+    dragItem.current = position;
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>, position: number) => {
+    dragOverItem.current = position;
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    if (dragItem.current === null || dragOverItem.current === null) return;
+    const newColumnOrder = [...columnOrder];
+    const dragItemContent = newColumnOrder[dragItem.current];
+    newColumnOrder.splice(dragItem.current, 1);
+    newColumnOrder.splice(dragOverItem.current, 0, dragItemContent);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setColumnOrder(newColumnOrder);
+    savePreferences(visibleColumns, newColumnOrder);
+  };
 
   return (
     <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-full mx-auto w-full">
@@ -350,19 +386,31 @@ function ClientsContent() {
                 Personnaliser
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Afficher les colonnes</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuLabel>Afficher et ordonner les colonnes</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {Object.entries(allColumns).map(([key, value]) => (
-                <DropdownMenuCheckboxItem
-                  key={key}
-                  checked={visibleColumns[key as ColumnKeys]}
-                  onCheckedChange={() => toggleColumn(key as ColumnKeys)}
-                  onSelect={(e) => e.preventDefault()}
-                >
-                  {value}
-                </DropdownMenuCheckboxItem>
-              ))}
+              <div onDragEnd={handleDrop}>
+                {columnOrder.map((key, index) => (
+                  <div
+                    key={key}
+                    className="flex items-center"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragEnter={(e) => handleDragEnter(e, index)}
+                    onDragOver={(e) => e.preventDefault()}
+                  >
+                    <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab mr-2" />
+                    <DropdownMenuCheckboxItem
+                      className="flex-1"
+                      checked={visibleColumns[key]}
+                      onCheckedChange={() => toggleColumn(key)}
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      {allColumns[key]}
+                    </DropdownMenuCheckboxItem>
+                  </div>
+                ))}
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
           <Button variant="outline">
@@ -390,21 +438,9 @@ function ClientsContent() {
                   <TableHead>
                     <span className="sr-only">Actions</span>
                   </TableHead>
-                  {visibleColumns.identifiantInterne && <TableHead className="whitespace-nowrap">Identifiant interne</TableHead>}
-                  {visibleColumns.siren && <TableHead className="whitespace-nowrap">SIREN</TableHead>}
-                  {visibleColumns.raisonSociale && <TableHead className="whitespace-nowrap">Raison sociale</TableHead>}
-                  {visibleColumns.formeJuridique && <TableHead className="whitespace-nowrap">Forme juridique</TableHead>}
-                  {visibleColumns.contactPrincipal && <TableHead className="whitespace-nowrap">Contact principal</TableHead>}
-                  {visibleColumns.collaborateurReferent && <TableHead className="whitespace-nowrap">Collaborateur référent</TableHead>}
-                  {visibleColumns.expertComptableResponsable && <TableHead className="whitespace-nowrap">Expert-comptable responsable</TableHead>}
-                  {visibleColumns.typeMission && <TableHead className="whitespace-nowrap">Type de mission</TableHead>}
-                  {visibleColumns.codeAPE && <TableHead className="whitespace-nowrap">Code APE</TableHead>}
-                  {visibleColumns.secteurActivites && <TableHead className="whitespace-nowrap">Secteur d’activités</TableHead>}
-                  {visibleColumns.regimeTVA && <TableHead className="whitespace-nowrap">Régime de TVA</TableHead>}
-                  {visibleColumns.regimeFiscal && <TableHead className="whitespace-nowrap">Régime fiscal</TableHead>}
-                  {visibleColumns.typologieClientele && <TableHead className="whitespace-nowrap">Typologie de clientèle</TableHead>}
-                  {visibleColumns.outils && <TableHead className="whitespace-nowrap">Outils</TableHead>}
-                  {visibleColumns.obligationsLegales && <TableHead className="whitespace-nowrap">Obligations légales</TableHead>}
+                  {columnOrder.map(key => 
+                    visibleColumns[key] && <TableHead key={key} className="whitespace-nowrap">{allColumns[key]}</TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -425,36 +461,36 @@ function ClientsContent() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                    {visibleColumns.identifiantInterne && <TableCell className="font-medium whitespace-nowrap">{client.identifiantInterne}</TableCell>}
-                    {visibleColumns.siren && <TableCell className="whitespace-nowrap">{client.siren}</TableCell>}
-                    {visibleColumns.raisonSociale && <TableCell className="whitespace-nowrap">{client.raisonSociale}</TableCell>}
-                    {visibleColumns.formeJuridique && <TableCell className="whitespace-nowrap">{client.formeJuridique}</TableCell>}
-                    {visibleColumns.contactPrincipal && <TableCell className="whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-9 w-9">
-                          <AvatarImage src={client.avatar} alt="Avatar" />
-                          <AvatarFallback>{client.contactPrincipal.prenom.charAt(0)}{client.contactPrincipal.nom.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div>{client.contactPrincipal.prenom} {client.contactPrincipal.nom}</div>
-                          <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
-                        </div>
-                      </div>
-                    </TableCell>}
-                    {visibleColumns.collaborateurReferent && <TableCell className="whitespace-nowrap">{client.missionsActuelles.collaborateurReferent}</TableCell>}
-                    {visibleColumns.expertComptableResponsable && <TableCell className="whitespace-nowrap">{client.missionsActuelles.expertComptableResponsable}</TableCell>}
-                    {visibleColumns.typeMission && <TableCell className="whitespace-nowrap">
-                       <Badge variant={client.missionsActuelles.typeMission === 'Tenue' ? 'default' : client.missionsActuelles.typeMission === 'Révision' ? 'secondary' : 'outline'}>
-                        {client.missionsActuelles.typeMission}
-                      </Badge>
-                    </TableCell>}
-                    {visibleColumns.codeAPE && <TableCell className="whitespace-nowrap">{client.activites.codeAPE}</TableCell>}
-                    {visibleColumns.secteurActivites && <TableCell className="whitespace-nowrap">{client.activites.secteurActivites}</TableCell>}
-                    {visibleColumns.regimeTVA && <TableCell className="whitespace-nowrap">{client.activites.regimeTVA}</TableCell>}
-                    {visibleColumns.regimeFiscal && <TableCell className="whitespace-nowrap">{client.activites.regimeFiscal}</TableCell>}
-                    {visibleColumns.typologieClientele && <TableCell className="whitespace-nowrap">{client.activites.typologieClientele}</TableCell>}
-                    {visibleColumns.outils && <TableCell className="whitespace-nowrap">{client.outils}</TableCell>}
-                    {visibleColumns.obligationsLegales && <TableCell className="whitespace-nowrap">À définir</TableCell>}
+                    {columnOrder.map(key => visibleColumns[key] && (
+                        <TableCell key={key} className={cn("whitespace-nowrap", key === 'raisonSociale' && "font-medium")}>
+                            {
+                                key === 'contactPrincipal' ? (
+                                    <div className="flex items-center gap-2">
+                                        <Avatar className="h-9 w-9">
+                                            <AvatarImage src={client.avatar} alt="Avatar" />
+                                            <AvatarFallback>{client.contactPrincipal.prenom.charAt(0)}{client.contactPrincipal.nom.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <div>{client.contactPrincipal.prenom} {client.contactPrincipal.nom}</div>
+                                            <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
+                                        </div>
+                                    </div>
+                                ) : key === 'typeMission' ? (
+                                    <Badge variant={client.missionsActuelles.typeMission === 'Tenue' ? 'default' : client.missionsActuelles.typeMission === 'Révision' ? 'secondary' : 'outline'}>
+                                        {client.missionsActuelles.typeMission}
+                                    </Badge>
+                                ) : key === 'collaborateurReferent' ? client.missionsActuelles.collaborateurReferent
+                                : key === 'expertComptableResponsable' ? client.missionsActuelles.expertComptableResponsable
+                                : key === 'codeAPE' ? client.activites.codeAPE
+                                : key === 'secteurActivites' ? client.activites.secteurActivites
+                                : key === 'regimeTVA' ? client.activites.regimeTVA
+                                : key === 'regimeFiscal' ? client.activites.regimeFiscal
+                                : key === 'typologieClientele' ? client.activites.typologieClientele
+                                : key === 'obligationsLegales' ? "À définir"
+                                : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'>]
+                            }
+                        </TableCell>
+                    ))}
                   </TableRow>
                 ))}
               </TableBody>
