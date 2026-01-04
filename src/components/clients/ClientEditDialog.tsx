@@ -12,15 +12,17 @@ import { Progress } from "@/components/ui/progress";
 import { type Client, type Questionnaire } from "@/lib/clients-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+type ClientWithId = Client & { id: string };
+
 interface ClientEditDialogProps {
-  client: Client | null;
+  client: ClientWithId | null;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onSave: (updatedClient: Client) => void;
+  onSave: (updatedClient: ClientWithId) => void;
 }
 
 export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: ClientEditDialogProps) {
-  const [editedClient, setEditedClient] = useState<Client | null>(client);
+  const [editedClient, setEditedClient] = useState<ClientWithId | null>(client);
   const [isQuestionnaireOpen, setIsQuestionnaireOpen] = useState(false);
   const [isQuestionnaireCompleted, setIsQuestionnaireCompleted] = useState(false);
 
@@ -257,7 +259,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
           <DialogHeader>
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
-                <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
+                <DialogTitle>{client?.id ? 'Modifier le client' : 'Ajouter un nouveau client'}: {client?.raisonSociale}</DialogTitle>
                  <DialogDescription>
                   Gérez les informations de votre client.
                 </DialogDescription>

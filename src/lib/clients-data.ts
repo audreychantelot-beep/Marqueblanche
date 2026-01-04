@@ -59,8 +59,9 @@ export type Client = {
   questionnaire?: Questionnaire;
 };
 
-export const clients: Client[] = [
+export const clients: (Client & { id: string })[] = [
     {
+      id: "C001",
       identifiantInterne: "C001",
       siren: "123456789",
       raisonSociale: "Johnson & Co",
@@ -90,6 +91,7 @@ export const clients: Client[] = [
       }
     },
     {
+      id: "C002",
       identifiantInterne: "C002",
       siren: "987654321",
       raisonSociale: "Smith Enterprises",
@@ -119,6 +121,7 @@ export const clients: Client[] = [
       }
     },
     {
+      id: "C003",
       identifiantInterne: "C003",
       siren: "112233445",
       raisonSociale: "Williams Solutions",
@@ -147,6 +150,33 @@ export const clients: Client[] = [
         q4_software: "SumUp",
       }
     },
+    {
+      id: "C004",
+      identifiantInterne: "C004",
+      siren: "556677889",
+      raisonSociale: "Brown Industries",
+      formeJuridique: "SA",
+      contactPrincipal: {
+        nom: "Brown",
+        prenom: "Emma",
+        email: "emma@example.com",
+      },
+      avatar: "https://picsum.photos/seed/4/40/40",
+      missionsActuelles: {
+        collaborateurReferent: "Charles Dupont",
+        expertComptable: "David Petit",
+        typeMission: "Tenue",
+      },
+      activites: {
+        codeAPE: "2620Z",
+        secteurActivites: "Fabrication d'ordinateurs et d'équipements périphériques",
+        regimeTVA: "Débit",
+        regimeFiscal: "IS régime réel normal",
+        typologieClientele: "B to B",
+      },
+      obligationsLegales: {},
+      questionnaire: {}
+    }
   ];
   
   export const allColumns = {

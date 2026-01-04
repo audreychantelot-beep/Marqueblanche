@@ -9,7 +9,7 @@ import { MoreHorizontal, PlusCircle, Upload, Settings2, GripVertical } from "luc
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
 import React, { useState, useEffect, useRef } from "react";
-import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection } from "@/firebase";
+import { useUser, useFirestore, useMemoFirebase, useCollection } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { cn } from "@/lib/utils";
@@ -19,8 +19,37 @@ import { ClientEditDialog } from "@/components/clients/ClientEditDialog";
 type ColumnKeys = keyof typeof allColumns;
 const PAGE_ID = 'clients';
 
+type ClientWithId = Client & { id: string };
+
 const defaultVisibleColumns = Object.keys(allColumns).reduce((acc, key) => ({ ...acc, [key]: true }), {} as Record<ColumnKeys, boolean>);
 const defaultColumnOrder = Object.keys(allColumns) as ColumnKeys[];
+
+const emptyClientTemplate: Omit<Client, 'identifiantInterne'> = {
+  siren: "",
+  raisonSociale: "",
+  formeJuridique: "",
+  contactPrincipal: {
+    nom: "",
+    prenom: "",
+    email: "",
+  },
+  avatar: `https://picsum.photos/seed/${Math.random()}/40/40`,
+  missionsActuelles: {
+    collaborateurReferent: "",
+    expertComptable: "",
+    typeMission: "",
+  },
+  activites: {
+    codeAPE: "",
+    secteurActivites: "",
+    regimeTVA: "Débit",
+    regimeFiscal: "",
+    typologieClientele: "B to B",
+  },
+  obligationsLegales: {},
+  questionnaire: {},
+};
+
 
 function ClientsContent() {
   const { user } = useUser();
@@ -31,10 +60,10 @@ function ClientsContent() {
     return collection(firestore, 'users', user.uid, 'clients');
   }, [firestore, user]);
 
-  const { data: clientList, isLoading: isLoadingClients } = useCollection<Client>(clientsQuery);
+  const { data: clientList, isLoading: isLoadingClients } = useCollection<ClientWithId>(clientsQuery);
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [selectedClient, setSelectedClient] = useState<ClientWithId | null>(null);
 
   const preferencesQuery = useMemoFirebase(() => {
     if (!user) return null;
@@ -66,15 +95,32 @@ function ClientsContent() {
     }
   }, [preferencesData, isLoadingPreferences]);
 
-  const handleEditClick = (client: Client) => {
+  const handleEditClick = (client: ClientWithId) => {
     setSelectedClient(client);
     setIsDialogOpen(true);
   };
   
-  const handleSaveClient = (updatedClient: Client) => {
+  const handleAddNewClient = () => {
+    const newId = `client_${Date.now()}`;
+    const newClient: ClientWithId = {
+      id: newId,
+      identifiantInterne: newId,
+      ...emptyClientTemplate,
+    };
+    setSelectedClient(newClient);
+    setIsDialogOpen(true);
+  };
+  
+  const handleSaveClient = (updatedClient: ClientWithId) => {
     if (user && firestore) {
-      const clientDocRef = doc(firestore, 'users', user.uid, 'clients', updatedClient.identifiantInterne);
-      setDocumentNonBlocking(clientDocRef, updatedClient, { merge: true });
+      // The `id` property from ClientWithId is used for the document ID.
+      // The `identifiantInterne` can be the same or different.
+      const clientDocRef = doc(firestore, 'users', user.uid, 'clients', updatedClient.id);
+      
+      // We remove the `id` from the object before saving to Firestore.
+      const { id, ...clientData } = updatedClient;
+      
+      setDocumentNonBlocking(clientDocRef, clientData, { merge: true });
     }
   };
 
@@ -114,7 +160,7 @@ function ClientsContent() {
     dragItem.current = null;
     dragOverItem.current = null;
     setColumnOrder(newColumnOrder);
-    savePreferences(visibleColumns, newColumnOrder);
+    savePreferences(visibleColumns, columnOrder);
   };
 
   return (
@@ -163,7 +209,7 @@ function ClientsContent() {
             <Upload className="mr-2 h-4 w-4" />
             Importer des clients
           </Button>
-          <Button className="rounded-3xl">
+          <Button className="rounded-3xl" onClick={handleAddNewClient}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Ajouter un client
           </Button>
@@ -197,7 +243,7 @@ function ClientsContent() {
                     </TableRow>
                 ))}
                 {clientList && clientList.map((client) => (
-                  <TableRow key={client.identifiantInterne} onClick={() => handleEditClick(client)} className="cursor-pointer">
+                  <TableRow key={client.id} onClick={() => handleEditClick(client)} className="cursor-pointer">
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -239,7 +285,7 @@ function ClientsContent() {
                                 : key === 'regimeFiscal' ? client.activites.regimeFiscal
                                 : key === 'typologieClientele' ? client.activites.typologieClientele
                                 : key === 'obligationsLegales' ? "À définir"
-                                : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'|'questionnaire'|'id'>]
+                                : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'|'questionnaire'>]
                             }
                         </TableCell>
                     ))}

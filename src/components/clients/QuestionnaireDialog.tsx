@@ -14,8 +14,10 @@ import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
+type ClientWithId = Client & { id: string };
+
 interface QuestionnaireDialogProps {
-  client: Client;
+  client: ClientWithId;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onCompleteChange: (isComplete: boolean) => void;
@@ -77,7 +79,7 @@ export function QuestionnaireDialog({ client, isOpen, onOpenChange, onCompleteCh
 
   const handleSave = () => {
     if (user && firestore) {
-        const clientDocRef = doc(firestore, 'users', user.uid, 'clients', client.identifiantInterne);
+        const clientDocRef = doc(firestore, 'users', user.uid, 'clients', client.id);
         setDocumentNonBlocking(clientDocRef, { questionnaire: formState }, { merge: true });
         toast({
             title: "Questionnaire sauvegardé",
