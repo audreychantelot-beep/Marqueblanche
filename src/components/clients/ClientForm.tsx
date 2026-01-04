@@ -87,9 +87,8 @@ export function ClientForm({ client }: ClientFormProps) {
       const updatedClient = { ...editedClient, questionnaire: data };
       setEditedClient(updatedClient);
       
-      const { id, ...clientData } = updatedClient;
       if (user && firestore) {
-          const clientDocRef = doc(firestore, 'users', user.uid, 'clients', id);
+          const clientDocRef = doc(firestore, 'users', user.uid, 'clients', updatedClient.id);
           setDocumentNonBlocking(clientDocRef, { questionnaire: data }, { merge: true });
           toast({
               title: "Questionnaire sauvegardé",
@@ -156,21 +155,22 @@ export function ClientForm({ client }: ClientFormProps) {
     handleValueChange(e.target.name, e.target.value);
   };
 
-  const handleSaveAndRedirect = () => {
+  const handleSave = () => {
     if (editedClient && user && firestore) {
       const { id, ...clientData } = editedClient;
       if (isNewClient) {
         const clientsCollectionRef = collection(firestore, 'users', user.uid, 'clients');
-        addDocumentNonBlocking(clientsCollectionRef, clientData);
+        addDocumentNonBlocking(clientsCollectionRef, clientData)
+          .then(() => router.push('/clients'));
       } else {
         const clientDocRef = doc(firestore, 'users', user.uid, 'clients', id);
         setDocumentNonBlocking(clientDocRef, clientData, { merge: true });
+        router.push('/clients');
       }
       toast({
         title: isNewClient ? "Client créé" : "Client sauvegardé",
         description: `Les informations pour ${editedClient.raisonSociale} ont été mises à jour.`,
       });
-      router.push('/clients');
     }
   }
   
@@ -182,20 +182,22 @@ export function ClientForm({ client }: ClientFormProps) {
          client={client || null}
          raisonSociale={editedClient.raisonSociale}
          completionPercentage={completionPercentage}
-         handleSave={handleSaveAndRedirect}
+         handleSave={handleSave}
          isNewClient={isNewClient}
          onOpenQuestionnaire={() => setIsQuestionnaireOpen(true)}
       />
       <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <div className="lg:col-span-2 flex flex-col h-full">
+        <div className="lg:col-span-3 flex flex-col h-full">
             <MainInfoSection 
               editedClient={editedClient}
               handleChange={handleChange}
               handleValueChange={handleValueChange}
             />
         </div>
-        <div className="space-y-6 flex flex-col">
+        <div className="lg:col-span-1 space-y-6 flex flex-col">
           <ClientAnalysis editedClient={editedClient} setEditedClient={setEditedClient} />
+        </div>
+        <div className="lg:col-span-2 space-y-6 flex flex-col">
           <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
         </div>
         <div className="lg:col-span-3">
