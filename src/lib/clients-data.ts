@@ -56,6 +56,18 @@ export type Client = {
     paEmission?: string;
     paReception?: string;
   };
+  outils?: {
+    logicielCaisse?: string;
+    genereEReporting?: string;
+    logicielFacturation?: string;
+    conformeFacturationElectronique?: string;
+    logicielGestionAchats?: string;
+    interoperableComptable?: string;
+    interoperablePaEmission?: string;
+    logicielComptableClient?: string;
+    interoperableAutresLogiciels?: string;
+    logicielNotesFrais?: string;
+  };
   questionnaire?: Questionnaire;
 };
 
@@ -173,6 +185,33 @@ export const clients: (Client & { id: string })[] = [
         regimeTVA: "Débit",
         regimeFiscal: "IS régime réel normal",
         typologieClientele: "B to B",
+      },
+      obligationsLegales: {},
+      questionnaire: {}
+    },
+    {
+      id: "C005",
+      identifiantInterne: "C005",
+      siren: "998877665",
+      raisonSociale: "Innovatech",
+      formeJuridique: "SASU",
+      contactPrincipal: {
+        nom: "Leroy",
+        prenom: "Lucas",
+        email: "lucas.leroy@example.com"
+      },
+      avatar: "https://picsum.photos/seed/5/40/40",
+      missionsActuelles: {
+        collaborateurReferent: "Sophie Dubois",
+        expertComptable: "Bob Durand",
+        typeMission: "Révision"
+      },
+      activites: {
+        codeAPE: "6202A",
+        secteurActivites: "Conseil en systèmes et logiciels informatiques",
+        regimeTVA: "Débit",
+        regimeFiscal: "IS régime réel normal",
+        typologieClientele: "B to B"
       },
       obligationsLegales: {},
       questionnaire: {}
