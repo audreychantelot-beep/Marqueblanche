@@ -22,7 +22,7 @@ export function ClientPageHeader({ client, raisonSociale, completionPercentage, 
     const router = useRouter();
     
     return (
-        <header className="bg-card p-4 border-b">
+        <header className="bg-background p-4">
             <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                     <div className="flex items-center gap-4 mb-2">
