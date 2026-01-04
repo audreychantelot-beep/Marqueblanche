@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { CheckCircle, FileQuestion, ArrowLeft } from "lucide-react";
 import { type Client } from "@/lib/clients-data";
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 type ClientWithId = Client & { id: string };
 
@@ -41,7 +42,10 @@ export function ClientPageHeader({ client, raisonSociale, completionPercentage, 
                             ) : (
                                 <span className='text-sm'>Profil complet à {Math.round(completionPercentage)}%</span>
                             )}
-                            <Progress value={completionPercentage} className="mt-1 h-2 w-48" />
+                            <Progress 
+                                value={completionPercentage} 
+                                className={cn("mt-1 h-2 w-48", completionPercentage === 100 && "[&>div]:bg-green-500")} 
+                            />
                         </div>
                     </div>
                 </div>
