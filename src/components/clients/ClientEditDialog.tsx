@@ -242,9 +242,9 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
   
   const
    toolFields = [
-    { id: "logicielCaisse", label: "Logiciel de caisse", type: "questionnaire" },
+    { id: "logicielCaisse", label: "Logiciel de caisse", type: "questionnaire", question: "q4" },
     { id: "genereEReporting", label: "Génère le e-reporting", type: "select" },
-    { id: "logicielFacturation", label: "Logiciel de facturation", type: "text" },
+    { id: "logicielFacturation", label: "Logiciel de facturation", type: "questionnaire", question: "q5" },
     { id: "conformeFacturationElectronique", label: "Conforme facturation électronique", type: "select" },
     { id: "logicielGestionAchats", label: "Logiciel de gestion des achats", type: "text" },
     { id: "interoperableComptable", label: "Interopérable avec le logiciel comptable", type: "select" },
@@ -425,50 +425,65 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
              <Card className="rounded-3xl">
               <CardHeader><CardTitle className="flex items-center gap-2"><Construction className="w-5 h-5 text-muted-foreground" />Outils</CardTitle></CardHeader>
               <CardContent className="grid grid-cols-1 gap-y-4 text-left text-sm">
-                {toolFields.map(field => (
-                  <div key={field.id} className="flex items-center justify-between">
-                    <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
-                    {field.type === 'questionnaire' ? (
-                       <div className="flex items-center gap-2 max-w-[200px]">
-                        <Input
-                            value={editedClient.questionnaire?.q4 || "N/A"}
-                            disabled
-                            className={`${inputStyle} w-16 text-center`}
-                        />
-                        <Input
-                            value={editedClient.questionnaire?.q4 === 'Oui' ? (editedClient.questionnaire?.q4_software || '') : (editedClient.questionnaire?.q4_method || '')}
-                            disabled
-                            className={`${inputStyle} flex-1`}
-                        />
+                {toolFields.map(field => {
+                  if (field.type === 'questionnaire') {
+                    const qKey = field.question as keyof Questionnaire;
+                    const qSoftwareKey = `${qKey}_software` as keyof Questionnaire;
+                    const qMethodKey = `${qKey}_method` as keyof Questionnaire;
+                    const answer = editedClient.questionnaire?.[qKey] || "N/A";
+                    const detail = answer === 'Oui' 
+                        ? editedClient.questionnaire?.[qSoftwareKey] 
+                        : editedClient.questionnaire?.[qMethodKey];
+
+                    return (
+                       <div key={field.id} className="flex items-center justify-between">
+                         <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
+                         <div className="flex items-center gap-2 max-w-[200px]">
+                           <Input
+                               value={answer.toString()}
+                               disabled
+                               className={`${inputStyle} w-16 text-center`}
+                           />
+                           <Input
+                               value={detail || ''}
+                               disabled
+                               className={`${inputStyle} flex-1`}
+                           />
+                         </div>
                        </div>
-                    ) : field.type === 'text' ? (
-                       <Input
-                        id={`outils.${field.id}`}
-                        name={`outils.${field.id}`}
-                        // @ts-ignore
-                        value={editedClient.outils?.[field.id] || ''}
-                        onChange={handleChange}
-                        className={`${inputStyle} max-w-[200px]`}
-                      />
-                    ) : (
-                      <Select 
-                        name={`outils.${field.id}`} 
-                        // @ts-ignore
-                        value={editedClient.outils?.[field.id] || "À définir"}
-                        onValueChange={(value) => handleValueChange(`outils.${field.id}`, value)}
-                      >
-                        <SelectTrigger className={`${inputStyle} max-w-[120px] rounded-xl text-right`}>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Oui">Oui</SelectItem>
-                          <SelectItem value="Non">Non</SelectItem>
-                          <SelectItem value="À définir">À définir</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-                ))}
+                    )
+                  }
+                  
+                  return (
+                    <div key={field.id} className="flex items-center justify-between">
+                      <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
+                      {field.type === 'text' ? (
+                         <Input
+                          id={`outils.${field.id}`}
+                          name={`outils.${field.id}`}
+                          value={(editedClient.outils as any)?.[field.id] || ''}
+                          onChange={handleChange}
+                          className={`${inputStyle} max-w-[200px]`}
+                        />
+                      ) : (
+                        <Select 
+                          name={`outils.${field.id}`} 
+                          value={(editedClient.outils as any)?.[field.id] || "À définir"}
+                          onValueChange={(value) => handleValueChange(`outils.${field.id}`, value)}
+                        >
+                          <SelectTrigger className={`${inputStyle} max-w-[120px] rounded-xl text-right`}>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Oui">Oui</SelectItem>
+                            <SelectItem value="Non">Non</SelectItem>
+                            <SelectItem value="À définir">À définir</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
+                  )
+                })}
               </CardContent>
             </Card>
           </div>
