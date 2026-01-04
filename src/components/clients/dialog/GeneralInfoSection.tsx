@@ -17,6 +17,7 @@ interface GeneralInfoSectionProps {
 }
 
 const inputStyle = "bg-white dark:bg-zinc-800 border-none";
+const placeholderText = "À compléter";
 
 export function GeneralInfoSection({ editedClient, handleChange, handleValueChange }: GeneralInfoSectionProps) {
     return (
@@ -25,20 +26,20 @@ export function GeneralInfoSection({ editedClient, handleChange, handleValueChan
             <div className="space-y-4 text-left">
                 <div className="space-y-2">
                     <Label htmlFor="identifiantInterne" className="text-muted-foreground">Identifiant interne</Label>
-                    <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne || ''} onChange={handleChange} className={inputStyle} />
+                    <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="raisonSociale" className="text-muted-foreground">Raison sociale</Label>
-                    <Input id="raisonSociale" name="raisonSociale" value={editedClient.raisonSociale || ''} onChange={handleChange} className={inputStyle} />
+                    <Input id="raisonSociale" name="raisonSociale" value={editedClient.raisonSociale || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="siren" className="text-muted-foreground">SIREN</Label>
-                        <Input id="siren" name="siren" value={editedClient.siren || ''} onChange={handleChange} className={inputStyle} />
+                        <Input id="siren" name="siren" value={editedClient.siren || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="formeJuridique" className="text-muted-foreground">Forme juridique</Label>
-                        <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique || ''} onChange={handleChange} className={inputStyle} />
+                        <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                     </div>
                 </div>
 
@@ -46,23 +47,23 @@ export function GeneralInfoSection({ editedClient, handleChange, handleValueChan
                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>
-                        <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE || ''} onChange={handleChange} className={inputStyle} />
+                        <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="activites.regimeFiscal" className="text-muted-foreground">Régime fiscal</Label>
-                        <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal || ''} onChange={handleChange} className={inputStyle} />
+                        <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                     </div>
                 </div>
 
                 <div className="space-y-2">
                     <Label htmlFor="activites.secteurActivites" className="text-muted-foreground">Secteur d’activités</Label>
-                    <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites || ''} onChange={handleChange} className={inputStyle} />
+                    <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="activites.regimeTVA" className="text-muted-foreground">Régime de TVA</Label>
                     <Select name="activites.regimeTVA" value={editedClient.activites.regimeTVA} onValueChange={(value) => handleValueChange("activites.regimeTVA", value)}>
                         <SelectTrigger className="bg-white dark:bg-zinc-800 border-none rounded-3xl hover:bg-accent">
-                            <SelectValue placeholder="Sélectionner..." />
+                            <SelectValue placeholder={placeholderText} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="Débit">Débit</SelectItem>
@@ -75,7 +76,7 @@ export function GeneralInfoSection({ editedClient, handleChange, handleValueChan
                     <Label htmlFor="activites.typologieClientele" className="text-muted-foreground">Typologie de clientèle</Label>
                     <Select name="activites.typologieClientele" value={editedClient.activites.typologieClientele} onValueChange={(value) => handleValueChange("activites.typologieClientele", value)}>
                         <SelectTrigger className="bg-white dark:bg-zinc-800 border-none rounded-3xl hover:bg-accent">
-                            <SelectValue placeholder="Sélectionner..." />
+                            <SelectValue placeholder={placeholderText} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="B to B">B to B</SelectItem>

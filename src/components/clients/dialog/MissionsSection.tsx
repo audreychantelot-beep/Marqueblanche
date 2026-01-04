@@ -15,6 +15,7 @@ interface MissionsSectionProps {
 }
 
 const inputStyle = "bg-white dark:bg-zinc-800 border-none";
+const placeholderText = "À compléter";
 
 export function MissionsSection({ editedClient, handleChange }: MissionsSectionProps) {
     return (
@@ -24,16 +25,16 @@ export function MissionsSection({ editedClient, handleChange }: MissionsSectionP
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="missionsActuelles.collaborateurReferent" className="text-muted-foreground">Collaborateur référent</Label>
-                        <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent || ''} onChange={handleChange} className={inputStyle} />
+                        <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="missionsActuelles.expertComptable" className="text-muted-foreground">Expert-comptable</Label>
-                        <Input id="missionsActuelles.expertComptable" name="missionsActuelles.expertComptable" value={editedClient.missionsActuelles.expertComptable || ''} onChange={handleChange} className={inputStyle} />
+                        <Input id="missionsActuelles.expertComptable" name="missionsActuelles.expertComptable" value={editedClient.missionsActuelles.expertComptable || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="missionsActuelles.typeMission" className="text-muted-foreground">Type de mission</Label>
-                    <Input id="missionsActuelles.typeMission" name="missionsActuelles.typeMission" value={editedClient.missionsActuelles.typeMission || ''} onChange={handleChange} className={inputStyle} />
+                    <Input id="missionsActuelles.typeMission" name="missionsActuelles.typeMission" value={editedClient.missionsActuelles.typeMission || ''} onChange={handleChange} className={inputStyle} placeholder={placeholderText}/>
                 </div>
             </div>
         </div>

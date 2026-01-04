@@ -81,6 +81,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  input::placeholder, textarea::placeholder {
+    @apply text-orange-500/80;
+  }
 }
 
 @layer utilities {
