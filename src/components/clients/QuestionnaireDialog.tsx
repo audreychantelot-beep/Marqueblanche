@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -13,6 +13,7 @@ interface QuestionnaireDialogProps {
   client: any;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  onCompleteChange: (isComplete: boolean) => void;
 }
 
 const QuestionItem = ({ question, children }: { question: string, children: React.ReactNode }) => (
@@ -37,9 +38,16 @@ const RadioOption = ({ id, value, label, subInputName, onSubInputChange }: { id:
   </div>
 );
 
+const TOTAL_QUESTIONS = 12;
 
-export function QuestionnaireDialog({ client, isOpen, onOpenChange }: QuestionnaireDialogProps) {
-  const [formState, setFormState] = useState({});
+export function QuestionnaireDialog({ client, isOpen, onOpenChange, onCompleteChange }: QuestionnaireDialogProps) {
+  const [formState, setFormState] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const answeredQuestions = Object.values(formState).filter(Boolean).length;
+    onCompleteChange(answeredQuestions >= TOTAL_QUESTIONS);
+  }, [formState, onCompleteChange]);
+
 
   const handleValueChange = (name: string, value: string) => {
     setFormState(prev => ({ ...prev, [name]: value }));
@@ -48,6 +56,13 @@ export function QuestionnaireDialog({ client, isOpen, onOpenChange }: Questionna
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormState(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    console.log(formState); // Here you would typically save to a database
+    const answeredQuestions = Object.values(formState).filter(Boolean).length;
+    onCompleteChange(answeredQuestions >= TOTAL_QUESTIONS);
+    onOpenChange(false);
   };
 
   return (
@@ -166,7 +181,7 @@ export function QuestionnaireDialog({ client, isOpen, onOpenChange }: Questionna
         </ScrollArea>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Fermer</Button>
-          <Button onClick={() => { console.log(formState); onOpenChange(false); }}>Sauvegarder les réponses</Button>
+          <Button onClick={handleSave}>Sauvegarder les réponses</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

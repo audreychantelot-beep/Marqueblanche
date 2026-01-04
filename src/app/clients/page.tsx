@@ -5,10 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle, Upload, Info, User, Briefcase, Activity, Wrench, Settings2, GripVertical, FileQuestion } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Upload, Info, User, Briefcase, Activity, Wrench, Settings2, GripVertical, FileQuestion, CheckCircle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +17,7 @@ import { doc } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { cn } from "@/lib/utils";
 import { QuestionnaireDialog } from "@/components/clients/QuestionnaireDialog";
+import { Progress } from "@/components/ui/progress";
 
 
 const clients = [
@@ -108,10 +109,54 @@ type Client = typeof clients[0];
 function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Client | null, isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onSave: (updatedClient: Client) => void }) {
   const [editedClient, setEditedClient] = useState<Client | null>(client);
   const [isQuestionnaireOpen, setIsQuestionnaireOpen] = useState(false);
+  // Simulating questionnaire completion state for now
+  const [isQuestionnaireCompleted, setIsQuestionnaireCompleted] = useState(false);
+
 
   React.useEffect(() => {
     setEditedClient(client);
+    // Reset questionnaire state on client change for demo purposes
+    setIsQuestionnaireCompleted(Math.random() > 0.5);
   }, [client]);
+
+  const calculateProfileCompletion = useMemo(() => {
+    if (!editedClient) return 0;
+
+    const fields = [
+      editedClient.identifiantInterne,
+      editedClient.siren,
+      editedClient.raisonSociale,
+      editedClient.formeJuridique,
+      editedClient.outils,
+      editedClient.contactPrincipal.nom,
+      editedClient.contactPrincipal.prenom,
+      editedClient.contactPrincipal.email,
+      editedClient.missionsActuelles.collaborateurReferent,
+      editedClient.missionsActuelles.expertComptableResponsable,
+      editedClient.missionsActuelles.typeMission,
+      editedClient.activites.codeAPE,
+      editedClient.activites.secteurActivites,
+      editedClient.activites.regimeTVA,
+      editedClient.activites.regimeFiscal,
+      editedClient.activites.typologieClientele,
+    ];
+
+    const filledFields = fields.filter(field => field && String(field).trim() !== '').length;
+    const totalFields = fields.length;
+    
+    const fieldsProgress = (filledFields / totalFields) * 100;
+    
+    // For now, obligations and questionnaire are simple booleans
+    const obligationsDefined = editedClient.obligationsLegales && Object.keys(editedClient.obligationsLegales).length > 0;
+    
+    const totalChecks = 3;
+    let completedChecks = 0;
+    if (fieldsProgress === 100) completedChecks++;
+    if (obligationsDefined) completedChecks++;
+    if (isQuestionnaireCompleted) completedChecks++;
+
+    return (completedChecks / totalChecks) * 100;
+  }, [editedClient, isQuestionnaireCompleted]);
 
   if (!editedClient) return null;
 
@@ -121,7 +166,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
     
     setEditedClient(prev => {
       if (!prev) return null;
-      const newClient = { ...prev };
+      const newClient = JSON.parse(JSON.stringify(prev)); // Deep copy
       let current: any = newClient;
       for (let i = 0; i < keys.length - 1; i++) {
         current = current[keys[i]];
@@ -140,6 +185,8 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
   
   const inputStyle = "bg-white dark:bg-zinc-800 border-none";
 
+  const completionPercentage = calculateProfileCompletion;
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -148,8 +195,18 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
-                <DialogDescription className="text-muted-foreground mt-1">
-                  Modifiez les informations du client ci-dessous.
+                 <DialogDescription className="text-muted-foreground mt-2 flex items-center gap-4">
+                  <div>
+                    {completionPercentage === 100 ? (
+                      <div className="flex items-center gap-2 text-sm text-green-600">
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Profil complet</span>
+                      </div>
+                    ) : (
+                      <span>Profil complet à {Math.round(completionPercentage)}%</span>
+                    )}
+                    <Progress value={completionPercentage} className="mt-1 h-2" />
+                  </div>
                 </DialogDescription>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
@@ -273,7 +330,12 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {client && <QuestionnaireDialog client={client} isOpen={isQuestionnaireOpen} onOpenChange={setIsQuestionnaireOpen} />}
+      {client && <QuestionnaireDialog 
+          client={client} 
+          isOpen={isQuestionnaireOpen} 
+          onOpenChange={setIsQuestionnaireOpen} 
+          onCompleteChange={setIsQuestionnaireCompleted}
+        />}
     </>
   );
 }
