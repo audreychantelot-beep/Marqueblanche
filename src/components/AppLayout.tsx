@@ -121,9 +121,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <div className="flex flex-1">
+      <main className="flex flex-1">
         {children}
-      </div>
+      </main>
     </div>
   );
 }

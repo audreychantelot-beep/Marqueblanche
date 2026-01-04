@@ -9,7 +9,7 @@ function DashboardContent() {
   const { user } = useUser();
 
   return (
-    <main className="flex flex-col flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+    <main className="flex flex-col flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
       <div className="mb-6">
         <h1 className="font-headline text-2xl font-semibold md:text-3xl">Dashboard</h1>
         <p className="text-muted-foreground">Voici un aperçu de votre activité.</p>

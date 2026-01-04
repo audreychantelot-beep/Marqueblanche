@@ -111,7 +111,7 @@ function ClientsContent() {
   };
 
   return (
-    <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-full mx-auto w-full">
+    <main className="flex flex-col p-4 md:p-6 max-w-full mx-auto w-full">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-headline text-2xl font-semibold md:text-3xl">Clients</h1>
