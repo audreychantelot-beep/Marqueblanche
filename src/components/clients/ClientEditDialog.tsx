@@ -224,7 +224,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
   
   const
    toolFields = [
-    { id: "logicielCaisse", label: "Logiciel de caisse", type: "text" },
+    { id: "logicielCaisse", label: "Logiciel de caisse", type: "questionnaire" },
     { id: "genereEReporting", label: "Génère le e-reporting", type: "select" },
     { id: "logicielFacturation", label: "Logiciel de facturation", type: "text" },
     { id: "conformeFacturationElectronique", label: "Conforme facturation électronique", type: "select" },
@@ -410,7 +410,20 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                 {toolFields.map(field => (
                   <div key={field.id} className="flex items-center justify-between">
                     <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
-                    {field.type === 'text' ? (
+                    {field.type === 'questionnaire' ? (
+                       <div className="flex items-center gap-2 max-w-[200px]">
+                        <Input
+                            value={editedClient.questionnaire?.q4_reponse || "N/A"}
+                            disabled
+                            className={`${inputStyle} w-16 text-center`}
+                        />
+                        <Input
+                            value={editedClient.questionnaire?.q4_reponse === 'Oui' ? editedClient.questionnaire?.q4_software : editedClient.questionnaire?.q4_method}
+                            disabled
+                            className={`${inputStyle} flex-1`}
+                        />
+                       </div>
+                    ) : field.type === 'text' ? (
                        <Input
                         id={`outils.${field.id}`}
                         name={`outils.${field.id}`}
@@ -456,5 +469,3 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     </>
   );
 }
-
-    

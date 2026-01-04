@@ -30,8 +30,11 @@ export const clients = [
         paEmission: "À définir",
         paReception: "À définir",
       },
-      outils: "QuickBooks",
-      status: "Active",
+      questionnaire: {
+        q4_reponse: "Oui",
+        q4_software: "Cegid",
+        q4_method: ""
+      }
     },
     {
       identifiantInterne: "C002",
@@ -64,8 +67,11 @@ export const clients = [
         paEmission: "À définir",
         paReception: "À définir",
       },
-      outils: "Xero",
-      status: "Active",
+      questionnaire: {
+        q4_reponse: "Non",
+        q4_software: "",
+        q4_method: "Excel"
+      }
     },
     {
       identifiantInterne: "C003",
@@ -98,8 +104,11 @@ export const clients = [
         paEmission: "À définir",
         paReception: "À définir",
       },
-      outils: "Sage",
-      status: "Inactive",
+      questionnaire: {
+        q4_reponse: "Oui",
+        q4_software: "SumUp",
+        q4_method: ""
+      }
     },
   ];
   
@@ -119,7 +128,6 @@ export const clients = [
     regimeTVA: "Régime de TVA",
     regimeFiscal: "Régime fiscal",
     typologieClientele: "Typologie de clientèle",
-    outils: "Outils",
     obligationsLegales: "Obligations légales",
   };
   
