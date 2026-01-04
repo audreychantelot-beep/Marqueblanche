@@ -36,7 +36,7 @@ export default function AuthPage() {
 
   return (
     <SignInPage
-      heroImageSrc="https://cdn.dribbble.com/userupload/37447614/file/original-a912c65352e920fdabbe8b86ac5996c1.png?resize=1504x1131&vertical=center"
+      heroImageSrc="https://cdn.dribbble.com/userupload/31301517/file/original-e0100a71afe33d5d96ee9f0a16dc599c.png?resize=1504x1131&vertical=center"
       testimonials={[]}
       onGoogleSignIn={handleGoogleSignIn}
     />
