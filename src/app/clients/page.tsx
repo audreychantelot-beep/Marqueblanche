@@ -323,6 +323,7 @@ function ClientsContent() {
                   key={key}
                   checked={visibleColumns[key as ColumnKeys]}
                   onCheckedChange={() => toggleColumn(key as ColumnKeys)}
+                  onSelect={(e) => e.preventDefault()}
                 >
                   {value}
                 </DropdownMenuCheckboxItem>
