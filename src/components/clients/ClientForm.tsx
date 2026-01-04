@@ -11,7 +11,6 @@ import { doc, collection } from 'firebase/firestore';
 
 import { ClientPageHeader } from "./dialog/ClientDialogHeader";
 import { MainInfoSection } from "./dialog/MainInfoSection";
-import { MissionsSection } from "./dialog/MissionsSection";
 import { ObligationsSection } from "./dialog/ObligationsSection";
 import { ToolsSection } from "./dialog/ToolsSection";
 
@@ -171,7 +170,7 @@ export function ClientForm({ client }: ClientFormProps) {
          handleSave={() => handleSave()}
          isNewClient={isNewClient}
       />
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="lg:col-span-2">
             <MainInfoSection 
               editedClient={editedClient}
@@ -179,7 +178,6 @@ export function ClientForm({ client }: ClientFormProps) {
               handleValueChange={handleValueChange}
             />
         </div>
-        <MissionsSection editedClient={editedClient} handleChange={handleChange} />
         <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
         <ToolsSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
       </div>

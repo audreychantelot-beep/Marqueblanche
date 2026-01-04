@@ -2,9 +2,11 @@
 
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from '@/components/ui/separator';
 import { GeneralInfoSection } from "./GeneralInfoSection";
 import { ContactSection } from "./ContactSection";
 import { ActivitiesSection } from "./ActivitiesSection";
+import { MissionsSection } from "./MissionsSection";
 import { type Client } from "@/lib/clients-data";
 
 type ClientWithId = Client & { id: string };
@@ -20,8 +22,12 @@ export function MainInfoSection({ editedClient, handleChange, handleValueChange 
         <Card className="rounded-3xl p-0">
             <CardContent className="p-6 flex flex-col gap-6">
                 <GeneralInfoSection editedClient={editedClient} handleChange={handleChange} />
+                <Separator />
                 <ContactSection editedClient={editedClient} handleChange={handleChange} />
+                <Separator />
                 <ActivitiesSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
+                <Separator />
+                <MissionsSection editedClient={editedClient} handleChange={handleChange} />
             </CardContent>
         </Card>
     );
