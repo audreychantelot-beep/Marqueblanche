@@ -31,7 +31,7 @@ function DashboardContent() {
     <main className="flex flex-col flex-1 p-4 md:px-6 max-w-full mx-auto w-full">
       <div className="flex-1 flex gap-6">
         <div className="w-1/2">
-            <Card className="h-full w-full overflow-hidden flex flex-col">
+            <Card className="h-full w-full overflow-hidden flex flex-col rounded-3xl">
                 {dashboardImage && (
                 <div className="h-1/2 w-full relative">
                     <Image
