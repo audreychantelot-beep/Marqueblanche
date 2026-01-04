@@ -258,7 +258,17 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                 </div>
                  <div className="space-y-2 sm:col-span-2">
                   <Label htmlFor="activites.typologieClientele" className="text-muted-foreground">Typologie de clientèle</Label>
-                  <Input id="activites.typologieClientele" name="activites.typologieClientele" value={editedClient.activites.typologieClientele} onChange={handleChange} className={inputStyle} />
+                    <Select name="activites.typologieClientele" value={editedClient.activites.typologieClientele} onValueChange={(value) => handleValueChange("activites.typologieClientele", value)}>
+                        <SelectTrigger className="bg-white dark:bg-zinc-800 border-none rounded-3xl hover:bg-accent">
+                        <SelectValue placeholder="Sélectionner..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                        <SelectItem value="B to B">B to B</SelectItem>
+                        <SelectItem value="B to C">B to C</SelectItem>
+                        <SelectItem value="Organismes publics">Organismes publics</SelectItem>
+                        <SelectItem value="Mixtes">Mixtes</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
               </CardContent>
             </Card>
@@ -297,3 +307,5 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     </>
   );
 }
+
+    
