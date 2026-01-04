@@ -8,6 +8,7 @@ import { type Client, type Questionnaire } from "@/lib/clients-data";
 import { useUser, useFirestore } from '@/firebase';
 import { setDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc, collection } from 'firebase/firestore';
+import Image from 'next/image';
 
 import { ClientPageHeader } from "./dialog/ClientDialogHeader";
 import { MainInfoSection } from "./dialog/MainInfoSection";
@@ -170,7 +171,7 @@ export function ClientForm({ client }: ClientFormProps) {
          handleSave={() => handleSave()}
          isNewClient={isNewClient}
       />
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
             <MainInfoSection 
               editedClient={editedClient}
@@ -178,8 +179,18 @@ export function ClientForm({ client }: ClientFormProps) {
               handleValueChange={handleValueChange}
             />
         </div>
-        <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
-        <ToolsSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
+        <div className="space-y-6">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl">
+              <Image
+                src="https://cdn.dribbble.com/userupload/14986251/file/original-9e0aef456b3c8bf1c6a70ee6d9eb27a8.png?resize=1024x771&vertical=center"
+                alt="Obligations illustration"
+                fill
+                className="object-cover"
+              />
+          </div>
+          <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
+          <ToolsSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
+        </div>
       </div>
       {client && <QuestionnaireDialog 
           client={client} 
