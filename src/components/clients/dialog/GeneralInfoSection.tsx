@@ -23,10 +23,6 @@ export function GeneralInfoSection({ editedClient, handleChange, handleValueChan
         <div>
             <CardTitle className="flex items-center gap-2 mb-4"><Info className="w-5 h-5 text-muted-foreground" />Informations Générales</CardTitle>
             <div className="space-y-4 text-left">
-                <div className="space-y-2">
-                    <Label htmlFor="identifiantInterne" className="text-muted-foreground">Identifiant interne</Label>
-                    <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne || ''} onChange={handleChange} className="border-none" placeholder={placeholderText}/>
-                </div>
                  <div className="space-y-2">
                     <Label htmlFor="raisonSociale" className="text-muted-foreground">Raison sociale</Label>
                     <Input id="raisonSociale" name="raisonSociale" value={editedClient.raisonSociale || ''} onChange={handleChange} className="border-none" placeholder={placeholderText}/>
@@ -41,9 +37,7 @@ export function GeneralInfoSection({ editedClient, handleChange, handleValueChan
                         <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique || ''} onChange={handleChange} className="border-none" placeholder={placeholderText}/>
                     </div>
                 </div>
-
-                {/* Moved from ActivitiesSection */}
-                 <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>
                         <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE || ''} onChange={handleChange} className="border-none" placeholder={placeholderText}/>
@@ -53,7 +47,6 @@ export function GeneralInfoSection({ editedClient, handleChange, handleValueChan
                         <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal || ''} onChange={handleChange} className="border-none" placeholder={placeholderText}/>
                     </div>
                 </div>
-
                 <div className="space-y-2">
                     <Label htmlFor="activites.secteurActivites" className="text-muted-foreground">Secteur d’activités</Label>
                     <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites || ''} onChange={handleChange} className="border-none" placeholder={placeholderText}/>
