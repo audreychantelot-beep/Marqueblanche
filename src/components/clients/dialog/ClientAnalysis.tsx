@@ -18,21 +18,21 @@ const getMaturityColor = (value: string | undefined) => {
     if (value === 'Élevée') return 'text-green-600 dark:text-green-500';
     if (value === 'Intermédiaire') return 'text-orange-500 dark:text-orange-400';
     if (value === 'Faible') return 'text-red-600 dark:text-red-500';
-    return 'text-muted-foreground';
+    return 'text-orange-500 dark:text-orange-400';
 };
 
 const getObligationColor = (value: string | undefined) => {
     if (value === 'Fortes') return 'text-green-600 dark:text-green-500';
     if (value === 'Intermédiaire') return 'text-orange-500 dark:text-orange-400';
     if (value === 'Faibles') return 'text-blue-600 dark:text-blue-500';
-    return 'text-muted-foreground';
+    return 'text-orange-500 dark:text-orange-400';
 };
 
 const getCartographieStyle = (cartographie: string) => {
     if (cartographie.startsWith('Priorité haute')) return { text: 'text-red-800 dark:text-red-200', bg: 'bg-red-100 dark:bg-red-900/50' };
     if (cartographie.startsWith('Priorité intermédiaire')) return { text: 'text-orange-800 dark:text-orange-200', bg: 'bg-orange-100 dark:bg-orange-900/50' };
     if (cartographie.startsWith('Priorité faible')) return { text: 'text-green-800 dark:text-green-200', bg: 'bg-green-100 dark:bg-green-900/50' };
-    return { text: 'text-muted-foreground', bg: 'bg-muted' };
+    return { text: 'text-orange-500 dark:text-orange-400', bg: 'bg-orange-100/50 dark:bg-orange-900/20' };
 };
 
 

@@ -22,13 +22,13 @@ const inputStyle = "bg-white dark:bg-zinc-800 border-none";
 const getStatusColorText = (value: string | undefined) => {
     if (value === 'Oui') return 'text-green-600 dark:text-green-500';
     if (value === 'Non') return 'text-red-600 dark:text-red-500';
-    return 'text-muted-foreground';
+    return 'text-orange-500 dark:text-orange-400';
 };
 
 const getStatusColorSelect = (value: string | undefined) => {
     if (value === 'Oui') return 'text-green-600 dark:text-green-500 bg-white dark:bg-zinc-800';
     if (value === 'Non') return 'text-red-600 dark:text-red-500 bg-white dark:bg-zinc-800';
-    return 'text-muted-foreground bg-white dark:bg-zinc-800';
+    return 'text-orange-500 dark:text-orange-400 bg-white dark:bg-zinc-800';
 }
 
 const toolFields = [
