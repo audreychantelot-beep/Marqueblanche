@@ -146,7 +146,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* General Info */}
           <Card>
             <CardHeader><CardTitle>Informations Générales</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               <div className="space-y-2">
                 <Label htmlFor="identifiantInterne" className="text-muted-foreground">Identifiant interne</Label>
                 <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne} onChange={handleChange} className={inputStyle} />
@@ -169,7 +169,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* Contact Principal */}
           <Card>
             <CardHeader><CardTitle>Contact Principal</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               <div className="space-y-2">
                 <Label htmlFor="contactPrincipal.nom" className="text-muted-foreground">Nom</Label>
                 <Input id="contactPrincipal.nom" name="contactPrincipal.nom" value={editedClient.contactPrincipal.nom} onChange={handleChange} className={inputStyle} />
@@ -188,7 +188,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* Missions Actuelles */}
           <Card>
             <CardHeader><CardTitle>Missions Actuelles</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               <div className="space-y-2">
                 <Label htmlFor="missionsActuelles.collaborateurReferent" className="text-muted-foreground">Collaborateur référent</Label>
                 <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent} onChange={handleChange} className={inputStyle} />
@@ -207,7 +207,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* Activités */}
           <Card className="md:col-span-2 lg:col-span-1">
             <CardHeader><CardTitle>Activités du client</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               <div className="space-y-2">
                 <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>
                 <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE} onChange={handleChange} className={inputStyle} />
@@ -234,7 +234,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* Outils & Obligations */}
           <Card>
             <CardHeader><CardTitle>Outils & Obligations</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                <div className="space-y-2">
                 <Label htmlFor="outils" className="text-muted-foreground">Outils</Label>
                 <Input id="outils" name="outils" value={editedClient.outils} onChange={handleChange} className={inputStyle} />
@@ -395,5 +395,3 @@ export default function ClientsPage() {
     </AppLayout>
   );
 }
-
-    
