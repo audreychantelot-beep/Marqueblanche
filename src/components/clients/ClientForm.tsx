@@ -2,20 +2,17 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { QuestionnaireDialog } from "@/components/clients/QuestionnaireDialog";
 import { type Client, type Questionnaire } from "@/lib/clients-data";
 import { useUser, useFirestore } from '@/firebase';
 import { setDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc, collection } from 'firebase/firestore';
-import Image from 'next/image';
 
 import { ClientPageHeader } from "./dialog/ClientDialogHeader";
 import { MainInfoSection } from "./dialog/MainInfoSection";
 import { ObligationsSection } from "./dialog/ObligationsSection";
 import { ToolsSection } from "./dialog/ToolsSection";
 import { DigitalMaturityScore } from "./dialog/DigitalMaturityScore";
-import { FileQuestion } from "lucide-react";
 
 type ClientWithId = Client & { id: string };
 
@@ -172,6 +169,7 @@ export function ClientForm({ client }: ClientFormProps) {
          completionPercentage={completionPercentage}
          handleSave={() => handleSave()}
          isNewClient={isNewClient}
+         onOpenQuestionnaire={() => setIsQuestionnaireOpen(true)}
       />
       <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 flex flex-col h-full">
@@ -182,23 +180,6 @@ export function ClientForm({ client }: ClientFormProps) {
             />
         </div>
         <div className="space-y-6 flex flex-col">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl group">
-              <Image
-                src="https://cdn.dribbble.com/userupload/14986251/file/original-9e0aef456b3c8bf1c6a70ee6d9eb27a8.png?resize=1024x771&vertical=center"
-                alt="Obligations illustration"
-                fill
-                className="object-cover"
-              />
-              <Button 
-                variant="secondary" 
-                onClick={() => setIsQuestionnaireOpen(true)} 
-                disabled={isNewClient}
-                className="absolute bottom-4 left-4 rounded-3xl bg-black/70 text-white hover:bg-black"
-                >
-                <FileQuestion className="mr-2 h-4 w-4" />
-                Questionnaire
-              </Button>
-          </div>
           <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
           <DigitalMaturityScore questionnaire={editedClient.questionnaire} setEditedClient={setEditedClient} />
         </div>

@@ -15,9 +15,10 @@ interface ClientPageHeaderProps {
     completionPercentage: number;
     handleSave: () => void;
     isNewClient: boolean;
+    onOpenQuestionnaire: () => void;
 }
 
-export function ClientPageHeader({ client, raisonSociale, completionPercentage, handleSave, isNewClient }: ClientPageHeaderProps) {
+export function ClientPageHeader({ client, raisonSociale, completionPercentage, handleSave, isNewClient, onOpenQuestionnaire }: ClientPageHeaderProps) {
     const router = useRouter();
     
     return (
@@ -45,6 +46,14 @@ export function ClientPageHeader({ client, raisonSociale, completionPercentage, 
                     </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
+                    <Button 
+                        variant="outline" 
+                        onClick={onOpenQuestionnaire}
+                        disabled={isNewClient}
+                    >
+                        <FileQuestion className="mr-2 h-4 w-4" />
+                        Questionnaire
+                    </Button>
                     <Button variant="outline" onClick={() => router.push('/clients')}>Annuler</Button>
                     <Button onClick={handleSave}>Sauvegarder</Button>
                 </div>
