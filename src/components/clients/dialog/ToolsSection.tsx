@@ -103,7 +103,7 @@ export function ToolsSection({ editedClient, handleChange, handleValueChange }: 
                                         name={`outils.${field.id}`}
                                         value={(editedClient.outils as any)?.[field.id] || ''}
                                         onChange={handleChange}
-                                        className={cn("max-w-[200px] border-none bg-accent")}
+                                        className={cn("max-w-[200px] border-none")}
                                         placeholder={placeholderText}
                                     />
                                 </div>
@@ -119,7 +119,7 @@ export function ToolsSection({ editedClient, handleChange, handleValueChange }: 
                                     value={selectValue}
                                     onValueChange={(value) => handleValueChange(`outils.${field.id}`, value)}
                                 >
-                                    <SelectTrigger className={cn("max-w-[120px] rounded-xl text-right border-none font-medium bg-accent", getStatusColorSelect(selectValue))}>
+                                    <SelectTrigger className={cn("max-w-[120px] rounded-xl text-right border-none font-medium", getStatusColorSelect(selectValue))}>
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
