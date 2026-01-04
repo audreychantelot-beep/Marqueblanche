@@ -87,6 +87,18 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     return "À définir";
   }, [editedClient]);
 
+  const eReportingTransactionValue = useMemo(() => {
+    if (!editedClient) return "À définir";
+    const typologie = editedClient.activites.typologieClientele;
+    if (typologie === "B to C" || typologie === "Mixtes") {
+      return "Oui";
+    }
+    if (typologie === "B to B" || typologie === "Organismes publics") {
+      return "Non";
+    }
+    return "À définir";
+  }, [editedClient]);
+
   useEffect(() => {
     if (editedClient) {
       const newObligations = { ...editedClient.obligationsLegales };
@@ -104,6 +116,12 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
         newObligations.eInvoicing = eInvoicingValue;
         changed = true;
       }
+      // @ts-ignore
+      if (newObligations.eReportingTransaction !== eReportingTransactionValue) {
+        // @ts-ignore
+        newObligations.eReportingTransaction = eReportingTransactionValue;
+        changed = true;
+      }
 
       if (changed) {
         setEditedClient(prev => {
@@ -114,7 +132,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
         });
       }
     }
-  }, [editedClient, assujettiReformeValue, eInvoicingValue]);
+  }, [editedClient, assujettiReformeValue, eInvoicingValue, eReportingTransactionValue]);
 
 
   if (!editedClient) return null;
@@ -313,6 +331,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                       value={
                         field.id === 'assujettiReforme' ? assujettiReformeValue :
                         field.id === 'eInvoicing' ? eInvoicingValue :
+                        field.id === 'eReportingTransaction' ? eReportingTransactionValue :
                         (editedClient.obligationsLegales as any)[field.id] || "À définir"
                       }
                       onChange={handleChange}
