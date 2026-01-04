@@ -130,13 +130,15 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
       onOpenChange(false);
     }
   }
+  
+  const inputStyle = "bg-white dark:bg-zinc-800 border-none";
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-full w-full h-full max-h-full sm:max-w-[95vw] sm:max-h-[95vh] rounded-3xl flex flex-col">
         <DialogHeader>
           <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-muted-foreground">
             Modifiez les informations du client ci-dessous.
           </DialogDescription>
         </DialogHeader>
@@ -147,19 +149,19 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="identifiantInterne">Identifiant interne</Label>
-                <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne} onChange={handleChange} />
+                <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="siren">SIREN</Label>
-                <Input id="siren" name="siren" value={editedClient.siren} onChange={handleChange} />
+                <Input id="siren" name="siren" value={editedClient.siren} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="raisonSociale">Raison sociale</Label>
-                <Input id="raisonSociale" name="raisonSociale" value={editedClient.raisonSociale} onChange={handleChange} />
+                <Input id="raisonSociale" name="raisonSociale" value={editedClient.raisonSociale} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="formeJuridique">Forme juridique</Label>
-                <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique} onChange={handleChange} />
+                <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
           </Card>
@@ -170,15 +172,15 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="contactPrincipal.nom">Nom</Label>
-                <Input id="contactPrincipal.nom" name="contactPrincipal.nom" value={editedClient.contactPrincipal.nom} onChange={handleChange} />
+                <Input id="contactPrincipal.nom" name="contactPrincipal.nom" value={editedClient.contactPrincipal.nom} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="contactPrincipal.prenom">Prénom</Label>
-                <Input id="contactPrincipal.prenom" name="contactPrincipal.prenom" value={editedClient.contactPrincipal.prenom} onChange={handleChange} />
+                <Input id="contactPrincipal.prenom" name="contactPrincipal.prenom" value={editedClient.contactPrincipal.prenom} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="contactPrincipal.email">Email</Label>
-                <Input id="contactPrincipal.email" name="contactPrincipal.email" type="email" value={editedClient.contactPrincipal.email} onChange={handleChange} />
+                <Input id="contactPrincipal.email" name="contactPrincipal.email" type="email" value={editedClient.contactPrincipal.email} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
           </Card>
@@ -189,15 +191,15 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="missionsActuelles.collaborateurReferent">Collaborateur référent</Label>
-                <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent} onChange={handleChange} />
+                <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent} onChange={handleChange} className={inputStyle} />
               </div>
                <div className="space-y-2">
                 <Label htmlFor="missionsActuelles.expertComptableResponsable">Expert-comptable responsable</Label>
-                <Input id="missionsActuelles.expertComptableResponsable" name="missionsActuelles.expertComptableResponsable" value={editedClient.missionsActuelles.expertComptableResponsable} onChange={handleChange} />
+                <Input id="missionsActuelles.expertComptableResponsable" name="missionsActuelles.expertComptableResponsable" value={editedClient.missionsActuelles.expertComptableResponsable} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="missionsActuelles.typeMission">Type de mission</Label>
-                <Input id="missionsActuelles.typeMission" name="missionsActuelles.typeMission" value={editedClient.missionsActuelles.typeMission} onChange={handleChange} />
+                <Input id="missionsActuelles.typeMission" name="missionsActuelles.typeMission" value={editedClient.missionsActuelles.typeMission} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
           </Card>
@@ -208,23 +210,23 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="activites.codeAPE">Code APE</Label>
-                <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE} onChange={handleChange} />
+                <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="activites.secteurActivites">Secteur d’activités</Label>
-                <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites} onChange={handleChange} />
+                <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="activites.regimeTVA">Régime de TVA</Label>
-                <Input id="activites.regimeTVA" name="activites.regimeTVA" value={editedClient.activites.regimeTVA} onChange={handleChange} />
+                <Input id="activites.regimeTVA" name="activites.regimeTVA" value={editedClient.activites.regimeTVA} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="activites.regimeFiscal">Régime fiscal</Label>
-                <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal} onChange={handleChange} />
+                <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal} onChange={handleChange} className={inputStyle} />
               </div>
                <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="activites.typologieClientele">Typologie de clientèle</Label>
-                <Input id="activites.typologieClientele" name="activites.typologieClientele" value={editedClient.activites.typologieClientele} onChange={handleChange} />
+                <Input id="activites.typologieClientele" name="activites.typologieClientele" value={editedClient.activites.typologieClientele} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
           </Card>
@@ -235,11 +237,11 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                <div className="space-y-2">
                 <Label htmlFor="outils">Outils</Label>
-                <Input id="outils" name="outils" value={editedClient.outils} onChange={handleChange} />
+                <Input id="outils" name="outils" value={editedClient.outils} onChange={handleChange} className={inputStyle} />
               </div>
                <div className="space-y-2">
                 <Label htmlFor="obligationsLegales">Obligations légales</Label>
-                <Input id="obligationsLegales" name="obligationsLegales" value={"À définir"} onChange={handleChange} />
+                <Input id="obligationsLegales" name="obligationsLegales" value={"À définir"} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
           </Card>
@@ -393,3 +395,5 @@ export default function ClientsPage() {
     </AppLayout>
   );
 }
+
+    
