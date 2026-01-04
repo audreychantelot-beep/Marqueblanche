@@ -21,22 +21,18 @@ export function MainInfoSection({ editedClient, handleChange, handleValueChange 
         <Card className="rounded-3xl p-0 h-full">
             <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="md:col-span-2">
+                    <div className="md:col-span-2 space-y-8">
                         <GeneralInfoSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
-                    </div>
-                    <div className="space-y-6 md:col-span-2">
                         <ContactSection editedClient={editedClient} handleChange={handleChange} />
+                        <MissionsSection editedClient={editedClient} handleChange={handleChange} />
                     </div>
-                    <div className="relative aspect-square md:aspect-auto rounded-2xl overflow-hidden row-start-2 md:row-start-auto md:col-span-1">
+                    <div className="relative rounded-2xl overflow-hidden md:col-span-1">
                          <Image
                             src="https://cdn.dribbble.com/userupload/32708980/file/original-50cec0836d7d5d7bee386d9749bc44df.png?resize=1504x1131&vertical=center"
                             alt="Illustration pour les informations générales"
                             fill
                             className="object-cover"
                         />
-                    </div>
-                     <div className="space-y-6 md:col-span-3">
-                        <MissionsSection editedClient={editedClient} handleChange={handleChange} />
                     </div>
                 </div>
             </CardContent>
