@@ -9,7 +9,7 @@ import { MoreHorizontal, PlusCircle, Upload, Info, User, Briefcase, Activity, Wr
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
 import React, { useState, useEffect, useRef } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
@@ -141,18 +141,20 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} className="max-w-full w-full h-full max-h-full sm:max-w-[95vw] sm:max-h-[95vh] rounded-3xl flex flex-col">
         <DialogHeader>
-            <div className="flex items-center justify-between">
-                <div>
-                    <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
-                    <DialogDescription className="text-muted-foreground">
-                        Modifiez les informations du client ci-dessous.
-                    </DialogDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
-                    <Button onClick={handleSave}>Sauvegarder</Button>
-                </div>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
+              <DialogDescription className="text-muted-foreground mt-1">
+                Modifiez les informations du client ci-dessous.
+              </DialogDescription>
             </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+              <Button onClick={handleSave}>Sauvegarder</Button>
+            </div>
+            {/* The actual close button is rendered by DialogContent, we just need to keep it in the flow */}
+            <DialogClose className="invisible" />
+          </div>
         </DialogHeader>
         <div className="flex-1 overflow-y-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* General Info */}
