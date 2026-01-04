@@ -187,7 +187,6 @@ export function ClientForm({ client }: ClientFormProps) {
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
               <Button 
                 variant="secondary" 
                 onClick={() => setIsQuestionnaireOpen(true)} 
