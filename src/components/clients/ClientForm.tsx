@@ -172,14 +172,14 @@ export function ClientForm({ client }: ClientFormProps) {
          isNewClient={isNewClient}
       />
       <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 flex flex-col">
             <MainInfoSection 
               editedClient={editedClient}
               handleChange={handleChange}
               handleValueChange={handleValueChange}
             />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-6 flex flex-col">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl group">
               <Image
                 src="https://cdn.dribbble.com/userupload/14986251/file/original-9e0aef456b3c8bf1c6a70ee6d9eb27a8.png?resize=1024x771&vertical=center"
@@ -198,6 +198,8 @@ export function ClientForm({ client }: ClientFormProps) {
               </Button>
           </div>
           <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
+        </div>
+        <div className="lg:col-span-3">
           <ToolsSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
         </div>
       </div>
