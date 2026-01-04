@@ -141,40 +141,42 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
             }
         }
     }, [editedClient, assujettiReformeValue, eInvoicingValue, eReportingTransactionValue, eReportingPaiementValue, paEmissionValue, paReceptionValue, obligationScore.level, setEditedClient]);
-
-    const obligationLevel = (editedClient.obligationsLegales as any)?.niveauObligation || "À définir";
     
     return (
         <Card className="rounded-3xl">
             <CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="w-5 h-5 text-muted-foreground" />Obligations</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-1 gap-x-4 gap-y-2 text-left">
-                <div className="sm:col-span-1 border-b pb-4 mb-2 flex items-center justify-between text-sm">
-                    <Label htmlFor="obligationsLegales.niveauObligation" className="font-semibold">Niveau d'obligation</Label>
-                    <Input
-                        id="obligationsLegales.niveauObligation"
-                        name="obligationsLegales.niveauObligation"
-                        value={obligationLevel}
-                        readOnly
-                        className={cn(inputStyle, "text-right max-w-[120px] font-bold", getScoringColor(obligationLevel))}
-                        disabled
-                    />
+            <CardContent>
+                <div className="flex items-center justify-between text-sm">
+                    <Label className="font-semibold">Niveau d'obligation</Label>
+                    <p className={cn("font-bold text-lg", getScoringColor(obligationScore.level))}>
+                        {obligationScore.level}
+                    </p>
                 </div>
-                {obligationFields.map(field => {
-                    const value = (editedClient.obligationsLegales as any)?.[field.id] || "À définir";
-                    return (
-                        <div key={field.id} className="flex items-center justify-between space-y-2 text-sm">
-                            <Label htmlFor={`obligationsLegales.${field.id}`} className="text-muted-foreground">{field.label}</Label>
-                            <Input
-                                id={`obligationsLegales.${field.id}`}
-                                name={`obligationsLegales.${field.id}`}
-                                value={value}
-                                readOnly
-                                className={cn(inputStyle, "text-right max-w-[100px]", getStatusColorText(value))}
-                                disabled
-                            />
-                        </div>
-                    )
-                })}
+                 <div className="flex items-center justify-between text-sm mt-2">
+                    <Label className="text-muted-foreground">Score</Label>
+                    <p className="font-medium">{obligationScore.score}</p>
+                </div>
+                
+                <div className='border-b my-4'></div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-1 gap-x-4 gap-y-2 text-left">
+                    {obligationFields.map(field => {
+                        const value = (editedClient.obligationsLegales as any)?.[field.id] || "À définir";
+                        return (
+                            <div key={field.id} className="flex items-center justify-between space-y-2 text-sm">
+                                <Label htmlFor={`obligationsLegales.${field.id}`} className="text-muted-foreground">{field.label}</Label>
+                                <Input
+                                    id={`obligationsLegales.${field.id}`}
+                                    name={`obligationsLegales.${field.id}`}
+                                    value={value}
+                                    readOnly
+                                    className={cn(inputStyle, "text-right max-w-[100px] border-none p-0 h-auto", getStatusColorText(value))}
+                                    disabled
+                                />
+                            </div>
+                        )
+                    })}
+                </div>
             </CardContent>
         </Card>
     );
