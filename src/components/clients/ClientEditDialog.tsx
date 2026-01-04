@@ -128,7 +128,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
             <GeneralInfoSection editedClient={editedClient} handleChange={handleChange} />
             <ContactSection editedClient={editedClient} handleChange={handleChange} />
             <MissionsSection editedClient={editedClient} handleChange={handleChange} />
-            <ActivitiesSection editedClient={editedClient} handleValueChange={handleValueChange} />
+            <ActivitiesSection editedClient={editedClient} handleValueChange={handleValueChange} handleChange={handleChange} />
             <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
             <ToolsSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
           </div>

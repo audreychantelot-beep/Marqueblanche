@@ -23,15 +23,15 @@ export function MissionsSection({ editedClient, handleChange }: MissionsSectionP
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                 <div className="space-y-2">
                     <Label htmlFor="missionsActuelles.collaborateurReferent" className="text-muted-foreground">Collaborateur référent</Label>
-                    <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent} onChange={handleChange} className={inputStyle} />
+                    <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent || ''} onChange={handleChange} className={inputStyle} />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="missionsActuelles.expertComptable" className="text-muted-foreground">Expert-comptable</Label>
-                    <Input id="missionsActuelles.expertComptable" name="missionsActuelles.expertComptable" value={editedClient.missionsActuelles.expertComptable} onChange={handleChange} className={inputStyle} />
+                    <Input id="missionsActuelles.expertComptable" name="missionsActuelles.expertComptable" value={editedClient.missionsActuelles.expertComptable || ''} onChange={handleChange} className={inputStyle} />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="missionsActuelles.typeMission" className="text-muted-foreground">Type de mission</Label>
-                    <Input id="missionsActuelles.typeMission" name="missionsActuelles.typeMission" value={editedClient.missionsActuelles.typeMission} onChange={handleChange} className={inputStyle} />
+                    <Input id="missionsActuelles.typeMission" name="missionsActuelles.typeMission" value={editedClient.missionsActuelles.typeMission || ''} onChange={handleChange} className={inputStyle} />
                 </div>
             </CardContent>
         </Card>

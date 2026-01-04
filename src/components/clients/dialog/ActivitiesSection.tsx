@@ -25,11 +25,11 @@ export function ActivitiesSection({ editedClient, handleValueChange, handleChang
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                 <div className="space-y-2">
                     <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>
-                    <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE} onChange={handleChange} className={inputStyle} />
+                    <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE || ''} onChange={handleChange} className={inputStyle} />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="activites.secteurActivites" className="text-muted-foreground">Secteur d’activités</Label>
-                    <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites} onChange={handleChange} className={inputStyle} />
+                    <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites || ''} onChange={handleChange} className={inputStyle} />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="activites.regimeTVA" className="text-muted-foreground">Régime de TVA</Label>
@@ -46,7 +46,7 @@ export function ActivitiesSection({ editedClient, handleValueChange, handleChang
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="activites.regimeFiscal" className="text-muted-foreground">Régime fiscal</Label>
-                    <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal} onChange={handleChange} className={inputStyle} />
+                    <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal || ''} onChange={handleChange} className={inputStyle} />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="activites.typologieClientele" className="text-muted-foreground">Typologie de clientèle</Label>
