@@ -148,6 +148,17 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
         <Card className="rounded-3xl">
             <CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="w-5 h-5 text-muted-foreground" />Obligations</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-1 gap-x-4 gap-y-2 text-left">
+                <div className="sm:col-span-1 border-b pb-4 mb-2 flex items-center justify-between text-sm">
+                    <Label htmlFor="obligationsLegales.niveauObligation" className="font-semibold">Niveau d'obligation</Label>
+                    <Input
+                        id="obligationsLegales.niveauObligation"
+                        name="obligationsLegales.niveauObligation"
+                        value={obligationLevel}
+                        readOnly
+                        className={cn(inputStyle, "text-right max-w-[120px] font-bold", getScoringColor(obligationLevel))}
+                        disabled
+                    />
+                </div>
                 {obligationFields.map(field => {
                     const value = (editedClient.obligationsLegales as any)?.[field.id] || "À définir";
                     return (
@@ -164,17 +175,6 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
                         </div>
                     )
                 })}
-                <div className="sm:col-span-1 border-t mt-4 pt-4 flex items-center justify-between text-sm">
-                    <Label htmlFor="obligationsLegales.niveauObligation" className="font-semibold">Niveau d'obligation</Label>
-                    <Input
-                        id="obligationsLegales.niveauObligation"
-                        name="obligationsLegales.niveauObligation"
-                        value={obligationLevel}
-                        readOnly
-                        className={cn(inputStyle, "text-right max-w-[120px] font-bold", getScoringColor(obligationLevel))}
-                        disabled
-                    />
-                </div>
             </CardContent>
         </Card>
     );
