@@ -139,7 +139,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-full w-full h-full max-h-full sm:max-w-[95vw] sm:max-h-[95vh] rounded-3xl flex flex-col">
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} className="max-w-full w-full h-full max-h-full sm:max-w-[95vw] sm:max-h-[95vh] rounded-3xl flex flex-col">
         <DialogHeader>
           <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
           <DialogDescription className="text-muted-foreground">
