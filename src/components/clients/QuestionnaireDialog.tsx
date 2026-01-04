@@ -189,7 +189,7 @@ export function QuestionnaireDialog({ client, isOpen, onOpenChange, onCompleteCh
                 </QuestionItem>
                 <QuestionItem question="11. Comment se déroule aujourd’hui la transmission des pièces au cabinet comptable ?">
                    <RadioGroup name="q11" onValueChange={(value) => handleValueChange("q11", value)} value={formState.q11 || ''}>
-                    <RadioOption id="q11a" value="paper" label="Papier" />
+                    <RadioOption id="q11a" value="papier" label="Papier" />
                     <RadioOption id="q11b" value="email" label="Par mail" />
                     <RadioOption id="q11c" value="platform" label="Par plateforme dédiée" />
                     <RadioOption id="q11d" value="mixed" label="Mixte" />

@@ -240,13 +240,12 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     { id: "paReception", label: "Obligation PA réception" },
   ];
   
-  const
-   toolFields = [
+  const toolFields = [
     { id: "logicielCaisse", label: "Logiciel de caisse", type: "questionnaire", question: "q4" },
     { id: "genereEReporting", label: "Génère le e-reporting", type: "select" },
     { id: "logicielFacturation", label: "Logiciel de facturation", type: "questionnaire", question: "q5" },
     { id: "conformeFacturationElectronique", label: "Conforme facturation électronique", type: "select" },
-    { id: "logicielGestionAchats", label: "Logiciel de gestion des achats", type: "text" },
+    { id: "logicielGestionAchats", label: "Logiciel de gestion des achats", type: "questionnaire", question: "q6" },
     { id: "interoperableComptable", label: "Interopérable avec le logiciel comptable", type: "select" },
     { id: "interoperablePaEmission", label: "Interopérable avec la PA en émission", type: "select" },
     { id: "logicielComptableClient", label: "Logiciel comptable du client", type: "text" },
