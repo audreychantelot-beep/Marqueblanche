@@ -62,6 +62,32 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
     
     return fieldsProgress + obligationsProgress + questionnaireProgress;
   }, [editedClient, isQuestionnaireCompleted]);
+  
+  const assujettiReformeValue = useMemo(() => {
+    if (!editedClient) return "À définir";
+    const regimeTVA = editedClient.activites.regimeTVA;
+    if (regimeTVA === "Débit" || regimeTVA === "Encaissement") {
+      return "Oui";
+    }
+    if (regimeTVA === "Non concerné") {
+      return "Non";
+    }
+    return "À définir";
+  }, [editedClient]);
+
+  useEffect(() => {
+    if (editedClient) {
+      // @ts-ignore
+      if (editedClient.obligationsLegales.assujettiReforme !== assujettiReformeValue) {
+        setEditedClient(prev => {
+          if (!prev) return null;
+          const newClient = JSON.parse(JSON.stringify(prev));
+          newClient.obligationsLegales.assujettiReforme = assujettiReformeValue;
+          return newClient;
+        });
+      }
+    }
+  }, [editedClient, assujettiReformeValue]);
 
   if (!editedClient) return null;
 
@@ -216,7 +242,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                 <div className="space-y-2">
                   <Label htmlFor="activites.regimeTVA" className="text-muted-foreground">Régime de TVA</Label>
                   <Select name="activites.regimeTVA" value={editedClient.activites.regimeTVA} onValueChange={(value) => handleValueChange("activites.regimeTVA", value)}>
-                    <SelectTrigger className={inputStyle}>
+                    <SelectTrigger className="bg-white dark:bg-zinc-800 border-none rounded-3xl hover:bg-accent">
                       <SelectValue placeholder="Sélectionner..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -243,14 +269,13 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                 {obligationFields.map(field => (
                   <div key={field.id} className="flex items-center justify-between space-y-2 text-sm">
                     <Label htmlFor={`obligationsLegales.${field.id}`} className="text-muted-foreground">{field.label}</Label>
-                    <Input 
-                      id={`obligationsLegales.${field.id}`} 
-                      name={`obligationsLegales.${field.id}`} 
-                      // @ts-ignore
-                      value={editedClient.obligationsLegales[field.id] || "À définir"} 
-                      onChange={handleChange} 
-                      className={`${inputStyle} text-right max-w-[100px]`} 
-                      disabled 
+                    <Input
+                      id={`obligationsLegales.${field.id}`}
+                      name={`obligationsLegales.${field.id}`}
+                      value={field.id === 'assujettiReforme' ? assujettiReformeValue : (editedClient.obligationsLegales as any)[field.id] || "À définir"}
+                      onChange={handleChange}
+                      className={`${inputStyle} text-right max-w-[100px]`}
+                      disabled
                     />
                   </div>
                 ))}
