@@ -18,7 +18,7 @@ interface MainInfoSectionProps {
 
 export function MainInfoSection({ editedClient, handleChange, handleValueChange }: MainInfoSectionProps) {
     return (
-        <Card className="rounded-3xl p-0">
+        <Card className="rounded-3xl p-0 h-full">
             <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                     <div className="space-y-6">
