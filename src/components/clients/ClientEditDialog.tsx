@@ -207,6 +207,9 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
       const newClient = JSON.parse(JSON.stringify(prev)); // Deep copy
       let current: any = newClient;
       for (let i = 0; i < keys.length - 1; i++) {
+        if (current[keys[i]] === undefined) {
+          current[keys[i]] = {};
+        }
         current = current[keys[i]];
       }
       current[keys[keys.length - 1]] = value;
@@ -433,7 +436,7 @@ export function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: Clien
                             className={`${inputStyle} w-16 text-center`}
                         />
                         <Input
-                            value={editedClient.questionnaire?.q4 === 'Oui' ? editedClient.questionnaire?.q4_software : editedClient.questionnaire?.q4_method}
+                            value={editedClient.questionnaire?.q4 === 'Oui' ? (editedClient.questionnaire?.q4_software || '') : (editedClient.questionnaire?.q4_method || '')}
                             disabled
                             className={`${inputStyle} flex-1`}
                         />
