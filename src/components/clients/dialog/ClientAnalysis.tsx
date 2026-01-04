@@ -15,24 +15,22 @@ interface ClientAnalysisProps {
 }
 
 const getMaturityColor = (value: string | undefined) => {
-    if (value === 'Élevée') return 'text-green-600 dark:text-green-500';
-    if (value === 'Intermédiaire') return 'text-orange-500 dark:text-orange-400';
+    if (value === 'Élevée') return 'text-blue-500 dark:text-blue-400';
+    if (value === 'Intermédiaire') return 'text-blue-500 dark:text-blue-400';
     if (value === 'Faible') return 'text-red-600 dark:text-red-500';
     return 'text-orange-500 dark:text-orange-400';
 };
 
 const getObligationColor = (value: string | undefined) => {
-    if (value === 'Fortes') return 'text-green-600 dark:text-green-500';
-    if (value === 'Intermédiaire') return 'text-orange-500 dark:text-orange-400';
-    if (value === 'Faibles') return 'text-blue-600 dark:text-blue-500';
+    if (value === 'Fortes') return 'text-blue-500 dark:text-blue-400';
+    if (value === 'Intermédiaire') return 'text-blue-500 dark:text-blue-400';
+    if (value === 'Faibles') return 'text-blue-500 dark:text-blue-400';
     return 'text-orange-500 dark:text-orange-400';
 };
 
 const getCartographieStyle = (cartographie: string) => {
     if (cartographie.startsWith('Priorité haute')) return { text: 'text-red-800 dark:text-red-200', bg: 'bg-red-100 dark:bg-red-900/50' };
-    if (cartographie.startsWith('Priorité intermédiaire')) return { text: 'text-orange-800 dark:text-orange-200', bg: 'bg-orange-100 dark:bg-orange-900/50' };
-    if (cartographie.startsWith('Priorité faible')) return { text: 'text-green-800 dark:text-green-200', bg: 'bg-green-100 dark:bg-green-900/50' };
-    return { text: 'text-orange-500 dark:text-orange-400', bg: 'bg-orange-100/50 dark:bg-orange-900/20' };
+    return { text: 'text-blue-800 dark:text-blue-200', bg: 'bg-blue-100 dark:bg-blue-900/50' };
 };
 
 
@@ -99,11 +97,11 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
         }
         
         if (isObligationHighOrMedium && maturite === 'Intermédiaire') {
-            return 'Priorité intermédiaire - clients à opportunités émergentes';
+            return 'priorité intermédiaire - clients à opportunités émergentes';
         }
 
         if (isObligationHighOrMedium && maturite === 'Élevée') {
-            return 'Priorité faible - clients innovants et stratégiques';
+            return 'priorité faible - clients innovants et stratégiques';
         }
 
         if (obligation === 'Faibles' && maturite === 'Élevée') {
@@ -111,7 +109,7 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
         }
 
         if (obligation === 'Faibles' && isMaturiteLowOrMedium) {
-            return 'Priorité intermédiaire - clients à opportunités émergentes';
+            return 'priorité intermédiaire - clients à opportunités émergentes';
         }
 
         return 'À définir';
