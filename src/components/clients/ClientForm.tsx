@@ -10,10 +10,8 @@ import { setDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-b
 import { doc, collection } from 'firebase/firestore';
 
 import { ClientPageHeader } from "./dialog/ClientDialogHeader";
-import { GeneralInfoSection } from "./dialog/GeneralInfoSection";
-import { ContactSection } from "./dialog/ContactSection";
+import { MainInfoSection } from "./dialog/MainInfoSection";
 import { MissionsSection } from "./dialog/MissionsSection";
-import { ActivitiesSection } from "./dialog/ActivitiesSection";
 import { ObligationsSection } from "./dialog/ObligationsSection";
 import { ToolsSection } from "./dialog/ToolsSection";
 
@@ -174,10 +172,12 @@ export function ClientForm({ client }: ClientFormProps) {
          isNewClient={isNewClient}
       />
       <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <GeneralInfoSection editedClient={editedClient} handleChange={handleChange} />
-        <ContactSection editedClient={editedClient} handleChange={handleChange} />
+        <MainInfoSection 
+          editedClient={editedClient}
+          handleChange={handleChange}
+          handleValueChange={handleValueChange}
+        />
         <MissionsSection editedClient={editedClient} handleChange={handleChange} />
-        <ActivitiesSection editedClient={editedClient} handleValueChange={handleValueChange} handleChange={handleChange} />
         <ObligationsSection editedClient={editedClient} setEditedClient={setEditedClient} />
         <ToolsSection editedClient={editedClient} handleChange={handleChange} handleValueChange={handleValueChange} />
       </div>

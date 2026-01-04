@@ -20,9 +20,9 @@ const inputStyle = "bg-white dark:bg-zinc-800 border-none";
 
 export function ActivitiesSection({ editedClient, handleValueChange, handleChange }: ActivitiesSectionProps) {
     return (
-        <Card className="md:col-span-2 lg:col-span-1 rounded-3xl">
-            <CardHeader><CardTitle className="flex items-center gap-2"><Activity className="w-5 h-5 text-muted-foreground" />Activités du client</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+        <div>
+            <CardTitle className="flex items-center gap-2 mb-4"><Activity className="w-5 h-5 text-muted-foreground" />Activités du client</CardTitle>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                 <div className="space-y-2">
                     <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>
                     <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE || ''} onChange={handleChange} className={inputStyle} />
@@ -62,7 +62,7 @@ export function ActivitiesSection({ editedClient, handleValueChange, handleChang
                         </SelectContent>
                     </Select>
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }
