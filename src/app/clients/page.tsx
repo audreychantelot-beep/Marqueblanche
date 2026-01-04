@@ -144,7 +144,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* General Info */}
           <Card>
             <CardHeader><CardTitle>Informations Générales</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="identifiantInterne">Identifiant interne</Label>
                 <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne} onChange={handleChange} />
@@ -167,7 +167,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* Contact Principal */}
           <Card>
             <CardHeader><CardTitle>Contact Principal</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="contactPrincipal.nom">Nom</Label>
                 <Input id="contactPrincipal.nom" name="contactPrincipal.nom" value={editedClient.contactPrincipal.nom} onChange={handleChange} />
@@ -176,7 +176,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
                 <Label htmlFor="contactPrincipal.prenom">Prénom</Label>
                 <Input id="contactPrincipal.prenom" name="contactPrincipal.prenom" value={editedClient.contactPrincipal.prenom} onChange={handleChange} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="contactPrincipal.email">Email</Label>
                 <Input id="contactPrincipal.email" name="contactPrincipal.email" type="email" value={editedClient.contactPrincipal.email} onChange={handleChange} />
               </div>
@@ -186,7 +186,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* Missions Actuelles */}
           <Card>
             <CardHeader><CardTitle>Missions Actuelles</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="missionsActuelles.collaborateurReferent">Collaborateur référent</Label>
                 <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent} onChange={handleChange} />
@@ -195,7 +195,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
                 <Label htmlFor="missionsActuelles.expertComptableResponsable">Expert-comptable responsable</Label>
                 <Input id="missionsActuelles.expertComptableResponsable" name="missionsActuelles.expertComptableResponsable" value={editedClient.missionsActuelles.expertComptableResponsable} onChange={handleChange} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="missionsActuelles.typeMission">Type de mission</Label>
                 <Input id="missionsActuelles.typeMission" name="missionsActuelles.typeMission" value={editedClient.missionsActuelles.typeMission} onChange={handleChange} />
               </div>
@@ -205,7 +205,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* Activités */}
           <Card className="md:col-span-2 lg:col-span-1">
             <CardHeader><CardTitle>Activités du client</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="activites.codeAPE">Code APE</Label>
                 <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE} onChange={handleChange} />
@@ -222,7 +222,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
                 <Label htmlFor="activites.regimeFiscal">Régime fiscal</Label>
                 <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal} onChange={handleChange} />
               </div>
-               <div className="space-y-2">
+               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="activites.typologieClientele">Typologie de clientèle</Label>
                 <Input id="activites.typologieClientele" name="activites.typologieClientele" value={editedClient.activites.typologieClientele} onChange={handleChange} />
               </div>
@@ -232,7 +232,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           {/* Outils & Obligations */}
           <Card>
             <CardHeader><CardTitle>Outils & Obligations</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                <div className="space-y-2">
                 <Label htmlFor="outils">Outils</Label>
                 <Input id="outils" name="outils" value={editedClient.outils} onChange={handleChange} />
