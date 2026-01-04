@@ -13,6 +13,7 @@ import { MainInfoSection } from "./dialog/MainInfoSection";
 import { ObligationsSection } from "./dialog/ObligationsSection";
 import { ClientAnalysis } from "./dialog/ClientAnalysis";
 import { ToolsSection } from "./dialog/ToolsSection";
+import { useToast } from "@/hooks/use-toast";
 
 type ClientWithId = Client & { id: string };
 
@@ -52,6 +53,7 @@ const emptyClientTemplate: Omit<Client, 'identifiantInterne'> = {
 
 export function ClientForm({ client }: ClientFormProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const { user } = useUser();
   const firestore = useFirestore();
   const isNewClient = !client;
@@ -84,7 +86,16 @@ export function ClientForm({ client }: ClientFormProps) {
     if (editedClient) {
       const updatedClient = { ...editedClient, questionnaire: data };
       setEditedClient(updatedClient);
-      handleSave(updatedClient); // also save the main client object
+      
+      const { id, ...clientData } = updatedClient;
+      if (user && firestore) {
+          const clientDocRef = doc(firestore, 'users', user.uid, 'clients', id);
+          setDocumentNonBlocking(clientDocRef, { questionnaire: data }, { merge: true });
+          toast({
+              title: "Questionnaire sauvegardé",
+              description: `Les réponses pour ${updatedClient.raisonSociale} ont été enregistrées.`,
+          });
+      }
     }
   };
 
@@ -145,10 +156,9 @@ export function ClientForm({ client }: ClientFormProps) {
     handleValueChange(e.target.name, e.target.value);
   };
 
-  const handleSave = (clientToSave?: ClientWithId) => {
-    const finalClient = clientToSave || editedClient;
-    if (finalClient && user && firestore) {
-      const { id, ...clientData } = finalClient;
+  const handleSaveAndRedirect = () => {
+    if (editedClient && user && firestore) {
+      const { id, ...clientData } = editedClient;
       if (isNewClient) {
         const clientsCollectionRef = collection(firestore, 'users', user.uid, 'clients');
         addDocumentNonBlocking(clientsCollectionRef, clientData);
@@ -156,6 +166,10 @@ export function ClientForm({ client }: ClientFormProps) {
         const clientDocRef = doc(firestore, 'users', user.uid, 'clients', id);
         setDocumentNonBlocking(clientDocRef, clientData, { merge: true });
       }
+      toast({
+        title: isNewClient ? "Client créé" : "Client sauvegardé",
+        description: `Les informations pour ${editedClient.raisonSociale} ont été mises à jour.`,
+      });
       router.push('/clients');
     }
   }
@@ -168,7 +182,7 @@ export function ClientForm({ client }: ClientFormProps) {
          client={client || null}
          raisonSociale={editedClient.raisonSociale}
          completionPercentage={completionPercentage}
-         handleSave={() => handleSave()}
+         handleSave={handleSaveAndRedirect}
          isNewClient={isNewClient}
          onOpenQuestionnaire={() => setIsQuestionnaireOpen(true)}
       />

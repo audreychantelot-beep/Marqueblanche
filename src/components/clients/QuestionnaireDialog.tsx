@@ -9,9 +9,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Client, Questionnaire } from '@/lib/clients-data';
-import { useUser, useFirestore } from '@/firebase';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 type ClientWithId = Client & { id: string };
@@ -52,10 +49,7 @@ const TOTAL_QUESTIONS = 13;
 
 export function QuestionnaireDialog({ client, isOpen, onOpenChange, onCompleteChange, onSaveSuccess }: QuestionnaireDialogProps) {
   const [formState, setFormState] = useState<Questionnaire>(client.questionnaire || {});
-  const { user } = useUser();
-  const firestore = useFirestore();
-  const { toast } = useToast();
-
+  
   useEffect(() => {
     if (client.questionnaire) {
         setFormState(client.questionnaire);
@@ -78,22 +72,8 @@ export function QuestionnaireDialog({ client, isOpen, onOpenChange, onCompleteCh
   };
 
   const handleSave = () => {
-    if (user && firestore) {
-        const clientDocRef = doc(firestore, 'users', user.uid, 'clients', client.id);
-        setDocumentNonBlocking(clientDocRef, { questionnaire: formState }, { merge: true });
-        toast({
-            title: "Questionnaire sauvegardé",
-            description: `Les réponses pour ${client.raisonSociale} ont été enregistrées.`,
-        });
-        onSaveSuccess(formState);
-        onOpenChange(false);
-    } else {
-        toast({
-            variant: "destructive",
-            title: "Erreur",
-            description: "Impossible de sauvegarder, utilisateur non connecté.",
-        });
-    }
+    onSaveSuccess(formState);
+    onOpenChange(false);
   };
 
   return (
