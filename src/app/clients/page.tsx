@@ -148,19 +148,19 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardHeader><CardTitle>Informations Générales</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="identifiantInterne">Identifiant interne</Label>
+                <Label htmlFor="identifiantInterne" className="text-muted-foreground">Identifiant interne</Label>
                 <Input id="identifiantInterne" name="identifiantInterne" value={editedClient.identifiantInterne} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="siren">SIREN</Label>
+                <Label htmlFor="siren" className="text-muted-foreground">SIREN</Label>
                 <Input id="siren" name="siren" value={editedClient.siren} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="raisonSociale">Raison sociale</Label>
+                <Label htmlFor="raisonSociale" className="text-muted-foreground">Raison sociale</Label>
                 <Input id="raisonSociale" name="raisonSociale" value={editedClient.raisonSociale} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="formeJuridique">Forme juridique</Label>
+                <Label htmlFor="formeJuridique" className="text-muted-foreground">Forme juridique</Label>
                 <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
@@ -171,15 +171,15 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardHeader><CardTitle>Contact Principal</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="contactPrincipal.nom">Nom</Label>
+                <Label htmlFor="contactPrincipal.nom" className="text-muted-foreground">Nom</Label>
                 <Input id="contactPrincipal.nom" name="contactPrincipal.nom" value={editedClient.contactPrincipal.nom} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="contactPrincipal.prenom">Prénom</Label>
+                <Label htmlFor="contactPrincipal.prenom" className="text-muted-foreground">Prénom</Label>
                 <Input id="contactPrincipal.prenom" name="contactPrincipal.prenom" value={editedClient.contactPrincipal.prenom} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="contactPrincipal.email">Email</Label>
+                <Label htmlFor="contactPrincipal.email" className="text-muted-foreground">Email</Label>
                 <Input id="contactPrincipal.email" name="contactPrincipal.email" type="email" value={editedClient.contactPrincipal.email} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
@@ -190,15 +190,15 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardHeader><CardTitle>Missions Actuelles</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="missionsActuelles.collaborateurReferent">Collaborateur référent</Label>
+                <Label htmlFor="missionsActuelles.collaborateurReferent" className="text-muted-foreground">Collaborateur référent</Label>
                 <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent} onChange={handleChange} className={inputStyle} />
               </div>
                <div className="space-y-2">
-                <Label htmlFor="missionsActuelles.expertComptableResponsable">Expert-comptable responsable</Label>
+                <Label htmlFor="missionsActuelles.expertComptableResponsable" className="text-muted-foreground">Expert-comptable responsable</Label>
                 <Input id="missionsActuelles.expertComptableResponsable" name="missionsActuelles.expertComptableResponsable" value={editedClient.missionsActuelles.expertComptableResponsable} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="missionsActuelles.typeMission">Type de mission</Label>
+                <Label htmlFor="missionsActuelles.typeMission" className="text-muted-foreground">Type de mission</Label>
                 <Input id="missionsActuelles.typeMission" name="missionsActuelles.typeMission" value={editedClient.missionsActuelles.typeMission} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
@@ -209,23 +209,23 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardHeader><CardTitle>Activités du client</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="activites.codeAPE">Code APE</Label>
+                <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>
                 <Input id="activites.codeAPE" name="activites.codeAPE" value={editedClient.activites.codeAPE} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="activites.secteurActivites">Secteur d’activités</Label>
+                <Label htmlFor="activites.secteurActivites" className="text-muted-foreground">Secteur d’activités</Label>
                 <Input id="activites.secteurActivites" name="activites.secteurActivites" value={editedClient.activites.secteurActivites} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="activites.regimeTVA">Régime de TVA</Label>
+                <Label htmlFor="activites.regimeTVA" className="text-muted-foreground">Régime de TVA</Label>
                 <Input id="activites.regimeTVA" name="activites.regimeTVA" value={editedClient.activites.regimeTVA} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="activites.regimeFiscal">Régime fiscal</Label>
+                <Label htmlFor="activites.regimeFiscal" className="text-muted-foreground">Régime fiscal</Label>
                 <Input id="activites.regimeFiscal" name="activites.regimeFiscal" value={editedClient.activites.regimeFiscal} onChange={handleChange} className={inputStyle} />
               </div>
                <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="activites.typologieClientele">Typologie de clientèle</Label>
+                <Label htmlFor="activites.typologieClientele" className="text-muted-foreground">Typologie de clientèle</Label>
                 <Input id="activites.typologieClientele" name="activites.typologieClientele" value={editedClient.activites.typologieClientele} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
@@ -236,11 +236,11 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             <CardHeader><CardTitle>Outils & Obligations</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                <div className="space-y-2">
-                <Label htmlFor="outils">Outils</Label>
+                <Label htmlFor="outils" className="text-muted-foreground">Outils</Label>
                 <Input id="outils" name="outils" value={editedClient.outils} onChange={handleChange} className={inputStyle} />
               </div>
                <div className="space-y-2">
-                <Label htmlFor="obligationsLegales">Obligations légales</Label>
+                <Label htmlFor="obligationsLegales" className="text-muted-foreground">Obligations légales</Label>
                 <Input id="obligationsLegales" name="obligationsLegales" value={"À définir"} onChange={handleChange} className={inputStyle} />
               </div>
             </CardContent>
