@@ -62,7 +62,7 @@ export type Client = {
     genereEReporting?: string;
     logicielFacturation?: string;
     conformeFacturationElectronique?: string;
-    logicielGestionAchats?: string;
+    logicielGestionCommerciale?: string;
     interoperableComptable?: string;
     interoperablePaEmission?: string;
     logicielComptableClient?: string;
@@ -283,3 +283,4 @@ export const clients: (Client & { id: string })[] = [
     obligationsLegales: "Obligations légales",
   };
   
+

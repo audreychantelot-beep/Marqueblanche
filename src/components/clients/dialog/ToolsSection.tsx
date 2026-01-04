@@ -36,7 +36,7 @@ const toolFields = [
     { id: "genereEReporting", label: "Génère le e-reporting", type: "select" },
     { id: "logicielFacturation", label: "Logiciel de facturation", type: "questionnaire", question: "q5" },
     { id: "conformeFacturationElectronique", label: "Conforme facturation électronique", type: "select" },
-    { id: "logicielGestionAchats", label: "Logiciel de gestion des achats", type: "questionnaire", question: "q6" },
+    { id: "logicielGestionAchats", label: "Logiciel de gestion commerciale", type: "questionnaire", question: "q6" },
     { id: "interoperableComptable", label: "Interopérable avec le logiciel comptable", type: "select" },
     { id: "interoperablePaEmission", label: "Interopérable avec la PA en émission", type: "select" },
     { id: "logicielComptableClient", label: "Logiciel comptable du client", type: "questionnaire", question: "q7" },
@@ -48,7 +48,7 @@ export function ToolsSection({ editedClient, handleChange, handleValueChange }: 
     return (
         <Card className="rounded-3xl">
             <CardHeader><CardTitle className="flex items-center gap-2"><Construction className="w-5 h-5 text-muted-foreground" />Outils</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 gap-y-4 text-left text-sm">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-left text-sm">
                 {toolFields.map(field => {
                     if (field.type === 'questionnaire') {
                         const qKey = field.question as keyof Questionnaire;
