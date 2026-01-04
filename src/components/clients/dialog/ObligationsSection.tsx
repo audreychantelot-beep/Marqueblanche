@@ -26,9 +26,16 @@ const obligationFields = [
     { id: "paReception", label: "Obligation PA réception" },
 ];
 
-const getStatusColor = (value: string | undefined) => {
+const getStatusColorText = (value: string | undefined) => {
     if (value === 'Oui') return 'text-green-600 dark:text-green-500';
     if (value === 'Non') return 'text-red-600 dark:text-red-500';
+    return 'text-muted-foreground';
+};
+
+const getScoringColor = (value: string | undefined) => {
+    if (value === 'Fortes') return 'text-red-600 dark:text-red-500';
+    if (value === 'Intermédiaire') return 'text-orange-500 dark:text-orange-400';
+    if (value === 'Faibles') return 'text-green-600 dark:text-green-500';
     return 'text-muted-foreground';
 };
 
@@ -77,6 +84,41 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
         return "À définir";
     }, [assujettiReformeValue]);
 
+    const obligationScore = useMemo(() => {
+        if (!editedClient) return { score: 0, level: "À définir" };
+
+        let score = 0;
+        const { regimeTVA, typologieClientele } = editedClient.activites;
+
+        // Scoring for regimeTVA
+        if (regimeTVA === "Débit") {
+            score += 1;
+        } else if (regimeTVA === "Encaissement") {
+            score += 2;
+        }
+
+        // Scoring for typologieClientele
+        if (typologieClientele === "Mixtes") {
+            score += 3;
+        } else if (["B to B", "B to C", "Organismes publics"].includes(typologieClientele)) {
+            score += 1;
+        }
+
+        let level = "À définir";
+        if (score >= 3) {
+            level = "Fortes";
+        } else if (score === 2) {
+            level = "Intermédiaire";
+        } else if (score === 1) {
+            level = "Faibles";
+        } else if (score === 0 && (regimeTVA || typologieClientele)) {
+             // If we have data but score is 0, it's considered low.
+             level = "Faibles";
+        }
+        
+        return { score, level };
+    }, [editedClient]);
+
     useEffect(() => {
         if (editedClient) {
             const newObligations = {
@@ -86,6 +128,7 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
                 eReportingPaiement: eReportingPaiementValue,
                 paEmission: paEmissionValue,
                 paReception: paReceptionValue,
+                niveauObligation: obligationScore.level,
             };
             
             if (JSON.stringify(newObligations) !== JSON.stringify(editedClient.obligationsLegales)) {
@@ -97,15 +140,16 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
                 });
             }
         }
-    }, [editedClient, assujettiReformeValue, eInvoicingValue, eReportingTransactionValue, eReportingPaiementValue, paEmissionValue, paReceptionValue, setEditedClient]);
+    }, [editedClient, assujettiReformeValue, eInvoicingValue, eReportingTransactionValue, eReportingPaiementValue, paEmissionValue, paReceptionValue, obligationScore.level, setEditedClient]);
 
+    const obligationLevel = (editedClient.obligationsLegales as any)?.niveauObligation || "À définir";
+    
     return (
         <Card className="rounded-3xl">
             <CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="w-5 h-5 text-muted-foreground" />Obligations</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-left">
                 {obligationFields.map(field => {
                     const value = (editedClient.obligationsLegales as any)?.[field.id] || "À définir";
-
                     return (
                         <div key={field.id} className="flex items-center justify-between space-y-2 text-sm">
                             <Label htmlFor={`obligationsLegales.${field.id}`} className="text-muted-foreground">{field.label}</Label>
@@ -114,12 +158,23 @@ export function ObligationsSection({ editedClient, setEditedClient }: Obligation
                                 name={`obligationsLegales.${field.id}`}
                                 value={value}
                                 readOnly
-                                className={cn(inputStyle, "text-right max-w-[100px]", getStatusColor(value))}
+                                className={cn(inputStyle, "text-right max-w-[100px]", getStatusColorText(value))}
                                 disabled
                             />
                         </div>
                     )
                 })}
+                <div className="sm:col-span-2 border-t mt-4 pt-4 flex items-center justify-between text-sm">
+                    <Label htmlFor="obligationsLegales.niveauObligation" className="font-semibold">Niveau d'obligation</Label>
+                    <Input
+                        id="obligationsLegales.niveauObligation"
+                        name="obligationsLegales.niveauObligation"
+                        value={obligationLevel}
+                        readOnly
+                        className={cn(inputStyle, "text-right max-w-[120px] font-bold", getScoringColor(obligationLevel))}
+                        disabled
+                    />
+                </div>
             </CardContent>
         </Card>
     );

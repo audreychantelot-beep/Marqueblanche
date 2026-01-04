@@ -55,6 +55,7 @@ export type Client = {
     eReportingPaiement?: string;
     paEmission?: string;
     paReception?: string;
+    niveauObligation?: string;
   };
   outils?: {
     logicielCaisse?: string;
@@ -98,8 +99,24 @@ export const clients: (Client & { id: string })[] = [
       },
       obligationsLegales: {},
       questionnaire: {
+        q1: "detailed",
+        q2: "quickly",
+        q3: "b2b",
         q4: "Oui",
         q4_software: "Cegid",
+        q5: "Oui",
+        q5_software: "Pennylane",
+        q6: "Non",
+        q7: "Oui",
+        q7_software: "Quickbooks",
+        q8: "Non",
+        q9: "digital",
+        q10: "Oui",
+        q10_function: "Comptable",
+        q11: "platform",
+        q12: "Oui",
+        q12_actions: "Recherche de PDP",
+        q13: "Non",
       }
     },
     {
@@ -129,7 +146,9 @@ export const clients: (Client & { id: string })[] = [
       obligationsLegales: {},
       questionnaire: {
         q4: "Non",
-        q4_method: "Excel"
+        q4_method: "Excel",
+        q5: "Non",
+        q5_method: "Word"
       }
     },
     {
@@ -160,6 +179,8 @@ export const clients: (Client & { id: string })[] = [
       questionnaire: {
         q4: "Oui",
         q4_software: "SumUp",
+        q6: "Oui",
+        q6_software: "Odoo"
       }
     },
     {
@@ -212,6 +233,33 @@ export const clients: (Client & { id: string })[] = [
         regimeTVA: "Débit",
         regimeFiscal: "IS régime réel normal",
         typologieClientele: "B to B"
+      },
+      obligationsLegales: {},
+      questionnaire: {}
+    },
+    {
+      id: "C006",
+      identifiantInterne: "C006",
+      siren: "333444555",
+      raisonSociale: "Gourmet Express",
+      formeJuridique: "SARL",
+      contactPrincipal: {
+        nom: "Garcia",
+        prenom: "Mia",
+        email: "mia.garcia@example.com"
+      },
+      avatar: "https://picsum.photos/seed/6/40/40",
+      missionsActuelles: {
+        collaborateurReferent: "Alice Martin",
+        expertComptable: "David Petit",
+        typeMission: "Tenue"
+      },
+      activites: {
+        codeAPE: "5610A",
+        secteurActivites: "Restauration traditionnelle",
+        regimeTVA: "Encaissement",
+        regimeFiscal: "IS régime simplifié",
+        typologieClientele: "B to C"
       },
       obligationsLegales: {},
       questionnaire: {}
