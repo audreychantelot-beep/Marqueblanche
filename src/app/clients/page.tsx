@@ -167,6 +167,10 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
                 <Label htmlFor="formeJuridique" className="text-muted-foreground">Forme juridique</Label>
                 <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique} onChange={handleChange} className={inputStyle} />
               </div>
+               <div className="space-y-2">
+                <Label htmlFor="outils" className="text-muted-foreground">Outils</Label>
+                <Input id="outils" name="outils" value={editedClient.outils} onChange={handleChange} className={inputStyle} />
+              </div>
             </CardContent>
           </Card>
           
@@ -235,14 +239,10 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             </CardContent>
           </Card>
 
-          {/* Outils & Obligations */}
+          {/* Obligations */}
           <Card className="rounded-3xl">
-            <CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="w-5 h-5 text-muted-foreground" />Outils & Obligations</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="w-5 h-5 text-muted-foreground" />Obligations</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
-               <div className="space-y-2">
-                <Label htmlFor="outils" className="text-muted-foreground">Outils</Label>
-                <Input id="outils" name="outils" value={editedClient.outils} onChange={handleChange} className={inputStyle} />
-              </div>
                <div className="space-y-2">
                 <Label htmlFor="obligationsLegales" className="text-muted-foreground">Obligations légales</Label>
                 <Input id="obligationsLegales" name="obligationsLegales" value={"À définir"} onChange={handleChange} className={inputStyle} />
