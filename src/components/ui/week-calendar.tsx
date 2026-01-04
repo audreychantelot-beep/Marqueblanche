@@ -42,21 +42,14 @@ export function WeekCalendar() {
       <div className="grid grid-cols-5 gap-2">
         {days.map((day) => (
           <div key={day.toString()} className="flex flex-col items-center p-2 rounded-lg border">
-            <span
-              className={cn("text-sm font-medium", 
-                isSameDay(day, today) ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              {format(day, 'eee', { locale: fr }).toUpperCase()}
-            </span>
-            <span
-              className={cn(
-                "mt-1 text-2xl font-bold flex items-center justify-center h-10 w-10 rounded-full",
-                isSameDay(day, today) ? "bg-primary text-primary-foreground" : ""
-              )}
-            >
-              {format(day, 'd')}
-            </span>
+            <div className={cn("flex items-baseline gap-2 text-lg", isSameDay(day, today) ? "font-bold text-primary" : "text-muted-foreground")}>
+              <span className="text-sm">
+                {format(day, 'eee', { locale: fr }).toUpperCase()}
+              </span>
+              <span className="text-2xl">
+                {format(day, 'd')}
+              </span>
+            </div>
             <div className="mt-2 h-24 w-full overflow-y-auto">
               {/* Event items can be mapped here */}
             </div>
