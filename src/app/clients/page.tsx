@@ -12,8 +12,8 @@ import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { doc, collection } from "firebase/firestore";
+import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
+import { doc } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 const clients = [
@@ -294,15 +294,15 @@ function ClientsContent() {
     return doc(firestore, 'users', user.uid, 'columnPreferences', PAGE_ID);
   }, [firestore, user]);
   
-  const { data: preferencesDoc, isLoading: isLoadingPreferences } = useCollection(preferencesQuery);
-  const preferencesData = preferencesDoc ? preferencesDoc[0] : null;
+  const { data: preferencesData, isLoading: isLoadingPreferences } = useDoc(preferencesQuery);
 
   const [visibleColumns, setVisibleColumns] = useState<Record<ColumnKeys, boolean>>(defaultVisibleColumns);
 
   useEffect(() => {
     if (!isLoadingPreferences) {
       if (preferencesData?.columns) {
-        setVisibleColumns({ ...defaultVisibleColumns, ...preferencesData.columns });
+        const mergedColumns = { ...defaultVisibleColumns, ...preferencesData.columns };
+        setVisibleColumns(mergedColumns);
       } else {
         setVisibleColumns(defaultVisibleColumns);
       }
