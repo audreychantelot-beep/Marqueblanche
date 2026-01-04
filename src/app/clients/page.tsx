@@ -141,10 +141,18 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} className="max-w-full w-full h-full max-h-full sm:max-w-[95vw] sm:max-h-[95vh] rounded-3xl flex flex-col">
         <DialogHeader>
-          <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Modifiez les informations du client ci-dessous.
-          </DialogDescription>
+            <div className="flex items-center justify-between">
+                <div>
+                    <DialogTitle>Modifier le client : {client?.raisonSociale}</DialogTitle>
+                    <DialogDescription className="text-muted-foreground">
+                        Modifiez les informations du client ci-dessous.
+                    </DialogDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+                    <Button onClick={handleSave}>Sauvegarder</Button>
+                </div>
+            </div>
         </DialogHeader>
         <div className="flex-1 overflow-y-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* General Info */}
@@ -202,7 +210,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
                 <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent} onChange={handleChange} className={inputStyle} />
               </div>
                <div className="space-y-2">
-                <Label htmlFor="missionsActuelles.expertComptableResponsable" className="text-muted-foreground">Expert-comptable responsable</Label>
+                <Label htmlFor="missionsActuelles.expertComptableResponsable" className="text-muted-foreground">Expert-comptable</Label>
                 <Input id="missionsActuelles.expertComptableResponsable" name="missionsActuelles.expertComptableResponsable" value={editedClient.missionsActuelles.expertComptableResponsable} onChange={handleChange} className={inputStyle} />
               </div>
               <div className="space-y-2 sm:col-span-2">
@@ -250,7 +258,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
             </CardContent>
           </Card>
         </div>
-        <DialogFooter className="p-4 border-t">
+        <DialogFooter className="p-4 border-t sr-only">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
           <Button onClick={handleSave}>Sauvegarder</Button>
         </DialogFooter>
@@ -266,7 +274,7 @@ const allColumns = {
   formeJuridique: "Forme juridique",
   contactPrincipal: "Contact principal",
   collaborateurReferent: "Collaborateur référent",
-  expertComptableResponsable: "Expert-comptable responsable",
+  expertComptableResponsable: "Expert-comptable",
   typeMission: "Type de mission",
   codeAPE: "Code APE",
   secteurActivites: "Secteur d’activités",
