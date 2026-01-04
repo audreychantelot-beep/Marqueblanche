@@ -38,7 +38,7 @@ const RadioOption = ({ id, value, label, subInputName, onSubInputChange }: { id:
   </div>
 );
 
-const TOTAL_QUESTIONS = 12;
+const TOTAL_QUESTIONS = 13;
 
 export function QuestionnaireDialog({ client, isOpen, onOpenChange, onCompleteChange }: QuestionnaireDialogProps) {
   const [formState, setFormState] = useState<Record<string, string>>({});
@@ -113,49 +113,55 @@ export function QuestionnaireDialog({ client, isOpen, onOpenChange, onCompleteCh
             <AccordionItem value="item-3">
               <AccordionTrigger className="text-lg font-medium">III – Outils et organisation interne</AccordionTrigger>
               <AccordionContent>
-                <QuestionItem question="4. Utilisez-vous actuellement un logiciel de facturation ?">
-                  <RadioGroup name="q4" onValueChange={(value) => handleValueChange("q4", value)}>
-                    <RadioOption id="q4a" value="yes" label="Oui" subInputName="q4_software" onSubInputChange={handleInputChange} />
-                    <RadioOption id="q4b" value="no" label="Non" subInputName="q4_method" onSubInputChange={handleInputChange} />
-                  </RadioGroup>
+                <QuestionItem question="4. Utilisez-vous actuellement un logiciel de caisse?">
+                    <RadioGroup name="q4" onValueChange={(value) => handleValueChange("q4", value)}>
+                        <RadioOption id="q4a" value="yes" label="Oui" subInputName="q4_software" onSubInputChange={handleInputChange} />
+                        <RadioOption id="q4b" value="no" label="Non" subInputName="q4_method" onSubInputChange={handleInputChange} />
+                    </RadioGroup>
                 </QuestionItem>
-                <QuestionItem question="5. Utilisez-vous un logiciel de gestion commerciale ou un ERP ?">
+                <QuestionItem question="5. Utilisez-vous actuellement un logiciel de facturation ?">
                   <RadioGroup name="q5" onValueChange={(value) => handleValueChange("q5", value)}>
                     <RadioOption id="q5a" value="yes" label="Oui" subInputName="q5_software" onSubInputChange={handleInputChange} />
-                    <RadioOption id="q5b" value="no" label="Non" />
+                    <RadioOption id="q5b" value="no" label="Non" subInputName="q5_method" onSubInputChange={handleInputChange} />
                   </RadioGroup>
                 </QuestionItem>
-                <QuestionItem question="6. Avez-vous un logiciel de gestion comptable ou de précomptabilité interne à l’entreprise ?">
+                <QuestionItem question="6. Utilisez-vous un logiciel de gestion commerciale ou un ERP ?">
                   <RadioGroup name="q6" onValueChange={(value) => handleValueChange("q6", value)}>
                     <RadioOption id="q6a" value="yes" label="Oui" subInputName="q6_software" onSubInputChange={handleInputChange} />
                     <RadioOption id="q6b" value="no" label="Non" />
                   </RadioGroup>
                 </QuestionItem>
-                <QuestionItem question="7. Disposez-vous d’un logiciel de GED ou d’océrisation ?">
+                <QuestionItem question="7. Avez-vous un logiciel de gestion comptable ou de précomptabilité interne à l’entreprise ?">
                   <RadioGroup name="q7" onValueChange={(value) => handleValueChange("q7", value)}>
                     <RadioOption id="q7a" value="yes" label="Oui" subInputName="q7_software" onSubInputChange={handleInputChange} />
                     <RadioOption id="q7b" value="no" label="Non" />
                   </RadioGroup>
                 </QuestionItem>
-                <QuestionItem question="8. Vos documents (factures, bons de commande, relevés, etc.) sont aujourd’hui :">
+                <QuestionItem question="8. Disposez-vous d’un logiciel de GED ou d’océrisation ?">
                   <RadioGroup name="q8" onValueChange={(value) => handleValueChange("q8", value)}>
-                    <RadioOption id="q8a" value="paper" label="Stockés sur support papier" />
-                    <RadioOption id="q8b" value="digital" label="Stockés numériquement (serveur interne, cloud, etc.)" />
-                    <RadioOption id="q8c" value="mixed" label="Mixtes (papier et numérique)" />
+                    <RadioOption id="q8a" value="yes" label="Oui" subInputName="q8_software" onSubInputChange={handleInputChange} />
+                    <RadioOption id="q8b" value="no" label="Non" />
                   </RadioGroup>
                 </QuestionItem>
-                <QuestionItem question="9. Disposez-vous d’une personne dédiée à la gestion administrative ou comptable dans votre entreprise ?">
+                <QuestionItem question="9. Vos documents (factures, bons de commande, relevés, etc.) sont aujourd’hui :">
                   <RadioGroup name="q9" onValueChange={(value) => handleValueChange("q9", value)}>
-                    <RadioOption id="q9a" value="yes" label="Oui" subInputName="q9_function" onSubInputChange={handleInputChange} />
-                    <RadioOption id="q9b" value="no" label="Non" />
+                    <RadioOption id="q9a" value="paper" label="Stockés sur support papier" />
+                    <RadioOption id="q9b" value="digital" label="Stockés numériquement (serveur interne, cloud, etc.)" />
+                    <RadioOption id="q9c" value="mixed" label="Mixtes (papier et numérique)" />
                   </RadioGroup>
                 </QuestionItem>
-                <QuestionItem question="10. Comment se déroule aujourd’hui la transmission des pièces au cabinet comptable ?">
-                   <RadioGroup name="q10" onValueChange={(value) => handleValueChange("q10", value)}>
-                    <RadioOption id="q10a" value="paper" label="Papier" />
-                    <RadioOption id="q10b" value="email" label="Par mail" />
-                    <RadioOption id="q10c" value="platform" label="Par plateforme dédiée" />
-                    <RadioOption id="q10d" value="mixed" label="Mixte" />
+                <QuestionItem question="10. Disposez-vous d’une personne dédiée à la gestion administrative ou comptable dans votre entreprise ?">
+                  <RadioGroup name="q10" onValueChange={(value) => handleValueChange("q10", value)}>
+                    <RadioOption id="q10a" value="yes" label="Oui" subInputName="q10_function" onSubInputChange={handleInputChange} />
+                    <RadioOption id="q10b" value="no" label="Non" />
+                  </RadioGroup>
+                </QuestionItem>
+                <QuestionItem question="11. Comment se déroule aujourd’hui la transmission des pièces au cabinet comptable ?">
+                   <RadioGroup name="q11" onValueChange={(value) => handleValueChange("q11", value)}>
+                    <RadioOption id="q11a" value="paper" label="Papier" />
+                    <RadioOption id="q11b" value="email" label="Par mail" />
+                    <RadioOption id="q11c" value="platform" label="Par plateforme dédiée" />
+                    <RadioOption id="q11d" value="mixed" label="Mixte" />
                   </RadioGroup>
                 </QuestionItem>
               </AccordionContent>
@@ -163,16 +169,16 @@ export function QuestionnaireDialog({ client, isOpen, onOpenChange, onCompleteCh
             <AccordionItem value="item-4">
               <AccordionTrigger className="text-lg font-medium">IV – Actions déjà engagées</AccordionTrigger>
               <AccordionContent>
-                <QuestionItem question="11. Avez-vous déjà entrepris des démarches pour anticiper la réforme de la facturation électronique ?">
-                  <RadioGroup name="q11" onValueChange={(value) => handleValueChange("q11", value)}>
-                    <RadioOption id="q11a" value="yes" label="Oui" subInputName="q11_actions" onSubInputChange={handleInputChange} />
-                    <RadioOption id="q11b" value="no" label="Non" />
+                <QuestionItem question="12. Avez-vous déjà entrepris des démarches pour anticiper la réforme de la facturation électronique ?">
+                  <RadioGroup name="q12" onValueChange={(value) => handleValueChange("q12", value)}>
+                    <RadioOption id="q12a" value="yes" label="Oui" subInputName="q12_actions" onSubInputChange={handleInputChange} />
+                    <RadioOption id="q12b" value="no" label="Non" />
                   </RadioGroup>
                 </QuestionItem>
-                <QuestionItem question="12. Avez-vous déjà un projet ou une réflexion en cours concernant un changement ou une évolution de vos outils administratifs ?">
-                  <RadioGroup name="q12" onValueChange={(value) => handleValueChange("q12", value)}>
-                    <RadioOption id="q12a" value="yes" label="Oui" subInputName="q12_project" onSubInputChange={handleInputChange} />
-                    <RadioOption id="q12b" value="no" label="Non" />
+                <QuestionItem question="13. Avez-vous déjà un projet ou une réflexion en cours concernant un changement ou une évolution de vos outils administratifs ?">
+                  <RadioGroup name="q13" onValueChange={(value) => handleValueChange("q13", value)}>
+                    <RadioOption id="q13a" value="yes" label="Oui" subInputName="q13_project" onSubInputChange={handleInputChange} />
+                    <RadioOption id="q13b" value="no" label="Non" />
                   </RadioGroup>
                 </QuestionItem>
               </AccordionContent>
