@@ -291,23 +291,23 @@ function ClientsContent() {
 
   const preferencesQuery = useMemoFirebase(() => {
     if (!user) return null;
-    return collection(firestore, 'users', user.uid, 'columnPreferences');
+    return doc(firestore, 'users', user.uid, 'columnPreferences', PAGE_ID);
   }, [firestore, user]);
   
-  const { data: preferencesData, isLoading: isLoadingPreferences } = useCollection(preferencesQuery);
+  const { data: preferencesDoc, isLoading: isLoadingPreferences } = useCollection(preferencesQuery);
+  const preferencesData = preferencesDoc ? preferencesDoc[0] : null;
 
   const [visibleColumns, setVisibleColumns] = useState<Record<ColumnKeys, boolean>>(defaultVisibleColumns);
 
   useEffect(() => {
-    if (preferencesData) {
-      const clientPagePref = preferencesData.find(p => p.id === PAGE_ID);
-      if (clientPagePref) {
-        setVisibleColumns(clientPagePref.columns);
+    if (!isLoadingPreferences) {
+      if (preferencesData?.columns) {
+        setVisibleColumns({ ...defaultVisibleColumns, ...preferencesData.columns });
       } else {
         setVisibleColumns(defaultVisibleColumns);
       }
     }
-  }, [preferencesData]);
+  }, [preferencesData, isLoadingPreferences]);
 
   const handleEditClick = (client: Client) => {
     setSelectedClient(client);
