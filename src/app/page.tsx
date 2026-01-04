@@ -7,11 +7,23 @@ import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Hand } from "lucide-react";
 import { WeekCalendar } from "@/components/ui/week-calendar";
-import React from "react";
+import React, { useState } from "react";
+import { getWeek, addWeeks, subWeeks } from "date-fns";
 
 function DashboardContent() {
   const { user } = useUser();
   const dashboardImage = PlaceHolderImages.find(p => p.id === 'dashboard-hero');
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const weekNumber = getWeek(currentDate, { weekStartsOn: 1 });
+
+  const goToPreviousWeek = () => {
+    setCurrentDate(prev => subWeeks(prev, 1));
+  };
+
+  const goToNextWeek = () => {
+    setCurrentDate(prev => addWeeks(prev, 1));
+  };
 
   return (
     <main className="flex flex-col flex-1 p-4 md:px-6 max-w-full mx-auto w-full">
@@ -37,10 +49,17 @@ function DashboardContent() {
           <div className="h-1/2">
             <Card className="h-full flex flex-col">
               <CardHeader>
-                <CardTitle>Échéances à venir</CardTitle>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Échéances à venir</CardTitle>
+                  <span className="text-sm font-medium text-muted-foreground">Semaine {weekNumber}</span>
+                </div>
               </CardHeader>
               <CardContent className="flex-1 p-6">
-                <WeekCalendar />
+                <WeekCalendar 
+                  currentDate={currentDate}
+                  onPreviousWeek={goToPreviousWeek}
+                  onNextWeek={goToNextWeek}
+                />
               </CardContent>
             </Card>
           </div>

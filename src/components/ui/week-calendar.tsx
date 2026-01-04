@@ -1,41 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
-import { format, startOfWeek, addDays, subDays, isSameDay } from 'date-fns';
+import React from 'react';
+import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-export function WeekCalendar() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+interface WeekCalendarProps {
+  currentDate: Date;
+  onPreviousWeek: () => void;
+  onNextWeek: () => void;
+}
 
+export function WeekCalendar({ currentDate, onPreviousWeek, onNextWeek }: WeekCalendarProps) {
   const startOfCurrentWeek = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday
 
   const days = Array.from({ length: 5 }).map((_, i) =>
     addDays(startOfCurrentWeek, i)
   );
-
-  const goToPreviousWeek = () => {
-    setCurrentDate(subDays(currentDate, 7));
-  };
-
-  const goToNextWeek = () => {
-    setCurrentDate(addDays(currentDate, 7));
-  };
   
   const today = new Date();
 
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
-        <Button variant="ghost" size="icon" onClick={goToPreviousWeek}>
+        <Button variant="ghost" size="icon" onClick={onPreviousWeek}>
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <h3 className="text-lg font-semibold">
-          Semaine du {format(startOfCurrentWeek, 'd MMMM yyyy', { locale: fr })}
+          {format(startOfCurrentWeek, 'MMMM yyyy', { locale: fr })}
         </h3>
-        <Button variant="ghost" size="icon" onClick={goToNextWeek}>
+        <Button variant="ghost" size="icon" onClick={onNextWeek}>
           <ChevronRight className="h-5 w-5" />
         </Button>
       </div>
