@@ -18,7 +18,7 @@ function DashboardContent() {
         <p className="text-muted-foreground">Voici un aperçu de votre activité.</p>
       </div>
       <div className="flex-1 flex gap-6">
-        <div className="w-1/4 h-full">
+        <div className="w-1/2 h-1/2">
             {dashboardImage && (
                 <Card className="h-full w-full overflow-hidden">
                     <CardContent className="p-0 h-full">
