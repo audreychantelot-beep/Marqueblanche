@@ -39,7 +39,7 @@ function DashboardContent() {
               <CardHeader>
                 <CardTitle>Échéances à venir</CardTitle>
               </CardHeader>
-              <CardContent className="flex-1 flex items-center justify-center p-6">
+              <CardContent className="flex-1 p-6">
                 <WeekCalendar />
               </CardContent>
             </Card>
