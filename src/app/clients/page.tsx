@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle, Upload } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Upload, Info, User, Briefcase, Activity, Wrench } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
 import React, { useState } from "react";
@@ -144,8 +144,8 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
         </DialogHeader>
         <div className="flex-1 overflow-y-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* General Info */}
-          <Card>
-            <CardHeader><CardTitle>Informations Générales</CardTitle></CardHeader>
+          <Card className="rounded-3xl">
+            <CardHeader><CardTitle className="flex items-center gap-2"><Info className="w-5 h-5 text-muted-foreground" />Informations Générales</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               <div className="space-y-2">
                 <Label htmlFor="identifiantInterne" className="text-muted-foreground">Identifiant interne</Label>
@@ -167,8 +167,8 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           </Card>
           
           {/* Contact Principal */}
-          <Card>
-            <CardHeader><CardTitle>Contact Principal</CardTitle></CardHeader>
+          <Card className="rounded-3xl">
+            <CardHeader><CardTitle className="flex items-center gap-2"><User className="w-5 h-5 text-muted-foreground" />Contact Principal</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               <div className="space-y-2">
                 <Label htmlFor="contactPrincipal.nom" className="text-muted-foreground">Nom</Label>
@@ -186,8 +186,8 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           </Card>
 
           {/* Missions Actuelles */}
-          <Card>
-            <CardHeader><CardTitle>Missions Actuelles</CardTitle></CardHeader>
+          <Card className="rounded-3xl">
+            <CardHeader><CardTitle className="flex items-center gap-2"><Briefcase className="w-5 h-5 text-muted-foreground" />Missions Actuelles</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               <div className="space-y-2">
                 <Label htmlFor="missionsActuelles.collaborateurReferent" className="text-muted-foreground">Collaborateur référent</Label>
@@ -205,8 +205,8 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           </Card>
 
           {/* Activités */}
-          <Card className="md:col-span-2 lg:col-span-1">
-            <CardHeader><CardTitle>Activités du client</CardTitle></CardHeader>
+          <Card className="md:col-span-2 lg:col-span-1 rounded-3xl">
+            <CardHeader><CardTitle className="flex items-center gap-2"><Activity className="w-5 h-5 text-muted-foreground" />Activités du client</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               <div className="space-y-2">
                 <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>
@@ -232,8 +232,8 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
           </Card>
 
           {/* Outils & Obligations */}
-          <Card>
-            <CardHeader><CardTitle>Outils & Obligations</CardTitle></CardHeader>
+          <Card className="rounded-3xl">
+            <CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="w-5 h-5 text-muted-foreground" />Outils & Obligations</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                <div className="space-y-2">
                 <Label htmlFor="outils" className="text-muted-foreground">Outils</Label>
