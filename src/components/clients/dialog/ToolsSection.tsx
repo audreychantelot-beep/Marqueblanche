@@ -19,11 +19,17 @@ interface ToolsSectionProps {
 
 const inputStyle = "bg-white dark:bg-zinc-800 border-none";
 
-const getStatusColor = (value: string | undefined) => {
-    if (value === 'Oui') return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-    if (value === 'Non') return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-    return '';
+const getStatusColorText = (value: string | undefined) => {
+    if (value === 'Oui') return 'text-green-600 dark:text-green-500';
+    if (value === 'Non') return 'text-red-600 dark:text-red-500';
+    return 'text-muted-foreground';
 };
+
+const getStatusColorSelect = (value: string | undefined) => {
+    if (value === 'Oui') return 'text-green-600 dark:text-green-500 bg-white dark:bg-zinc-800';
+    if (value === 'Non') return 'text-red-600 dark:text-red-500 bg-white dark:bg-zinc-800';
+    return 'text-muted-foreground bg-white dark:bg-zinc-800';
+}
 
 const toolFields = [
     { id: "logicielCaisse", label: "Logiciel de caisse", type: "questionnaire", question: "q4" },
@@ -64,7 +70,7 @@ export function ToolsSection({ editedClient, handleChange, handleValueChange }: 
                                     <Input
                                         value={answer.toString()}
                                         disabled
-                                        className={cn(inputStyle, "w-16 text-center", getStatusColor(answer.toString()))}
+                                        className={cn(inputStyle, "w-16 text-center font-medium", getStatusColorText(answer.toString()))}
                                     />
                                     <Input
                                         value={detail || ''}
@@ -100,7 +106,7 @@ export function ToolsSection({ editedClient, handleChange, handleValueChange }: 
                                 value={selectValue}
                                 onValueChange={(value) => handleValueChange(`outils.${field.id}`, value)}
                             >
-                                <SelectTrigger className={cn(inputStyle, "max-w-[120px] rounded-xl text-right", getStatusColor(selectValue))}>
+                                <SelectTrigger className={cn("max-w-[120px] rounded-xl text-right border-none font-medium", getStatusColorSelect(selectValue))}>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>

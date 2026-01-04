@@ -15,7 +15,7 @@ interface ObligationsSectionProps {
     setEditedClient: React.Dispatch<React.SetStateAction<ClientWithId | null>>;
 }
 
-const inputStyle = "bg-white dark:bg-zinc-800 border-none";
+const inputStyle = "bg-white dark:bg-zinc-800 border-none font-medium";
 
 const obligationFields = [
     { id: "assujettiReforme", label: "Assujetti à la réforme" },
@@ -27,9 +27,9 @@ const obligationFields = [
 ];
 
 const getStatusColor = (value: string | undefined) => {
-    if (value === 'Oui') return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-    if (value === 'Non') return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-    return '';
+    if (value === 'Oui') return 'text-green-600 dark:text-green-500';
+    if (value === 'Non') return 'text-red-600 dark:text-red-500';
+    return 'text-muted-foreground';
 };
 
 export function ObligationsSection({ editedClient, setEditedClient }: ObligationsSectionProps) {
