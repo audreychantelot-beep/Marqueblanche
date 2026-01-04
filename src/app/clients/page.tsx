@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle, Upload, Info, User, Briefcase, Activity, Wrench } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, PlusCircle, Upload, Info, User, Briefcase, Activity, Wrench, Settings2 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -255,11 +255,34 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
   );
 }
 
+const allColumns = {
+  identifiantInterne: "Identifiant interne",
+  siren: "SIREN",
+  raisonSociale: "Raison sociale",
+  formeJuridique: "Forme juridique",
+  contactPrincipal: "Contact principal",
+  collaborateurReferent: "Collaborateur référent",
+  expertComptableResponsable: "Expert-comptable responsable",
+  typeMission: "Type de mission",
+  codeAPE: "Code APE",
+  secteurActivites: "Secteur d’activités",
+  regimeTVA: "Régime de TVA",
+  regimeFiscal: "Régime fiscal",
+  typologieClientele: "Typologie de clientèle",
+  outils: "Outils",
+  obligationsLegales: "Obligations légales",
+};
+
+type ColumnKeys = keyof typeof allColumns;
+
 
 function ClientsContent() {
   const [clientList, setClientList] = useState(clients);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [visibleColumns, setVisibleColumns] = useState<Record<ColumnKeys, boolean>>(
+    Object.keys(allColumns).reduce((acc, key) => ({ ...acc, [key]: true }), {} as Record<ColumnKeys, boolean>)
+  );
 
   const handleEditClick = (client: Client) => {
     setSelectedClient(client);
@@ -272,6 +295,10 @@ function ClientsContent() {
     );
   };
 
+  const toggleColumn = (column: ColumnKeys) => {
+    setVisibleColumns(prev => ({ ...prev, [column]: !prev[column] }));
+  };
+
 
   return (
     <main className="flex flex-col p-4 md:p-6 lg:p-8 max-w-full mx-auto w-full">
@@ -281,6 +308,27 @@ function ClientsContent() {
           <p className="text-muted-foreground">Gérez vos clients et visualisez leurs informations.</p>
         </div>
         <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Settings2 className="mr-2 h-4 w-4" />
+                Personnaliser
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Afficher les colonnes</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {Object.entries(allColumns).map(([key, value]) => (
+                <DropdownMenuCheckboxItem
+                  key={key}
+                  checked={visibleColumns[key as ColumnKeys]}
+                  onCheckedChange={() => toggleColumn(key as ColumnKeys)}
+                >
+                  {value}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button variant="outline">
             <Upload className="mr-2 h-4 w-4" />
             Importer des clients
@@ -306,21 +354,21 @@ function ClientsContent() {
                   <TableHead>
                     <span className="sr-only">Actions</span>
                   </TableHead>
-                  <TableHead className="whitespace-nowrap">Identifiant interne</TableHead>
-                  <TableHead className="whitespace-nowrap">SIREN</TableHead>
-                  <TableHead className="whitespace-nowrap">Raison sociale</TableHead>
-                  <TableHead className="whitespace-nowrap">Forme juridique</TableHead>
-                  <TableHead className="whitespace-nowrap">Contact principal</TableHead>
-                  <TableHead className="whitespace-nowrap">Collaborateur référent</TableHead>
-                  <TableHead className="whitespace-nowrap">Expert-comptable responsable</TableHead>
-                  <TableHead className="whitespace-nowrap">Type de mission</TableHead>
-                  <TableHead className="whitespace-nowrap">Code APE</TableHead>
-                  <TableHead className="whitespace-nowrap">Secteur d’activités</TableHead>
-                  <TableHead className="whitespace-nowrap">Régime de TVA</TableHead>
-                  <TableHead className="whitespace-nowrap">Régime fiscal</TableHead>
-                  <TableHead className="whitespace-nowrap">Typologie de clientèle</TableHead>
-                  <TableHead className="whitespace-nowrap">Outils</TableHead>
-                  <TableHead className="whitespace-nowrap">Obligations légales</TableHead>
+                  {visibleColumns.identifiantInterne && <TableHead className="whitespace-nowrap">Identifiant interne</TableHead>}
+                  {visibleColumns.siren && <TableHead className="whitespace-nowrap">SIREN</TableHead>}
+                  {visibleColumns.raisonSociale && <TableHead className="whitespace-nowrap">Raison sociale</TableHead>}
+                  {visibleColumns.formeJuridique && <TableHead className="whitespace-nowrap">Forme juridique</TableHead>}
+                  {visibleColumns.contactPrincipal && <TableHead className="whitespace-nowrap">Contact principal</TableHead>}
+                  {visibleColumns.collaborateurReferent && <TableHead className="whitespace-nowrap">Collaborateur référent</TableHead>}
+                  {visibleColumns.expertComptableResponsable && <TableHead className="whitespace-nowrap">Expert-comptable responsable</TableHead>}
+                  {visibleColumns.typeMission && <TableHead className="whitespace-nowrap">Type de mission</TableHead>}
+                  {visibleColumns.codeAPE && <TableHead className="whitespace-nowrap">Code APE</TableHead>}
+                  {visibleColumns.secteurActivites && <TableHead className="whitespace-nowrap">Secteur d’activités</TableHead>}
+                  {visibleColumns.regimeTVA && <TableHead className="whitespace-nowrap">Régime de TVA</TableHead>}
+                  {visibleColumns.regimeFiscal && <TableHead className="whitespace-nowrap">Régime fiscal</TableHead>}
+                  {visibleColumns.typologieClientele && <TableHead className="whitespace-nowrap">Typologie de clientèle</TableHead>}
+                  {visibleColumns.outils && <TableHead className="whitespace-nowrap">Outils</TableHead>}
+                  {visibleColumns.obligationsLegales && <TableHead className="whitespace-nowrap">Obligations légales</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -341,11 +389,11 @@ function ClientsContent() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                    <TableCell className="font-medium whitespace-nowrap">{client.identifiantInterne}</TableCell>
-                    <TableCell className="whitespace-nowrap">{client.siren}</TableCell>
-                    <TableCell className="whitespace-nowrap">{client.raisonSociale}</TableCell>
-                    <TableCell className="whitespace-nowrap">{client.formeJuridique}</TableCell>
-                    <TableCell className="whitespace-nowrap">
+                    {visibleColumns.identifiantInterne && <TableCell className="font-medium whitespace-nowrap">{client.identifiantInterne}</TableCell>}
+                    {visibleColumns.siren && <TableCell className="whitespace-nowrap">{client.siren}</TableCell>}
+                    {visibleColumns.raisonSociale && <TableCell className="whitespace-nowrap">{client.raisonSociale}</TableCell>}
+                    {visibleColumns.formeJuridique && <TableCell className="whitespace-nowrap">{client.formeJuridique}</TableCell>}
+                    {visibleColumns.contactPrincipal && <TableCell className="whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <Avatar className="h-9 w-9">
                           <AvatarImage src={client.avatar} alt="Avatar" />
@@ -356,21 +404,21 @@ function ClientsContent() {
                           <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
                         </div>
                       </div>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">{client.missionsActuelles.collaborateurReferent}</TableCell>
-                    <TableCell className="whitespace-nowrap">{client.missionsActuelles.expertComptableResponsable}</TableCell>
-                    <TableCell className="whitespace-nowrap">
+                    </TableCell>}
+                    {visibleColumns.collaborateurReferent && <TableCell className="whitespace-nowrap">{client.missionsActuelles.collaborateurReferent}</TableCell>}
+                    {visibleColumns.expertComptableResponsable && <TableCell className="whitespace-nowrap">{client.missionsActuelles.expertComptableResponsable}</TableCell>}
+                    {visibleColumns.typeMission && <TableCell className="whitespace-nowrap">
                        <Badge variant={client.missionsActuelles.typeMission === 'Tenue' ? 'default' : client.missionsActuelles.typeMission === 'Révision' ? 'secondary' : 'outline'}>
                         {client.missionsActuelles.typeMission}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">{client.activites.codeAPE}</TableCell>
-                    <TableCell className="whitespace-nowrap">{client.activites.secteurActivites}</TableCell>
-                    <TableCell className="whitespace-nowrap">{client.activites.regimeTVA}</TableCell>
-                    <TableCell className="whitespace-nowrap">{client.activites.regimeFiscal}</TableCell>
-                    <TableCell className="whitespace-nowrap">{client.activites.typologieClientele}</TableCell>
-                    <TableCell className="whitespace-nowrap">{client.outils}</TableCell>
-                    <TableCell className="whitespace-nowrap">À définir</TableCell>
+                    </TableCell>}
+                    {visibleColumns.codeAPE && <TableCell className="whitespace-nowrap">{client.activites.codeAPE}</TableCell>}
+                    {visibleColumns.secteurActivites && <TableCell className="whitespace-nowrap">{client.activites.secteurActivites}</TableCell>}
+                    {visibleColumns.regimeTVA && <TableCell className="whitespace-nowrap">{client.activites.regimeTVA}</TableCell>}
+                    {visibleColumns.regimeFiscal && <TableCell className="whitespace-nowrap">{client.activites.regimeFiscal}</TableCell>}
+                    {visibleColumns.typologieClientele && <TableCell className="whitespace-nowrap">{client.activites.typologieClientele}</TableCell>}
+                    {visibleColumns.outils && <TableCell className="whitespace-nowrap">{client.outils}</TableCell>}
+                    {visibleColumns.obligationsLegales && <TableCell className="whitespace-nowrap">À définir</TableCell>}
                   </TableRow>
                 ))}
               </TableBody>
