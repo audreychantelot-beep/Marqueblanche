@@ -34,7 +34,7 @@ const clients = [
     avatar: "https://picsum.photos/seed/1/40/40",
     missionsActuelles: {
       collaborateurReferent: "Alice Martin",
-      expertComptableResponsable: "Bob Durand",
+      expertComptable: "Bob Durand",
       typeMission: "Tenue",
     },
     activites: {
@@ -61,7 +61,7 @@ const clients = [
     avatar: "https://picsum.photos/seed/2/40/40",
     missionsActuelles: {
       collaborateurReferent: "Charles Dupont",
-      expertComptableResponsable: "David Petit",
+      expertComptable: "David Petit",
       typeMission: "Révision",
     },
     activites: {
@@ -88,7 +88,7 @@ const clients = [
     avatar: "https://picsum.photos/seed/3/40/40",
     missionsActuelles: {
       collaborateurReferent: "Alice Martin",
-      expertComptableResponsable: "Bob Durand",
+      expertComptable: "Bob Durand",
       typeMission: "Autres",
     },
     activites: {
@@ -132,7 +132,7 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
       editedClient.contactPrincipal.prenom,
       editedClient.contactPrincipal.email,
       editedClient.missionsActuelles.collaborateurReferent,
-      editedClient.missionsActuelles.expertComptableResponsable,
+      editedClient.missionsActuelles.expertComptable,
       editedClient.missionsActuelles.typeMission,
       editedClient.activites.codeAPE,
       editedClient.activites.secteurActivites,
@@ -142,20 +142,17 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
     ];
 
     const filledFields = fields.filter(field => field && String(field).trim() !== '').length;
-    const totalFields = fields.length;
-    
-    const fieldsProgress = (filledFields / totalFields) * 100;
-    
-    // For now, obligations and questionnaire are simple booleans
-    const obligationsDefined = editedClient.obligationsLegales && Object.keys(editedClient.obligationsLegales).length > 0;
-    
-    const totalChecks = 3;
-    let completedChecks = 0;
-    if (fieldsProgress === 100) completedChecks++;
-    if (obligationsDefined) completedChecks++;
-    if (isQuestionnaireCompleted) completedChecks++;
+    const totalFields = fields.length; // 16 fields
+    const fieldsProgress = (filledFields / totalFields) * 50; // 50% of total progress
 
-    return (completedChecks / totalChecks) * 100;
+    // 25% of total progress
+    const obligationsDefined = editedClient.obligationsLegales && Object.keys(editedClient.obligationsLegales).length > 0;
+    const obligationsProgress = obligationsDefined ? 25 : 0;
+
+    // 25% of total progress
+    const questionnaireProgress = isQuestionnaireCompleted ? 25 : 0;
+    
+    return fieldsProgress + obligationsProgress + questionnaireProgress;
   }, [editedClient, isQuestionnaireCompleted]);
 
   if (!editedClient) return null;
@@ -279,8 +276,8 @@ function ClientEditDialog({ client, isOpen, onOpenChange, onSave }: { client: Cl
                   <Input id="missionsActuelles.collaborateurReferent" name="missionsActuelles.collaborateurReferent" value={editedClient.missionsActuelles.collaborateurReferent} onChange={handleChange} className={inputStyle} />
                 </div>
                  <div className="space-y-2">
-                  <Label htmlFor="missionsActuelles.expertComptableResponsable" className="text-muted-foreground">Expert-comptable</Label>
-                  <Input id="missionsActuelles.expertComptableResponsable" name="missionsActuelles.expertComptableResponsable" value={editedClient.missionsActuelles.expertComptableResponsable} onChange={handleChange} className={inputStyle} />
+                  <Label htmlFor="missionsActuelles.expertComptable" className="text-muted-foreground">Expert-comptable</Label>
+                  <Input id="missionsActuelles.expertComptable" name="missionsActuelles.expertComptable" value={editedClient.missionsActuelles.expertComptable} onChange={handleChange} className={inputStyle} />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                   <Label htmlFor="missionsActuelles.typeMission" className="text-muted-foreground">Type de mission</Label>
@@ -350,7 +347,7 @@ const allColumns = {
   formeJuridique: "Forme juridique",
   contactPrincipal: "Contact principal",
   collaborateurReferent: "Collaborateur référent",
-  expertComptableResponsable: "Expert-comptable",
+  expertComptable: "Expert-comptable",
   typeMission: "Type de mission",
   codeAPE: "Code APE",
   secteurActivites: "Secteur d’activités",
@@ -564,7 +561,7 @@ function ClientsContent() {
                                         {client.missionsActuelles.typeMission}
                                     </Badge>
                                 ) : key === 'collaborateurReferent' ? client.missionsActuelles.collaborateurReferent
-                                : key === 'expertComptableResponsable' ? client.missionsActuelles.expertComptableResponsable
+                                : key === 'expertComptable' ? client.missionsActuelles.expertComptable
                                 : key === 'codeAPE' ? client.activites.codeAPE
                                 : key === 'secteurActivites' ? client.activites.secteurActivites
                                 : key === 'regimeTVA' ? client.activites.regimeTVA
