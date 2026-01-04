@@ -13,10 +13,6 @@ function DashboardContent() {
 
   return (
     <main className="flex flex-col flex-1 p-4 md:p-6 max-w-full mx-auto w-full">
-      <div className="mb-6">
-        <h1 className="font-headline text-2xl font-semibold md:text-3xl">Dashboard</h1>
-        <p className="text-muted-foreground">Voici un aperçu de votre activité.</p>
-      </div>
       <div className="flex-1 flex gap-6">
         <div className="w-1/2 h-1/2">
             {dashboardImage && (
