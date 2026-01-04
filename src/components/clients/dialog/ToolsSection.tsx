@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +18,7 @@ interface ToolsSectionProps {
     handleValueChange: (name: string, value: string) => void;
 }
 
-const inputStyle = "bg-white dark:bg-zinc-800 border-none";
+const placeholderText = "À compléter";
 
 const getStatusColorText = (value: string | undefined) => {
     if (value === 'Oui') return 'text-green-600 dark:text-green-500';
@@ -48,76 +49,89 @@ export function ToolsSection({ editedClient, handleChange, handleValueChange }: 
     return (
         <Card className="rounded-3xl">
             <CardHeader><CardTitle className="flex items-center gap-2"><Construction className="w-5 h-5 text-muted-foreground" />Outils</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-left text-sm">
-                {toolFields.map(field => {
-                    if (field.type === 'questionnaire') {
-                        const qKey = field.question as keyof Questionnaire;
-                        const answer = editedClient.questionnaire?.[qKey] || "N/A";
-                        let detail: string | undefined;
+            <CardContent className="flex flex-col md:flex-row gap-8">
+                <div className="w-full md:w-1/3 relative aspect-[4/3] rounded-2xl overflow-hidden">
+                    <Image
+                        src="https://cdn.dribbble.com/userupload/32583993/file/original-5161968c87ad1b7f553d7a1fd00628cc.png?resize=1504x1131&vertical=center"
+                        alt="Illustration pour les outils"
+                        fill
+                        className="object-cover"
+                    />
+                </div>
+                <div className="w-full md:w-2/3 grid grid-cols-1 gap-y-4 text-left text-sm">
+                    {toolFields.map(field => {
+                        if (field.type === 'questionnaire') {
+                            const qKey = field.question as keyof Questionnaire;
+                            const answer = editedClient.questionnaire?.[qKey] || "N/A";
+                            let detail: string | undefined;
 
-                        if (answer === 'Oui') {
-                            const softwareKey = `${qKey}_software` as keyof Questionnaire;
-                            detail = editedClient.questionnaire?.[softwareKey]
-                        } else if (answer === 'Non') {
-                            const methodKey = `${qKey}_method` as keyof Questionnaire;
-                            detail = editedClient.questionnaire?.[methodKey]
+                            if (answer === 'Oui') {
+                                const softwareKey = `${qKey}_software` as keyof Questionnaire;
+                                detail = editedClient.questionnaire?.[softwareKey]
+                            } else if (answer === 'Non') {
+                                const methodKey = `${qKey}_method` as keyof Questionnaire;
+                                detail = editedClient.questionnaire?.[methodKey]
+                            }
+
+                            return (
+                                <div key={field.id} className="flex items-center justify-between">
+                                    <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
+                                    <div className="flex items-center gap-2 max-w-[200px]">
+                                        <Input
+                                            value={answer.toString()}
+                                            disabled
+                                            className={cn("w-16 text-center font-medium border-none", getStatusColorText(answer.toString()))}
+                                            placeholder={placeholderText}
+                                        />
+                                        <Input
+                                            value={detail || ''}
+                                            disabled
+                                            className={cn("flex-1 border-none")}
+                                            placeholder={placeholderText}
+                                        />
+                                    </div>
+                                </div>
+                            )
                         }
 
-                        return (
-                            <div key={field.id} className="flex items-center justify-between">
-                                <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
-                                <div className="flex items-center gap-2 max-w-[200px]">
+                        if (field.type === 'text') {
+                            return (
+                                <div key={field.id} className="flex items-center justify-between">
+                                    <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
                                     <Input
-                                        value={answer.toString()}
-                                        disabled
-                                        className={cn(inputStyle, "w-16 text-center font-medium", getStatusColorText(answer.toString()))}
-                                    />
-                                    <Input
-                                        value={detail || ''}
-                                        disabled
-                                        className={cn(inputStyle, "flex-1")}
+                                        id={`outils.${field.id}`}
+                                        name={`outils.${field.id}`}
+                                        value={(editedClient.outils as any)?.[field.id] || ''}
+                                        onChange={handleChange}
+                                        className={cn("max-w-[200px] border-none")}
+                                        placeholder={placeholderText}
                                     />
                                 </div>
-                            </div>
-                        )
-                    }
+                            )
+                        }
 
-                    if (field.type === 'text') {
+                        const selectValue = (editedClient.outils as any)?.[field.id] || "À définir";
                         return (
                             <div key={field.id} className="flex items-center justify-between">
                                 <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
-                                <Input
-                                    id={`outils.${field.id}`}
+                                <Select
                                     name={`outils.${field.id}`}
-                                    value={(editedClient.outils as any)?.[field.id] || ''}
-                                    onChange={handleChange}
-                                    className={cn(inputStyle, "max-w-[200px]")}
-                                />
+                                    value={selectValue}
+                                    onValueChange={(value) => handleValueChange(`outils.${field.id}`, value)}
+                                >
+                                    <SelectTrigger className={cn("max-w-[120px] rounded-xl text-right border-none font-medium", getStatusColorSelect(selectValue))}>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Oui">Oui</SelectItem>
+                                        <SelectItem value="Non">Non</SelectItem>
+                                        <SelectItem value="À définir">À définir</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         )
-                    }
-
-                    const selectValue = (editedClient.outils as any)?.[field.id] || "À définir";
-                    return (
-                        <div key={field.id} className="flex items-center justify-between">
-                            <Label htmlFor={`outils.${field.id}`} className="text-muted-foreground">{field.label}</Label>
-                            <Select
-                                name={`outils.${field.id}`}
-                                value={selectValue}
-                                onValueChange={(value) => handleValueChange(`outils.${field.id}`, value)}
-                            >
-                                <SelectTrigger className={cn("max-w-[120px] rounded-xl text-right border-none font-medium", getStatusColorSelect(selectValue))}>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Oui">Oui</SelectItem>
-                                    <SelectItem value="Non">Non</SelectItem>
-                                    <SelectItem value="À définir">À définir</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    )
-                })}
+                    })}
+                </div>
             </CardContent>
         </Card>
     );
