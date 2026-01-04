@@ -33,9 +33,9 @@ const getStatusColorText = (value: string | undefined) => {
 };
 
 const getScoringColor = (value: string | undefined) => {
-    if (value === 'Fortes') return 'text-red-600 dark:text-red-500';
+    if (value === 'Fortes') return 'text-green-600 dark:text-green-500';
     if (value === 'Intermédiaire') return 'text-orange-500 dark:text-orange-400';
-    if (value === 'Faibles') return 'text-green-600 dark:text-green-500';
+    if (value === 'Faibles') return 'text-blue-600 dark:text-blue-500';
     return 'text-muted-foreground';
 };
 
