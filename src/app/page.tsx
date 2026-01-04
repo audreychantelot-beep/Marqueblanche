@@ -30,47 +30,41 @@ function DashboardContent() {
   return (
     <main className="flex flex-col flex-1 p-4 md:px-6 max-w-full mx-auto w-full">
       <div className="flex-1 flex gap-6">
-        <div className="w-1/2 flex flex-col gap-6">
-          <div className="h-1/2">
-            {dashboardImage && (
-              <Card className="h-full w-full overflow-hidden">
-                <CardContent className="p-0 h-full">
-                  <div className="relative h-full w-full">
+        <div className="w-1/2">
+            <Card className="h-full w-full overflow-hidden flex flex-col">
+                {dashboardImage && (
+                <div className="h-1/2 w-full relative">
                     <Image
-                      src={dashboardImage.imageUrl}
-                      alt={dashboardImage.description}
-                      fill
-                      className="object-cover"
-                      data-ai-hint={dashboardImage.imageHint}
+                        src={dashboardImage.imageUrl}
+                        alt={dashboardImage.description}
+                        fill
+                        className="object-cover"
+                        data-ai-hint={dashboardImage.imageHint}
                     />
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-          <div className="h-1/2">
-            <Card className="h-full flex flex-col">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>Échéances à venir</CardTitle>
-                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Button variant="ghost" size="icon" onClick={goToPreviousWeek} className="h-6 w-6">
-                        <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <span>{format(currentDate, 'MMMM yyyy', { locale: fr })}</span>
-                    <Button variant="ghost" size="icon" onClick={goToNextWeek} className="h-6 w-6">
-                        <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
-              </CardHeader>
-              <CardContent className="flex-1 p-6">
-                <WeekCalendar 
-                  currentDate={currentDate}
-                />
-              </CardContent>
+                )}
+                <div className="h-1/2 flex flex-col">
+                    <CardHeader>
+                        <div className="flex justify-between items-center">
+                        <CardTitle>Échéances à venir</CardTitle>
+                        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                            <Button variant="ghost" size="icon" onClick={goToPreviousWeek} className="h-6 w-6">
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <span>{format(currentDate, 'MMMM yyyy', { locale: fr })}</span>
+                            <Button variant="ghost" size="icon" onClick={goToNextWeek} className="h-6 w-6">
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="flex-1 p-6">
+                        <WeekCalendar 
+                        currentDate={currentDate}
+                        />
+                    </CardContent>
+                </div>
             </Card>
-          </div>
         </div>
 
         <div className="w-1/3">
