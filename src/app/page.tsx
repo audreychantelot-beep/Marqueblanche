@@ -5,10 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/firebase";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Hand } from "lucide-react";
+import { Hand, ChevronLeft, ChevronRight } from "lucide-react";
 import { WeekCalendar } from "@/components/ui/week-calendar";
 import React, { useState } from "react";
-import { getWeek, addWeeks, subWeeks } from "date-fns";
+import { getWeek, addWeeks, subWeeks, format } from "date-fns";
+import { fr } from 'date-fns/locale';
+import { Button } from "@/components/ui/button";
 
 function DashboardContent() {
   const { user } = useUser();
@@ -51,14 +53,20 @@ function DashboardContent() {
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <CardTitle>Échéances à venir</CardTitle>
-                  <span className="text-sm font-medium text-muted-foreground">Semaine {weekNumber}</span>
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                    <Button variant="ghost" size="icon" onClick={goToPreviousWeek} className="h-6 w-6">
+                        <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <span>{format(currentDate, 'MMMM yyyy', { locale: fr })}</span>
+                    <Button variant="ghost" size="icon" onClick={goToNextWeek} className="h-6 w-6">
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="flex-1 p-6">
                 <WeekCalendar 
                   currentDate={currentDate}
-                  onPreviousWeek={goToPreviousWeek}
-                  onNextWeek={goToNextWeek}
                 />
               </CardContent>
             </Card>
