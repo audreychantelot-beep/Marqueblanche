@@ -80,8 +80,7 @@ export function ImportClientsDialog({
           </Alert>
         )}
 
-        <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
+        <div className="flex-1 overflow-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -117,7 +116,6 @@ export function ImportClientsDialog({
                 ))}
               </TableBody>
             </Table>
-          </ScrollArea>
         </div>
 
         <DialogFooter className="flex-row justify-between items-center w-full">
