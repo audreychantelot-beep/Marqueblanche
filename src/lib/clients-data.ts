@@ -339,5 +339,3 @@ export const clientImportFields = {
     'activites.typologieClientele': "Typologie de clientèle",
 };
     
-
-```
