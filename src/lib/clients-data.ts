@@ -320,5 +320,24 @@ export const clients: (Client & { id: string })[] = [
     eReportingPaiement: "E-reporting paiement",
   };
   
-
+export const clientImportFields = {
+    'identifiantInterne': "Identifiant interne",
+    'siren': "SIREN",
+    'raisonSociale': "Raison sociale",
+    'formeJuridique': "Forme juridique",
+    'dateDeCloture': "Date de clôture (JJ/MM)",
+    'contactPrincipal.nom': "Contact Principal - Nom",
+    'contactPrincipal.prenom': "Contact Principal - Prénom",
+    'contactPrincipal.email': "Contact Principal - Email",
+    'missionsActuelles.collaborateurReferent': "Collaborateur référent",
+    'missionsActuelles.expertComptable': "Expert-comptable",
+    'missionsActuelles.typeMission': "Type de mission",
+    'activites.codeAPE': "Code APE",
+    'activites.secteurActivites': "Secteur d’activités",
+    'activites.regimeTVA': "Régime de TVA",
+    'activites.regimeFiscal': "Régime fiscal",
+    'activites.typologieClientele': "Typologie de clientèle",
+};
     
+
+```
