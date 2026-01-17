@@ -395,7 +395,34 @@ function ClientsContent() {
                                 : key === 'regimeFiscal' ? client.activites.regimeFiscal
                                 : key === 'typologieClientele' ? client.activites.typologieClientele
                                 : key === 'dateDeCloture' ? client.dateDeCloture
-                                : key === 'obligationsLegales' ? "À définir"
+                                : key === 'obligationsLegales' ? (
+                                    <ul className="list-none space-y-1 text-xs whitespace-normal">
+                                        <li>
+                                            Assujetti à la réforme:{" "}
+                                            <span className="font-semibold">
+                                                {client.obligationsLegales?.assujettiReforme || 'À définir'}
+                                            </span>
+                                        </li>
+                                        <li>
+                                            E-invoicing:{" "}
+                                            <span className="font-semibold">
+                                                {client.obligationsLegales?.eInvoicing || 'À définir'}
+                                            </span>
+                                        </li>
+                                        <li>
+                                            E-reporting transactions:{" "}
+                                            <span className="font-semibold">
+                                                {client.obligationsLegales?.eReportingTransaction || 'À définir'}
+                                            </span>
+                                        </li>
+                                        <li>
+                                            E-reporting paiement:{" "}
+                                            <span className="font-semibold">
+                                                {client.obligationsLegales?.eReportingPaiement || 'À définir'}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                )
                                 : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'|'questionnaire'|'dateDeCloture'>]
                             }
                         </TableCell>
