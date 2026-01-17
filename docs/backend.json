@@ -245,6 +245,15 @@
           "items": {
             "type": "string"
           }
+        },
+        "migrationSteps": {
+            "type": "object",
+            "description": "Suivi des étapes de migration.",
+            "properties": {
+                "step1": { "type": "boolean", "description": "Création du dossier et paramétrage" },
+                "step2": { "type": "boolean", "description": "Remontée des données historiques" },
+                "step3": { "type": "boolean", "description": "Information du client" }
+            }
         }
       }
     }

@@ -1,7 +1,5 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -11,9 +9,11 @@ import { AppLayout } from "@/components/AppLayout";
 import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useUser, useFirestore, useMemoFirebase, useCollection } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
 import { cn } from "@/lib/utils";
 import { type Client, allColumns } from "@/lib/clients-data";
+import { Checkbox } from "@/components/ui/checkbox";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 type ClientWithId = Client & { id: string };
 
@@ -40,13 +40,35 @@ function SuiviMigrationContent() {
     router.push(`/clients/${client.id}`);
   };
 
-  const columnOrder: (keyof typeof allColumns)[] = useMemo(() => [
+  const handleStepChange = (client: ClientWithId, step: 'step1' | 'step2' | 'step3', checked: boolean) => {
+    if (!user || !firestore) return;
+    const clientDocRef = doc(firestore, 'users', user.uid, 'clients', client.id);
+    const updateData = {
+        migrationSteps: {
+            ...client.migrationSteps,
+            [step]: checked
+        }
+    };
+    setDocumentNonBlocking(clientDocRef, updateData, { merge: true });
+  };
+
+  const columnOrder: (keyof typeof allColumns | 'step1' | 'step2' | 'step3')[] = useMemo(() => [
     'identifiantInterne',
     'raisonSociale',
     'expertComptable',
     'collaborateurReferent',
-    'dateDeCloture'
+    'dateDeCloture',
+    'step1',
+    'step2',
+    'step3'
   ], []);
+
+  const columnLabels = {
+    ...allColumns,
+    step1: "1. Création & Paramétrage",
+    step2: "2. Remontée Données",
+    step3: "3. Information Client",
+  };
 
   return (
     <main className="flex flex-col p-4 md:p-6 max-w-full mx-auto w-full">
@@ -72,7 +94,7 @@ function SuiviMigrationContent() {
                     <span className="sr-only">Actions</span>
                   </TableHead>
                   {columnOrder.map(key =>
-                    <TableHead key={key} className="whitespace-nowrap">{allColumns[key]}</TableHead>
+                    <TableHead key={key} className="whitespace-nowrap">{columnLabels[key as keyof typeof columnLabels]}</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
@@ -84,7 +106,7 @@ function SuiviMigrationContent() {
                     </TableRow>
                 ))}
                 {migrationClients && migrationClients.map((client) => (
-                  <TableRow key={client.id} onClick={() => handleRowClick(client)} className="cursor-pointer">
+                  <TableRow key={client.id}>
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -100,15 +122,27 @@ function SuiviMigrationContent() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                    {columnOrder.map(key => (
-                        <TableCell key={key} className={cn("whitespace-nowrap", key === 'raisonSociale' && "font-medium")}>
+                    {columnOrder.map(key => {
+                      if (key === 'step1' || key === 'step2' || key === 'step3') {
+                        return (
+                          <TableCell key={key} className="text-center" onClick={(e) => e.stopPropagation()}>
+                            <Checkbox
+                                checked={client.migrationSteps?.[key] || false}
+                                onCheckedChange={(checked) => handleStepChange(client, key, !!checked)}
+                            />
+                          </TableCell>
+                        )
+                      }
+                      return (
+                        <TableCell key={key} onClick={() => handleRowClick(client)} className={cn("whitespace-nowrap cursor-pointer", key === 'raisonSociale' && "font-medium")}>
                             {
                                 key === 'collaborateurReferent' ? client.missionsActuelles.collaborateurReferent
                                 : key === 'expertComptable' ? client.missionsActuelles.expertComptable
                                 : client[key as keyof Pick<Client, 'identifiantInterne' | 'raisonSociale' | 'dateDeCloture'>]
                             }
                         </TableCell>
-                    ))}
+                      )
+                    })}
                   </TableRow>
                 ))}
               </TableBody>

@@ -74,6 +74,11 @@ export type Client = {
   maturiteDigitale?: string;
   cartographieClient?: string;
   actionsAMener?: string[];
+  migrationSteps?: {
+    step1: boolean;
+    step2: boolean;
+    step3: boolean;
+  };
 };
 
 export const clients: (Client & { id: string })[] = [
@@ -122,7 +127,9 @@ export const clients: (Client & { id: string })[] = [
         q12: "Oui",
         q12_actions: "Recherche de PDP",
         q13: "Non",
-      }
+      },
+      actionsAMener: ["Migration sur l'outil du cabinet"],
+      migrationSteps: { step1: true, step2: false, step3: false },
     },
     {
       id: "C002",
