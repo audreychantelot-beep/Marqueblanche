@@ -3,10 +3,11 @@
 import React, { useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Activity } from "lucide-react";
+import { Activity, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type Client, type Questionnaire } from "@/lib/clients-data";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from '@/components/ui/button';
 
 type ClientWithId = Client & { id: string };
 
@@ -33,6 +34,13 @@ const getCartographieStyle = (cartographie: string) => {
     if (cartographie.startsWith('Priorité haute')) return { text: 'text-red-800 dark:text-red-200', bg: 'bg-red-100 dark:bg-red-900/50' };
     return { text: 'text-blue-800 dark:text-blue-200', bg: 'bg-blue-100 dark:bg-blue-900/50' };
 };
+
+const actionOptions = [
+    "Migration sur l'outil du cabinet",
+    "Information client de ses obligations",
+    "Migration sur logiciel de comptabilité autres que celui du cabinet",
+    "Formation comptable interne sur logiciel du cabinet"
+];
 
 
 export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysisProps) {
@@ -129,14 +137,16 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
         });
     }, [digitalMaturity.level, obligationScore.level, cartographieClient, setEditedClient]);
 
-    const handleActionChange = (value: string) => {
+    const handleActionChange = (action: string) => {
         setEditedClient(prev => {
             if (!prev) return null;
-            if (prev.actionsAMener === value) {
-                return prev;
-            }
+            const currentActions = prev.actionsAMener || [];
+            const newActions = currentActions.includes(action)
+                ? currentActions.filter(a => a !== action)
+                : [...currentActions, action];
+
             const newClient = JSON.parse(JSON.stringify(prev));
-            newClient.actionsAMener = value;
+            newClient.actionsAMener = newActions;
             return newClient;
         });
     };
@@ -185,14 +195,30 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
                     <div className='border-b'></div>
                     <div>
                         <Label className="font-semibold text-sm">Actions à mener</Label>
-                        <Select onValueChange={handleActionChange} value={editedClient.actionsAMener || ''}>
-                            <SelectTrigger className={cn("w-full mt-2 rounded-3xl", !editedClient.actionsAMener && "border border-orange-500 text-orange-500")}>
-                                <SelectValue placeholder="Sélectionner une action..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="migration">Migration sur l'outil du cabinet</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" className={cn("w-full mt-2 justify-between rounded-3xl font-normal", (!editedClient.actionsAMener || editedClient.actionsAMener.length === 0) && "border border-orange-500 text-orange-500")}>
+                                    {editedClient.actionsAMener && editedClient.actionsAMener.length > 0
+                                        ? `${editedClient.actionsAMener.length} action(s) sélectionnée(s)`
+                                        : "Sélectionner des actions..."}
+                                    <ChevronDown className="h-4 w-4 opacity-50" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-full">
+                                <DropdownMenuLabel>Sélectionner les actions</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                {actionOptions.map(option => (
+                                <DropdownMenuCheckboxItem
+                                    key={option}
+                                    checked={editedClient.actionsAMener?.includes(option)}
+                                    onCheckedChange={() => handleActionChange(option)}
+                                    onSelect={(e) => e.preventDefault()}
+                                >
+                                    {option}
+                                </DropdownMenuCheckboxItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </CardContent>

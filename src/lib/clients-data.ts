@@ -72,7 +72,7 @@ export type Client = {
   questionnaire?: Questionnaire;
   maturiteDigitale?: string;
   cartographieClient?: string;
-  actionsAMener?: string;
+  actionsAMener?: string[];
 };
 
 export const clients: (Client & { id: string })[] = [

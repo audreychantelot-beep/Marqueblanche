@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Theme": {
@@ -237,7 +238,13 @@
         "questionnaire": { "$ref": "#/entities/Questionnaire" },
         "maturiteDigitale": { "type": "string", "description": "Client's digital maturity level (Faible, Intermédiaire, Élevée)." },
         "cartographieClient": { "type": "string", "description": "The client's mapping based on digital maturity and legal obligations." },
-        "actionsAMener": { "type": "string", "description": "Actions to be taken for the client." }
+        "actionsAMener": {
+          "type": "array",
+          "description": "Actions to be taken for the client.",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     }
   },

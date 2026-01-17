@@ -48,7 +48,7 @@ const emptyClientTemplate: Omit<Client, 'identifiantInterne'> = {
   outils: {},
   maturiteDigitale: "À définir",
   cartographieClient: "À définir",
-  actionsAMener: "",
+  actionsAMener: [],
 };
 
 
@@ -154,7 +154,7 @@ export function ClientForm({ client }: ClientFormProps) {
     if (isQuestionnaireCompleted) {
         completedChecklistItems += 1;
     }
-    if (editedClient.actionsAMener) {
+    if (editedClient.actionsAMener && editedClient.actionsAMener.length > 0) {
         completedChecklistItems += 1;
     }
     
