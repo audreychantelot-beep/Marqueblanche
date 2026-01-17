@@ -311,8 +311,8 @@ function ClientsContent() {
         setClientsToImport(parsedClients);
         setImportErrors([]);
       } catch (error) {
-          console.error("Error parsing Excel file:", error);
-          setImportErrors(["Le fichier semble corrompu ou n'est pas au format attendu (XLSX, CSV)."]);
+          console.error("Error parsing file:", error);
+          setImportErrors(["Le fichier semble corrompu ou n'est pas au format attendu (XLS, XLSX, CSV)."]);
           setClientsToImport([]);
       }
       setIsImporting(true);
