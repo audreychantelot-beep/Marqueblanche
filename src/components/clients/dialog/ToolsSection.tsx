@@ -64,6 +64,18 @@ export function ToolsSection({ editedClient, handleChange, handleValueChange }: 
                             return null;
                         }
 
+                        if (field.id === 'conformeFacturationElectronique' && editedClient.questionnaire?.q5 === 'Non') {
+                            return null;
+                        }
+
+                        if ((field.id === 'interoperableComptable' || field.id === 'interoperablePaEmission') && editedClient.questionnaire?.q6 === 'Non') {
+                            return null;
+                        }
+
+                        if ((field.id === 'interoperableAutresLogiciels' || field.id === 'logicielNotesFrais') && editedClient.questionnaire?.q7 === 'Non') {
+                            return null;
+                        }
+
                         if (field.type === 'questionnaire') {
                             const qKey = field.question as keyof Questionnaire;
                             const answer = editedClient.questionnaire?.[qKey] || "N/A";
