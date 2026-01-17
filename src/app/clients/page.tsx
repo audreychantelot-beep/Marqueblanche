@@ -12,7 +12,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser, useFirestore, useMemoFirebase, useCollection, useDoc } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
-import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { setDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { cn } from "@/lib/utils";
 import { type Client, allColumns, type Questionnaire } from "@/lib/clients-data";
 import { Input } from "@/components/ui/input";
@@ -481,7 +481,7 @@ function ClientsContent() {
                     <span className="sr-only">Actions</span>
                   </TableHead>
                   {columnOrder.map(key => 
-                    visibleColumns[key as ColumnKeys] && <TableHead key={key} className="whitespace-nowrap p-0">{getHeader(key as ColumnKeys)}</TableHead>
+                    visibleColumns[key as ColumnKeys] && <TableHead key={key} className="whitespace-nowrap p-0 select-none">{getHeader(key as ColumnKeys)}</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
