@@ -5,16 +5,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle, Upload, Settings2, GripVertical } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Upload, Settings2, GripVertical, Filter } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useUser, useFirestore, useMemoFirebase, useCollection, useDoc } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { cn } from "@/lib/utils";
 import { type Client, allColumns } from "@/lib/clients-data";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type ColumnKeys = keyof typeof allColumns;
 const PAGE_ID = 'clients';
@@ -23,7 +28,6 @@ type ClientWithId = Client & { id: string };
 
 const defaultVisibleColumns = Object.keys(allColumns).reduce((acc, key) => ({ ...acc, [key]: true }), {} as Record<ColumnKeys, boolean>);
 const defaultColumnOrder = Object.keys(allColumns) as ColumnKeys[];
-
 
 function ClientsContent() {
   const { user } = useUser();
@@ -46,6 +50,7 @@ function ClientsContent() {
 
   const [visibleColumns, setVisibleColumns] = useState<Record<ColumnKeys, boolean>>(defaultVisibleColumns);
   const [columnOrder, setColumnOrder] = useState<ColumnKeys[]>(defaultColumnOrder);
+  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
   
   const dragItem = useRef<number | null>(null);
   const dragOverItem = useRef<number | null>(null);
@@ -66,6 +71,74 @@ function ClientsContent() {
       }
     }
   }, [preferencesData, isLoadingPreferences]);
+
+  const filterOptions = useMemo(() => {
+    if (!clientList) return {
+      formesJuridiques: [],
+      datesDeCloture: [],
+      collaborateursReferents: [],
+      expertsComptables: [],
+      typesMission: [],
+      regimesTVA: [],
+      typologiesClientele: []
+    };
+    const formesJuridiques = [...new Set(clientList.map(c => c.formeJuridique).filter(Boolean))];
+    const datesDeCloture = [...new Set(clientList.map(c => c.dateDeCloture).filter(Boolean).sort())];
+    const collaborateursReferents = [...new Set(clientList.map(c => c.missionsActuelles.collaborateurReferent).filter(Boolean))];
+    const expertsComptables = [...new Set(clientList.map(c => c.missionsActuelles.expertComptable).filter(Boolean))];
+    const typesMission = [...new Set(clientList.map(c => c.missionsActuelles.typeMission).filter(Boolean))];
+    const regimesTVA = [...new Set(clientList.map(c => c.activites.regimeTVA).filter(Boolean))];
+    const typologiesClientele = [...new Set(clientList.map(c => c.activites.typologieClientele).filter(Boolean))];
+
+    return { formesJuridiques, datesDeCloture, collaborateursReferents, expertsComptables, typesMission, regimesTVA, typologiesClientele };
+  }, [clientList]);
+
+  const filteredClients = useMemo(() => {
+    if (!clientList) return [];
+    let clients = [...clientList];
+
+    Object.entries(columnFilters).forEach(([key, filterValue]) => {
+      if (!filterValue || (Array.isArray(filterValue) && filterValue.length === 0)) {
+        return;
+      }
+
+      clients = clients.filter(client => {
+        const columnKey = key as ColumnKeys;
+
+        switch (columnKey) {
+          case 'identifiantInterne':
+          case 'siren':
+          case 'raisonSociale':
+          case 'codeAPE':
+          case 'secteurActivites':
+          case 'regimeFiscal':
+            const clientValueText = client[columnKey as keyof Client] as string;
+            return clientValueText?.toLowerCase().includes((filterValue as string).toLowerCase());
+
+          case 'formeJuridique':
+          case 'dateDeCloture':
+            const clientValueSelect = client[columnKey as keyof Client] as string;
+            return (filterValue as string[]).includes(clientValueSelect);
+
+          case 'collaborateurReferent':
+          case 'expertComptable':
+          case 'typeMission':
+            const clientValueMission = client.missionsActuelles[columnKey as keyof Client['missionsActuelles']];
+            return (filterValue as string[]).includes(clientValueMission);
+
+          case 'regimeTVA':
+          case 'typologieClientele':
+            const clientValueActivite = client.activites[columnKey as keyof Client['activites']];
+            return (filterValue as string[]).includes(clientValueActivite);
+
+          default:
+            return true;
+        }
+      });
+    });
+
+    return clients;
+  }, [clientList, columnFilters]);
 
   const handleRowClick = (client: ClientWithId) => {
     router.push(`/clients/${client.id}`);
@@ -113,6 +186,92 @@ function ClientsContent() {
     setColumnOrder(newColumnOrder);
     savePreferences(visibleColumns, newColumnOrder);
   };
+
+  const renderTextFilter = (columnId: string, title: string) => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" className="flex items-center gap-2 p-2 h-auto text-left justify-start w-full font-medium">
+          {title}
+          {columnFilters[columnId] ? <Filter className="h-3 w-3 text-primary" /> : <Filter className="h-3 w-3 opacity-50" />}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-60">
+        <div className="space-y-2">
+          <Label htmlFor={`filter-${columnId}`}>Filtrer par {title}</Label>
+          <Input
+            id={`filter-${columnId}`}
+            placeholder="Rechercher..."
+            value={columnFilters[columnId] || ''}
+            onChange={(e) => setColumnFilters(prev => ({ ...prev, [columnId]: e.target.value || undefined }))}
+          />
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+
+  const renderCheckboxFilter = (columnId: string, title: string, options: string[]) => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" className="flex items-center gap-2 p-2 h-auto text-left justify-start w-full font-medium">
+          {title}
+          {columnFilters[columnId]?.length ? <Filter className="h-3 w-3 text-primary" /> : <Filter className="h-3 w-3 opacity-50" />}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-60">
+        <div className="space-y-2">
+          <Label>Filtrer par {title}</Label>
+          <ScrollArea className="h-40">
+            {options.map(option => (
+              <div key={option} className="flex items-center space-x-2 p-1">
+                <Checkbox
+                  id={`filter-${columnId}-${option}`}
+                  checked={(columnFilters[columnId] || []).includes(option)}
+                  onCheckedChange={checked => {
+                    const currentSelection = columnFilters[columnId] || [];
+                    const newSelection = checked ? [...currentSelection, option] : currentSelection.filter((item: string) => item !== option);
+                    setColumnFilters(prev => ({ ...prev, [columnId]: newSelection.length ? newSelection : undefined }));
+                  }}
+                />
+                <Label htmlFor={`filter-${columnId}-${option}`} className="font-normal">{option}</Label>
+              </div>
+            ))}
+          </ScrollArea>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+
+  const getHeader = (key: ColumnKeys) => {
+    const title = allColumns[key];
+    switch (key) {
+      case 'identifiantInterne':
+      case 'siren':
+      case 'raisonSociale':
+      case 'codeAPE':
+      case 'secteurActivites':
+      case 'regimeFiscal':
+        return renderTextFilter(key, title);
+      case 'formeJuridique':
+        return renderCheckboxFilter(key, title, filterOptions.formesJuridiques);
+      case 'dateDeCloture':
+        return renderCheckboxFilter(key, title, filterOptions.datesDeCloture);
+      case 'collaborateurReferent':
+        return renderCheckboxFilter(key, title, filterOptions.collaborateursReferents);
+      case 'expertComptable':
+        return renderCheckboxFilter(key, title, filterOptions.expertsComptables);
+      case 'typeMission':
+        return renderCheckboxFilter(key, title, filterOptions.typesMission);
+      case 'regimeTVA':
+        return renderCheckboxFilter(key, title, filterOptions.regimesTVA);
+      case 'typologieClientele':
+        return renderCheckboxFilter(key, title, filterOptions.typologiesClientele);
+      case 'contactPrincipal':
+      case 'obligationsLegales':
+      default:
+        return <div className="p-2 font-medium">{title}</div>;
+    }
+  };
+
 
   return (
     <main className="flex flex-col p-4 md:p-6 max-w-full mx-auto w-full">
@@ -182,7 +341,7 @@ function ClientsContent() {
                     <span className="sr-only">Actions</span>
                   </TableHead>
                   {columnOrder.map(key => 
-                    visibleColumns[key as ColumnKeys] && <TableHead key={key} className="whitespace-nowrap">{allColumns[key as ColumnKeys]}</TableHead>
+                    visibleColumns[key as ColumnKeys] && <TableHead key={key} className="whitespace-nowrap p-0">{getHeader(key as ColumnKeys)}</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
@@ -193,7 +352,7 @@ function ClientsContent() {
                         {columnOrder.map(key => visibleColumns[key as ColumnKeys] && <TableCell key={key}>...</TableCell>)}
                     </TableRow>
                 ))}
-                {clientList && clientList.map((client) => (
+                {filteredClients && filteredClients.map((client) => (
                   <TableRow key={client.id} onClick={() => handleRowClick(client)} className="cursor-pointer">
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
