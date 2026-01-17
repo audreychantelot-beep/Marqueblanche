@@ -60,6 +60,10 @@ export function ToolsSection({ editedClient, handleChange, handleValueChange }: 
                 </div>
                 <div className="w-full md:w-2/3 grid grid-cols-1 gap-y-4 text-left text-sm">
                     {toolFields.map(field => {
+                        if (field.id === 'genereEReporting' && editedClient.questionnaire?.q4 === 'Non') {
+                            return null;
+                        }
+
                         if (field.type === 'questionnaire') {
                             const qKey = field.question as keyof Questionnaire;
                             const answer = editedClient.questionnaire?.[qKey] || "N/A";
