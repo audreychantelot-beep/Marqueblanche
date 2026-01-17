@@ -43,7 +43,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { name: "Dashboard", icon: Home, href: "/" },
-    { name: "Suivi migration", icon: LineChart, href: "#" },
+    { name: "Suivi migration", icon: LineChart, href: "/suivi-migration" },
     { name: "Clients", icon: Users, href: "/clients" },
   ];
 
