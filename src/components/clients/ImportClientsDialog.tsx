@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { XCircle, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -119,6 +118,9 @@ export function ImportClientsDialog({
         if (!newClient.identifiantInterne) {
           newClient.identifiantInterne = `client_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
         }
+        if(!newClient.contactPrincipal) newClient.contactPrincipal = {nom: '', prenom: '', email: ''};
+        if(!newClient.missionsActuelles) newClient.missionsActuelles = {collaborateurReferent: '', expertComptable: '', typeMission: ''};
+        if(!newClient.activites) newClient.activites = {codeAPE: '', secteurActivites: '', regimeTVA: '', regimeFiscal: '', typologieClientele: ''};
 
         try {
           await addDocumentNonBlocking(clientsCollectionRef, newClient);
@@ -165,45 +167,43 @@ export function ImportClientsDialog({
           </Alert>
         )}
 
-        <ScrollArea className="flex-1 -mx-6">
-          <div className="overflow-x-auto px-6">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {headers.map((header, index) => (
-                    <TableHead key={index} className="min-w-[200px]">
-                      <div className="flex flex-col gap-2">
-                          <span className="font-bold text-foreground">{header || `Colonne ${index + 1}`}</span>
-                          <Select onValueChange={(value) => handleMappingChange(header, value)} value={mappings[header] || ''}>
-                              <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Mapper à un champ..." />
-                              </SelectTrigger>
-                              <SelectContent>
-                                  <SelectItem value="ignore">Ignorer cette colonne</SelectItem>
-                                  {Object.entries(clientImportFields).map(([key, label]) => (
-                                      <SelectItem key={key} value={key} disabled={usedTargetFields.includes(key) && mappings[header] !== key}>
-                                        {label}
-                                      </SelectItem>
-                                  ))}
-                              </SelectContent>
-                          </Select>
-                      </div>
-                    </TableHead>
+        <div className="flex-1 overflow-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {headers.map((header, index) => (
+                  <TableHead key={index} className="min-w-[200px]">
+                    <div className="flex flex-col gap-2">
+                        <span className="font-bold text-foreground">{header || `Colonne ${index + 1}`}</span>
+                        <Select onValueChange={(value) => handleMappingChange(header, value)} value={mappings[header] || ''}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Mapper à un champ..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="ignore">Ignorer cette colonne</SelectItem>
+                                {Object.entries(clientImportFields).map(([key, label]) => (
+                                    <SelectItem key={key} value={key} disabled={usedTargetFields.includes(key) && mappings[header] !== key}>
+                                      {label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.slice(0, 5).map((row, rowIndex) => ( // Show only first 5 rows as preview
+                <TableRow key={rowIndex}>
+                  {headers.map((_, cellIndex) => (
+                     <TableCell key={cellIndex} className="truncate max-w-[200px]">{row[cellIndex]}</TableCell>
                   ))}
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.slice(0, 5).map((row, rowIndex) => ( // Show only first 5 rows as preview
-                  <TableRow key={rowIndex}>
-                    {headers.map((_, cellIndex) => (
-                       <TableCell key={cellIndex} className="truncate max-w-[200px]">{row[cellIndex]}</TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </ScrollArea>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
         <DialogFooter className="flex-row justify-between items-center w-full">
           <div className="text-sm text-muted-foreground">
