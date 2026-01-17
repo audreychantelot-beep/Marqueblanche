@@ -142,11 +142,8 @@ function DashboardContent() {
     <main className="flex flex-col flex-1 p-4 md:px-6 max-w-full mx-auto w-full">
        <Card className="mb-6 rounded-3xl">
         <CardHeader>
-          <CardTitle className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <span>Bonjour, {user?.displayName?.split(' ')[0] || 'Utilisateur'} !</span>
-            <Hand className="h-5 w-5 text-amber-500" />
-          </CardTitle>
-          <CardDescription>Voici un aperçu de votre activité.</CardDescription>
+          <CardTitle>Tableau de bord suivi des clients</CardTitle>
+          <CardDescription>Filtrez et visualisez les données de vos clients.</CardDescription>
         </CardHeader>
         <CardContent>
             <div className="flex items-center gap-4">
