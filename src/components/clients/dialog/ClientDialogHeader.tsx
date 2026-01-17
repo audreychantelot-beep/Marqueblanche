@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, FileQuestion, ArrowLeft } from "lucide-react";
+import { CheckCircle, FileQuestion, ArrowLeft, Loader2, Check } from "lucide-react";
 import { type Client } from "@/lib/clients-data";
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -17,9 +17,23 @@ interface ClientPageHeaderProps {
     handleSave: () => void;
     isNewClient: boolean;
     onOpenQuestionnaire: () => void;
+    saveStatus: 'idle' | 'saving' | 'saved';
 }
 
-export function ClientPageHeader({ client, raisonSociale, completionPercentage, handleSave, isNewClient, onOpenQuestionnaire }: ClientPageHeaderProps) {
+const SaveStatusIndicator = ({ status }: { status: 'idle' | 'saving' | 'saved' }) => {
+    if (status === 'idle') {
+        return null;
+    }
+    if (status === 'saving') {
+        return <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="w-4 h-4 animate-spin" /><span>Enregistrement...</span></div>
+    }
+    if (status === 'saved') {
+        return <div className="flex items-center gap-2 text-sm text-green-600"><Check className="w-4 h-4" /><span>Enregistré</span></div>
+    }
+    return null;
+}
+
+export function ClientPageHeader({ client, raisonSociale, completionPercentage, handleSave, isNewClient, onOpenQuestionnaire, saveStatus }: ClientPageHeaderProps) {
     const router = useRouter();
     
     return (
@@ -47,6 +61,7 @@ export function ClientPageHeader({ client, raisonSociale, completionPercentage, 
                                 className={cn("mt-1 h-2 w-48", completionPercentage === 100 && "[&>div]:bg-green-500")} 
                             />
                         </div>
+                         {!isNewClient && <SaveStatusIndicator status={saveStatus} />}
                     </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -59,7 +74,7 @@ export function ClientPageHeader({ client, raisonSociale, completionPercentage, 
                         Questionnaire
                     </Button>
                     <Button variant="outline" onClick={() => router.push('/clients')}>Annuler</Button>
-                    <Button onClick={handleSave}>Sauvegarder</Button>
+                    {isNewClient && <Button onClick={handleSave}>Sauvegarder</Button>}
                 </div>
             </div>
         </header>

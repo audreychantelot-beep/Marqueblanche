@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { QuestionnaireDialog } from "@/components/clients/QuestionnaireDialog";
 import { type Client, type Questionnaire } from "@/lib/clients-data";
@@ -72,6 +72,8 @@ export function ClientForm({ client }: ClientFormProps) {
 
   const [isQuestionnaireOpen, setIsQuestionnaireOpen] = useState(false);
   const [isQuestionnaireCompleted, setIsQuestionnaireCompleted] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const firstRender = useRef(true);
 
   useEffect(() => {
     if(client?.questionnaire) {
@@ -82,15 +84,39 @@ export function ClientForm({ client }: ClientFormProps) {
     }
   }, [client]);
 
+  // Auto-save effect
+  useEffect(() => {
+    if (firstRender.current) {
+        firstRender.current = false;
+        return;
+    }
+
+    if (isNewClient || !editedClient || !user || !firestore) {
+      return;
+    }
+
+    setSaveStatus('saving');
+    const handler = setTimeout(() => {
+      const { id, ...clientData } = editedClient;
+      const clientDocRef = doc(firestore, 'users', user.uid, 'clients', id);
+      setDocumentNonBlocking(clientDocRef, clientData, { merge: true });
+      setSaveStatus('saved');
+      
+      const statusHandler = setTimeout(() => setSaveStatus('idle'), 2000);
+      return () => clearTimeout(statusHandler);
+
+    }, 1500); // 1.5s debounce
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [editedClient, isNewClient, user, firestore]);
+
   const handleQuestionnaireSave = (data: Questionnaire) => {
     if (editedClient) {
       const updatedClient = { ...editedClient, questionnaire: data };
       setEditedClient(updatedClient);
       
-      if (user && firestore) {
-          const clientDocRef = doc(firestore, 'users', user.uid, 'clients', updatedClient.id);
-          setDocumentNonBlocking(clientDocRef, { questionnaire: data }, { merge: true });
-      }
       toast({
           title: "Questionnaire sauvegardé",
           description: `Les réponses pour ${updatedClient.raisonSociale} ont été enregistrées.`,
@@ -156,21 +182,19 @@ export function ClientForm({ client }: ClientFormProps) {
   };
 
   const handleSave = () => {
-    if (editedClient && user && firestore) {
+    if (isNewClient && editedClient && user && firestore) {
       const { id, ...clientData } = editedClient;
-      if (isNewClient) {
-        const clientsCollectionRef = collection(firestore, 'users', user.uid, 'clients');
-        addDocumentNonBlocking(clientsCollectionRef, clientData)
-          .then(() => router.push('/clients'));
-      } else {
-        const clientDocRef = doc(firestore, 'users', user.uid, 'clients', id);
-        setDocumentNonBlocking(clientDocRef, clientData, { merge: true });
-        router.push('/clients');
-      }
-      toast({
-        title: isNewClient ? "Client créé" : "Client sauvegardé",
-        description: `Les informations pour ${editedClient.raisonSociale} ont été mises à jour.`,
-      });
+      const clientsCollectionRef = collection(firestore, 'users', user.uid, 'clients');
+      addDocumentNonBlocking(clientsCollectionRef, clientData)
+        .then((docRef) => {
+            if (docRef?.id) {
+                toast({
+                    title: "Client créé",
+                    description: `Le client ${editedClient.raisonSociale} a été créé.`,
+                });
+                router.push(`/clients/${docRef.id}`);
+            }
+        });
     }
   }
   
@@ -185,6 +209,7 @@ export function ClientForm({ client }: ClientFormProps) {
          handleSave={handleSave}
          isNewClient={isNewClient}
          onOpenQuestionnaire={() => setIsQuestionnaireOpen(true)}
+         saveStatus={saveStatus}
       />
       <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         <div className="lg:col-span-3 flex flex-col h-full">
