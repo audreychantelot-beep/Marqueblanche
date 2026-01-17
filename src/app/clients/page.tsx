@@ -235,8 +235,9 @@ function ClientsContent() {
                                 : key === 'regimeTVA' ? client.activites.regimeTVA
                                 : key === 'regimeFiscal' ? client.activites.regimeFiscal
                                 : key === 'typologieClientele' ? client.activites.typologieClientele
+                                : key === 'dateDeCloture' ? (client.dateDeCloture ? new Date(client.dateDeCloture + 'T00:00:00').toLocaleDateString('fr-FR') : '')
                                 : key === 'obligationsLegales' ? "À définir"
-                                : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'|'questionnaire'>]
+                                : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'|'questionnaire'|'dateDeCloture'>]
                             }
                         </TableCell>
                     ))}

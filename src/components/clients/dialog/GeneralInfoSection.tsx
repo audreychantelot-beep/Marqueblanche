@@ -37,6 +37,10 @@ export function GeneralInfoSection({ editedClient, handleChange, handleValueChan
                         <Input id="formeJuridique" name="formeJuridique" value={editedClient.formeJuridique || ''} onChange={handleChange} className="border-none" placeholder={placeholderText}/>
                     </div>
                 </div>
+                <div className="space-y-2">
+                    <Label htmlFor="dateDeCloture" className="text-muted-foreground">Date de clôture</Label>
+                    <Input id="dateDeCloture" name="dateDeCloture" type="date" value={editedClient.dateDeCloture || ''} onChange={handleChange} className="w-full border-none"/>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="activites.codeAPE" className="text-muted-foreground">Code APE</Label>

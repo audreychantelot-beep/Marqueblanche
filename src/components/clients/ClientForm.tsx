@@ -25,6 +25,7 @@ const emptyClientTemplate: Omit<Client, 'identifiantInterne'> = {
   siren: "",
   raisonSociale: "",
   formeJuridique: "",
+  dateDeCloture: "",
   contactPrincipal: {
     nom: "",
     prenom: "",
@@ -133,6 +134,7 @@ export function ClientForm({ client }: ClientFormProps) {
       editedClient.siren,
       editedClient.raisonSociale,
       editedClient.formeJuridique,
+      editedClient.dateDeCloture,
       editedClient.contactPrincipal.nom,
       editedClient.contactPrincipal.prenom,
       editedClient.contactPrincipal.email,

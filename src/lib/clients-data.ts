@@ -30,6 +30,7 @@ export type Client = {
   siren: string;
   raisonSociale: string;
   formeJuridique: string;
+  dateDeCloture?: string;
   contactPrincipal: {
     nom: string;
     prenom: string;
@@ -82,6 +83,7 @@ export const clients: (Client & { id: string })[] = [
       siren: "123456789",
       raisonSociale: "Johnson & Co",
       formeJuridique: "SARL",
+      dateDeCloture: "2024-12-31",
       contactPrincipal: {
         nom: "Johnson",
         prenom: "Liam",
@@ -128,6 +130,7 @@ export const clients: (Client & { id: string })[] = [
       siren: "987654321",
       raisonSociale: "Smith Enterprises",
       formeJuridique: "SAS",
+      dateDeCloture: "2024-12-31",
       contactPrincipal: {
         nom: "Smith",
         prenom: "Olivia",
@@ -160,6 +163,7 @@ export const clients: (Client & { id: string })[] = [
       siren: "112233445",
       raisonSociale: "Williams Solutions",
       formeJuridique: "EURL",
+      dateDeCloture: "2024-12-31",
       contactPrincipal: {
         nom: "Williams",
         prenom: "Noah",
@@ -192,6 +196,7 @@ export const clients: (Client & { id: string })[] = [
       siren: "556677889",
       raisonSociale: "Brown Industries",
       formeJuridique: "SA",
+      dateDeCloture: "2024-12-31",
       contactPrincipal: {
         nom: "Brown",
         prenom: "Emma",
@@ -219,6 +224,7 @@ export const clients: (Client & { id: string })[] = [
       siren: "998877665",
       raisonSociale: "Innovatech",
       formeJuridique: "SASU",
+      dateDeCloture: "2024-12-31",
       contactPrincipal: {
         nom: "Leroy",
         prenom: "Lucas",
@@ -246,6 +252,7 @@ export const clients: (Client & { id: string })[] = [
       siren: "333444555",
       raisonSociale: "Gourmet Express",
       formeJuridique: "SARL",
+      dateDeCloture: "2024-12-31",
       contactPrincipal: {
         nom: "Garcia",
         prenom: "Mia",
@@ -274,6 +281,7 @@ export const clients: (Client & { id: string })[] = [
     siren: "SIREN",
     raisonSociale: "Raison sociale",
     formeJuridique: "Forme juridique",
+    dateDeCloture: "Date de clôture",
     contactPrincipal: "Contact principal",
     collaborateurReferent: "Collaborateur référent",
     expertComptable: "Expert-comptable",
