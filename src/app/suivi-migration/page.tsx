@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { type Client } from "@/lib/clients-data";
 import { Checkbox } from "@/components/ui/checkbox";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { Input } from "@/components/ui/input";
 
 type ClientWithId = Client & { id: string };
 
@@ -65,6 +66,17 @@ function SuiviMigrationContent() {
     setDocumentNonBlocking(clientDocRef, updateData, { merge: true });
   };
   
+  const handleDateChange = (client: ClientWithId, date: string) => {
+    if (!user || !firestore) return;
+    const clientDocRef = doc(firestore, 'users', user.uid, 'clients', client.id);
+
+    const updateData = {
+        datePrevisionnelleMigration: date
+    };
+
+    setDocumentNonBlocking(clientDocRef, updateData, { merge: true });
+  };
+  
   const staticColumns = [
     { key: 'identifiantInterne', label: 'Identifiant interne' },
     { key: 'raisonSociale', label: 'Raison sociale' },
@@ -97,6 +109,7 @@ function SuiviMigrationContent() {
                     <span className="sr-only">Actions</span>
                   </TableHead>
                   {staticColumns.map(col => <TableHead rowSpan={2} key={col.key} className="align-bottom whitespace-nowrap">{col.label}</TableHead>)}
+                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap">Date prévisionnelle</TableHead>
                   <TableHead colSpan={2} className="text-center border-l">1. Création & Paramétrage</TableHead>
                   <TableHead colSpan={2} className="text-center border-l">2. Remontée Données</TableHead>
                   <TableHead colSpan={3} className="text-center border-l">3. Information Client</TableHead>
@@ -116,6 +129,7 @@ function SuiviMigrationContent() {
                     <TableRow key={`loading-${i}`}>
                         <TableCell><MoreHorizontal className="h-4 w-4" /></TableCell>
                         {staticColumns.map(col => <TableCell key={col.key}>...</TableCell>)}
+                        <TableCell>...</TableCell>
                         <TableCell colSpan={7} className="text-center">...</TableCell>
                     </TableRow>
                 ))}
@@ -146,6 +160,15 @@ function SuiviMigrationContent() {
                              }
                          </TableCell>
                     ))}
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Input 
+                            type="text" 
+                            placeholder="JJ/MM/AAAA" 
+                            value={client.datePrevisionnelleMigration || ''}
+                            onChange={(e) => handleDateChange(client, e.target.value)}
+                            className="w-32"
+                        />
+                    </TableCell>
 
                     <TableCell className="text-center border-l" onClick={(e) => e.stopPropagation()}><Checkbox checked={client.migrationSteps?.step1?.paramInfoClient || false} onCheckedChange={(checked) => handleStepChange(client, 'step1.paramInfoClient', !!checked)}/></TableCell>
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}><Checkbox checked={client.migrationSteps?.step1?.paramBanque || false} onCheckedChange={(checked) => handleStepChange(client, 'step1.paramBanque', !!checked)}/></TableCell>
@@ -174,5 +197,3 @@ export default function SuiviMigrationPage() {
     </AppLayout>
   );
 }
-
-    

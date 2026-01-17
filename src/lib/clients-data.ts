@@ -74,6 +74,7 @@ export type Client = {
   maturiteDigitale?: string;
   cartographieClient?: string;
   actionsAMener?: string[];
+  datePrevisionnelleMigration?: string;
   migrationSteps?: {
     step1: {
         paramInfoClient: boolean;
@@ -139,6 +140,7 @@ export const clients: (Client & { id: string })[] = [
         q13: "Non",
       },
       actionsAMener: ["Migration sur l'outil du cabinet"],
+      datePrevisionnelleMigration: "01/09/2024",
       migrationSteps: {
         step1: { paramInfoClient: true, paramBanque: false },
         step2: { remonteeFEC: false, remonteeImmobilisations: false },
