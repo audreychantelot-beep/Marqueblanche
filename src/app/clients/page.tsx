@@ -9,12 +9,12 @@ import { MoreHorizontal, PlusCircle, Upload, Settings2, GripVertical, Filter } f
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUser, useFirestore, useMemoFirebase, useCollection, useDoc } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { cn } from "@/lib/utils";
-import { type Client, allColumns } from "@/lib/clients-data";
+import { type Client, allColumns, type Questionnaire } from "@/lib/clients-data";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
@@ -29,10 +29,54 @@ type ClientWithId = Client & { id: string };
 const defaultVisibleColumns = Object.keys(allColumns).reduce((acc, key) => ({ ...acc, [key]: true }), {} as Record<ColumnKeys, boolean>);
 const defaultColumnOrder = Object.keys(allColumns) as ColumnKeys[];
 
+const isQuestionnaireComplete = (questionnaire: Questionnaire | undefined) => {
+    if (!questionnaire) return false;
+    const answeredQuestions = Object.keys(questionnaire).filter(key => !key.endsWith('_software') && !key.endsWith('_method') && !key.endsWith('_function') && !key.endsWith('_actions') && !key.endsWith('_project') && (questionnaire as any)[key]).length;
+    return answeredQuestions >= 13;
+}
+
+const getProfileCompletion = (client: Client) => {
+    if (!client) return 0;
+    const fields = [
+      client.identifiantInterne,
+      client.siren,
+      client.raisonSociale,
+      client.formeJuridique,
+      client.dateDeCloture,
+      client.contactPrincipal.nom,
+      client.contactPrincipal.prenom,
+      client.contactPrincipal.email,
+      client.missionsActuelles.collaborateurReferent,
+      client.missionsActuelles.expertComptable,
+      client.missionsActuelles.typeMission,
+      client.activites.codeAPE,
+      client.activites.secteurActivites,
+      client.activites.regimeTVA,
+      client.activites.regimeFiscal,
+      client.activites.typologieClientele,
+    ];
+
+    const filledInFieldsCount = fields.filter(field => field && String(field).trim() !== '').length;
+
+    const totalChecklistItems = fields.length + 2; // fields + questionnaire + actionsAMener
+    let completedChecklistItems = filledInFieldsCount;
+
+    if (isQuestionnaireComplete(client.questionnaire)) {
+        completedChecklistItems += 1;
+    }
+    if (client.actionsAMener && client.actionsAMener.length > 0) {
+        completedChecklistItems += 1;
+    }
+    
+    return (completedChecklistItems / totalChecklistItems) * 100;
+}
+
 function ClientsContent() {
   const { user } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const dashboardFilter = searchParams.get('filter');
 
   const clientsQuery = useMemoFirebase(() => {
     if (!user) return null;
@@ -99,6 +143,10 @@ function ClientsContent() {
   const filteredClients = useMemo(() => {
     if (!clientList) return [];
     let clients = [...clientList];
+    
+    if (dashboardFilter === 'a_completer') {
+      clients = clients.filter(client => getProfileCompletion(client) < 100);
+    }
 
     Object.entries(columnFilters).forEach(([key, filterValue]) => {
       if (!filterValue || (Array.isArray(filterValue) && filterValue.length === 0)) {
@@ -148,7 +196,7 @@ function ClientsContent() {
     });
 
     return clients;
-  }, [clientList, columnFilters]);
+  }, [clientList, columnFilters, dashboardFilter]);
 
   const handleRowClick = (client: ClientWithId) => {
     router.push(`/clients/${client.id}`);

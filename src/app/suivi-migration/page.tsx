@@ -7,7 +7,7 @@ import { MoreHorizontal, Filter } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
 import React, { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUser, useFirestore, useMemoFirebase, useCollection } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { cn } from "@/lib/utils";
@@ -22,10 +22,26 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type ClientWithId = Client & { id: string };
 
+const isMigrationComplete = (client: Client) => {
+    const steps = client.migrationSteps;
+    if (!steps) return false;
+    return (
+        steps.step1.paramInfoClient &&
+        steps.step1.paramBanque &&
+        steps.step2.remonteeFEC &&
+        steps.step2.remonteeImmobilisations &&
+        steps.step3.infoMail &&
+        steps.step3.presentationOutil &&
+        steps.step3.mandatPA
+    );
+};
+
 function SuiviMigrationContent() {
   const { user } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const dashboardFilter = searchParams.get('filter');
 
   const clientsQuery = useMemoFirebase(() => {
     if (!user) return null;
@@ -53,7 +69,14 @@ function SuiviMigrationContent() {
 
   const filteredClients = useMemo(() => {
     if (!migrationClients) return [];
-    return migrationClients.filter(client => {
+    
+    let clientsToFilter = [...migrationClients];
+    
+    if (dashboardFilter === 'restants_a_migrer') {
+        clientsToFilter = clientsToFilter.filter(client => !isMigrationComplete(client));
+    }
+    
+    return clientsToFilter.filter(client => {
       const {
         identifiantInterne, raisonSociale, expertComptable, collaborateurReferent, dateDeCloture,
         paramInfoClient, paramBanque, remonteeFEC, remonteeImmobilisations, infoMail, presentationOutil, mandatPA,
@@ -103,7 +126,7 @@ function SuiviMigrationContent() {
 
       return true;
     });
-  }, [migrationClients, columnFilters]);
+  }, [migrationClients, columnFilters, dashboardFilter]);
 
 
   const handleRowClick = (client: ClientWithId) => {

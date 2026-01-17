@@ -15,6 +15,7 @@ import { collection } from "firebase/firestore";
 import type { Client, Questionnaire } from "@/lib/clients-data";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Link from "next/link";
 
 type ClientWithId = Client & { id: string };
 
@@ -244,36 +245,42 @@ function DashboardContent() {
         </div>
 
         <div className="w-1/3 flex flex-col gap-6">
-          <Card className="rounded-3xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Clients à compléter</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsACompleter}</div>}
-              <p className="text-xs text-muted-foreground">Profils clients non finalisés</p>
-            </CardContent>
-          </Card>
-          <Card className="rounded-3xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Clients en migration</CardTitle>
-              <UserCheck className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsEnMigration}</div>}
-              <p className="text-xs text-muted-foreground">Clients avec le plan de migration</p>
-            </CardContent>
-          </Card>
-          <Card className="rounded-3xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Clients restants à migrer</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsRestantsAMigrer}</div>}
-              <p className="text-xs text-muted-foreground">Migrations non terminées</p>
-            </CardContent>
-          </Card>
+          <Link href="/clients?filter=a_completer" className="block">
+            <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Clients à compléter</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsACompleter}</div>}
+                <p className="text-xs text-muted-foreground">Profils clients non finalisés</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/suivi-migration" className="block">
+            <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Clients en migration</CardTitle>
+                <UserCheck className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsEnMigration}</div>}
+                <p className="text-xs text-muted-foreground">Clients avec le plan de migration</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/suivi-migration?filter=restants_a_migrer" className="block">
+            <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Clients restants à migrer</CardTitle>
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsRestantsAMigrer}</div>}
+                <p className="text-xs text-muted-foreground">Migrations non terminées</p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
     </main>
