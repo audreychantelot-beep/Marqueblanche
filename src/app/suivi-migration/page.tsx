@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, X } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser, useFirestore, useMemoFirebase, useCollection } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
@@ -15,6 +15,7 @@ import { type Client } from "@/lib/clients-data";
 import { Checkbox } from "@/components/ui/checkbox";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type ClientWithId = Client & { id: string };
 
@@ -36,6 +37,44 @@ function SuiviMigrationContent() {
       client.actionsAMener?.includes("Migration sur l'outil du cabinet")
     );
   }, [allClients]);
+
+  const [filters, setFilters] = useState({
+    collaborateur: 'all',
+    expertComptable: 'all',
+    dateDeCloture: 'all',
+  });
+
+  const handleFilterChange = (filterName: keyof typeof filters, value: string) => {
+    setFilters(prev => ({ ...prev, [filterName]: value }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      collaborateur: 'all',
+      expertComptable: 'all',
+      dateDeCloture: 'all',
+    });
+  };
+
+  const filterOptions = useMemo(() => {
+    if (!migrationClients) return { collaborateurs: [], expertsComptables: [], datesDeCloture: [] };
+    const collaborateurs = [...new Set(migrationClients.map(c => c.missionsActuelles.collaborateurReferent).filter(Boolean))];
+    const expertsComptables = [...new Set(migrationClients.map(c => c.missionsActuelles.expertComptable).filter(Boolean))];
+    const datesDeCloture = [...new Set(migrationClients.map(c => c.dateDeCloture).filter(Boolean).sort())];
+    return { collaborateurs, expertsComptables, datesDeCloture };
+  }, [migrationClients]);
+
+  const filteredClients = useMemo(() => {
+    if (!migrationClients) return [];
+    return migrationClients.filter(client => {
+      const matchCollaborateur = filters.collaborateur === 'all' || client.missionsActuelles.collaborateurReferent === filters.collaborateur;
+      const matchExpertComptable = filters.expertComptable === 'all' || client.missionsActuelles.expertComptable === filters.expertComptable;
+      const matchDateDeCloture = filters.dateDeCloture === 'all' || client.dateDeCloture === filters.dateDeCloture;
+      return matchCollaborateur && matchExpertComptable && matchDateDeCloture;
+    });
+  }, [migrationClients, filters]);
+
+  const hasActiveFilters = filters.collaborateur !== 'all' || filters.expertComptable !== 'all' || filters.dateDeCloture !== 'all';
 
   const handleRowClick = (client: ClientWithId) => {
     router.push(`/clients/${client.id}`);
@@ -99,6 +138,44 @@ function SuiviMigrationContent() {
           <CardDescription>
             Liste des clients pour lesquels une migration sur l'outil du cabinet est prévue.
           </CardDescription>
+           <div className="flex items-center gap-4 pt-4">
+                <p className="text-sm font-medium text-muted-foreground">Filtres :</p>
+                <Select value={filters.collaborateur} onValueChange={(value) => handleFilterChange('collaborateur', value)}>
+                    <SelectTrigger className="w-[200px] rounded-3xl bg-muted">
+                        <SelectValue placeholder="Collaborateur" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Tous les collaborateurs</SelectItem>
+                        {filterOptions.collaborateurs.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+
+                <Select value={filters.expertComptable} onValueChange={(value) => handleFilterChange('expertComptable', value)}>
+                    <SelectTrigger className="w-[200px] rounded-3xl bg-muted">
+                        <SelectValue placeholder="Expert-comptable" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Tous les experts-comptables</SelectItem>
+                        {filterOptions.expertsComptables.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+
+                <Select value={filters.dateDeCloture} onValueChange={(value) => handleFilterChange('dateDeCloture', value)}>
+                    <SelectTrigger className="w-[200px] rounded-3xl bg-muted">
+                        <SelectValue placeholder="Date de clôture" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Toutes les dates de clôture</SelectItem>
+                        {filterOptions.datesDeCloture.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+                {hasActiveFilters && (
+                    <Button variant="ghost" onClick={resetFilters}>
+                        <X className="mr-2 h-4 w-4" />
+                        Réinitialiser
+                    </Button>
+                )}
+            </div>
         </CardHeader>
         <CardContent className="flex-1 p-0 overflow-hidden">
           <div className="overflow-x-auto">
@@ -133,7 +210,7 @@ function SuiviMigrationContent() {
                         <TableCell colSpan={7} className="text-center">...</TableCell>
                     </TableRow>
                 ))}
-                {migrationClients && migrationClients.map((client) => (
+                {filteredClients && filteredClients.map((client) => (
                   <TableRow key={client.id}>
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
