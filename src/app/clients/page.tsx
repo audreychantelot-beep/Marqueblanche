@@ -516,11 +516,14 @@ function ClientsContent() {
                                     <div className="flex items-center gap-2">
                                         <Avatar className="h-9 w-9">
                                             <AvatarImage src={client.avatar} alt="Avatar" />
-                                            <AvatarFallback>{client.contactPrincipal.prenom.charAt(0)}{client.contactPrincipal.nom.charAt(0)}</AvatarFallback>
+                                            <AvatarFallback>
+                                                {client.contactPrincipal?.prenom?.charAt(0) || ''}
+                                                {client.contactPrincipal?.nom?.charAt(0) || ''}
+                                            </AvatarFallback>
                                         </Avatar>
                                         <div>
-                                            <div>{client.contactPrincipal.prenom} {client.contactPrincipal.nom}</div>
-                                            <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
+                                            <div>{client.contactPrincipal?.prenom} {client.contactPrincipal?.nom}</div>
+                                            <div className="text-muted-foreground text-xs">{client.contactPrincipal?.email}</div>
                                         </div>
                                     </div>
                                 ) : key === 'typeMission' ? (
