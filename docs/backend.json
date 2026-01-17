@@ -181,7 +181,7 @@
         "siren": { "type": "string" },
         "raisonSociale": { "type": "string" },
         "formeJuridique": { "type": "string" },
-        "dateDeCloture": { "type": "string", "format": "date", "description": "Date de clôture comptable" },
+        "dateDeCloture": { "type": "string", "description": "Date de clôture comptable (JJ/MM)" },
         "contactPrincipal": {
           "type": "object",
           "properties": {
