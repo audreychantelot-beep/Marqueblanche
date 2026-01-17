@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Hand, ChevronLeft, ChevronRight, Users, UserCheck, Clock } from "lucide-react";
+import { Hand, ChevronLeft, ChevronRight, Users, UserCheck, Clock, X } from "lucide-react";
 import { WeekCalendar } from "@/components/ui/week-calendar";
 import React, { useState, useMemo } from "react";
 import { getWeek, addWeeks, subWeeks, format } from "date-fns";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { collection } from "firebase/firestore";
 import type { Client, Questionnaire } from "@/lib/clients-data";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type ClientWithId = Client & { id: string };
 
@@ -88,8 +89,44 @@ function DashboardContent() {
 
   const { data: clientList, isLoading: isLoadingClients } = useCollection<ClientWithId>(clientsQuery);
 
+  const [filters, setFilters] = useState({
+    collaborateur: 'all',
+    expertComptable: 'all',
+    dateDeCloture: 'all',
+  });
+
+  const handleFilterChange = (filterName: keyof typeof filters, value: string) => {
+    setFilters(prev => ({ ...prev, [filterName]: value }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      collaborateur: 'all',
+      expertComptable: 'all',
+      dateDeCloture: 'all',
+    });
+  };
+
+  const filterOptions = useMemo(() => {
+    if (!clientList) return { collaborateurs: [], expertsComptables: [], datesDeCloture: [] };
+    const collaborateurs = [...new Set(clientList.map(c => c.missionsActuelles.collaborateurReferent).filter(Boolean))];
+    const expertsComptables = [...new Set(clientList.map(c => c.missionsActuelles.expertComptable).filter(Boolean))];
+    const datesDeCloture = [...new Set(clientList.map(c => c.dateDeCloture).filter(Boolean).sort())];
+    return { collaborateurs, expertsComptables, datesDeCloture };
+  }, [clientList]);
+
+  const filteredClients = useMemo(() => {
+    if (!clientList) return [];
+    return clientList.filter(client => {
+      const matchCollaborateur = filters.collaborateur === 'all' || client.missionsActuelles.collaborateurReferent === filters.collaborateur;
+      const matchExpertComptable = filters.expertComptable === 'all' || client.missionsActuelles.expertComptable === filters.expertComptable;
+      const matchDateDeCloture = filters.dateDeCloture === 'all' || client.dateDeCloture === filters.dateDeCloture;
+      return matchCollaborateur && matchExpertComptable && matchDateDeCloture;
+    });
+  }, [clientList, filters]);
+
   const dashboardMetrics = useMemo(() => {
-    if (!clientList) {
+    if (!filteredClients) {
         return {
             clientsACompleter: 0,
             clientsEnMigration: 0,
@@ -97,13 +134,13 @@ function DashboardContent() {
         };
     }
 
-    const clientsACompleter = clientList.filter(c => getProfileCompletion(c) < 100).length;
-    const clientsEnMigrationList = clientList.filter(c => c.actionsAMener?.includes("Migration sur l'outil du cabinet"));
+    const clientsACompleter = filteredClients.filter(c => getProfileCompletion(c) < 100).length;
+    const clientsEnMigrationList = filteredClients.filter(c => c.actionsAMener?.includes("Migration sur l'outil du cabinet"));
     const clientsEnMigration = clientsEnMigrationList.length;
     const clientsRestantsAMigrer = clientsEnMigrationList.filter(c => !isMigrationComplete(c)).length;
 
     return { clientsACompleter, clientsEnMigration, clientsRestantsAMigrer };
-  }, [clientList]);
+  }, [filteredClients]);
 
   const weekNumber = getWeek(currentDate, { weekStartsOn: 1 });
 
@@ -115,6 +152,8 @@ function DashboardContent() {
     setCurrentDate(prev => addWeeks(prev, 1));
   };
 
+  const hasActiveFilters = filters.collaborateur !== 'all' || filters.expertComptable !== 'all' || filters.dateDeCloture !== 'all';
+
   return (
     <main className="flex flex-col flex-1 p-4 md:px-6 max-w-full mx-auto w-full">
        <Card className="mb-6 rounded-3xl">
@@ -125,6 +164,46 @@ function DashboardContent() {
           </CardTitle>
           <CardDescription>Voici un aperçu de votre activité.</CardDescription>
         </CardHeader>
+        <CardContent>
+            <div className="flex items-center gap-4">
+                <p className="text-sm font-medium text-muted-foreground">Filtres :</p>
+                <Select value={filters.collaborateur} onValueChange={(value) => handleFilterChange('collaborateur', value)}>
+                    <SelectTrigger className="w-[200px] rounded-3xl bg-background">
+                        <SelectValue placeholder="Collaborateur" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Tous les collaborateurs</SelectItem>
+                        {filterOptions.collaborateurs.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+
+                <Select value={filters.expertComptable} onValueChange={(value) => handleFilterChange('expertComptable', value)}>
+                    <SelectTrigger className="w-[200px] rounded-3xl bg-background">
+                        <SelectValue placeholder="Expert-comptable" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Tous les experts-comptables</SelectItem>
+                        {filterOptions.expertsComptables.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+
+                <Select value={filters.dateDeCloture} onValueChange={(value) => handleFilterChange('dateDeCloture', value)}>
+                    <SelectTrigger className="w-[200px] rounded-3xl bg-background">
+                        <SelectValue placeholder="Date de clôture" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Toutes les dates de clôture</SelectItem>
+                        {filterOptions.datesDeCloture.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+                {hasActiveFilters && (
+                    <Button variant="ghost" onClick={resetFilters}>
+                        <X className="mr-2 h-4 w-4" />
+                        Réinitialiser
+                    </Button>
+                )}
+            </div>
+        </CardContent>
       </Card>
       <div className="flex-1 flex gap-6">
         <div className="w-2/3">
