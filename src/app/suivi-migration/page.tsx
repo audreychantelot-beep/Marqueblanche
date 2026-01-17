@@ -44,7 +44,8 @@ function SuiviMigrationContent() {
     'identifiantInterne',
     'raisonSociale',
     'expertComptable',
-    'collaborateurReferent'
+    'collaborateurReferent',
+    'dateDeCloture'
   ], []);
 
   return (
@@ -104,7 +105,7 @@ function SuiviMigrationContent() {
                             {
                                 key === 'collaborateurReferent' ? client.missionsActuelles.collaborateurReferent
                                 : key === 'expertComptable' ? client.missionsActuelles.expertComptable
-                                : client[key as keyof Pick<Client, 'identifiantInterne' | 'raisonSociale'>]
+                                : client[key as keyof Pick<Client, 'identifiantInterne' | 'raisonSociale' | 'dateDeCloture'>]
                             }
                         </TableCell>
                     ))}
