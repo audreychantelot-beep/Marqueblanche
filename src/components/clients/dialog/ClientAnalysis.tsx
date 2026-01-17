@@ -3,9 +3,9 @@
 import React, { useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Activity, ChevronDown } from "lucide-react";
+import { Activity, Edit } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type Client, type Questionnaire } from "@/lib/clients-data";
+import { type Client } from "@/lib/clients-data";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from '@/components/ui/button';
 
@@ -194,31 +194,50 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
                     </div>
                     <div className='border-b'></div>
                     <div>
-                        <Label className="font-semibold text-sm">Actions à mener</Label>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className={cn("w-full mt-2 justify-between rounded-3xl font-normal", (!editedClient.actionsAMener || editedClient.actionsAMener.length === 0) && "border border-orange-500 text-orange-500")}>
-                                    {editedClient.actionsAMener && editedClient.actionsAMener.length > 0
-                                        ? `${editedClient.actionsAMener.length} action(s) sélectionnée(s)`
-                                        : "Sélectionner des actions..."}
-                                    <ChevronDown className="h-4 w-4 opacity-50" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-full">
-                                <DropdownMenuLabel>Sélectionner les actions</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                {actionOptions.map(option => (
-                                <DropdownMenuCheckboxItem
-                                    key={option}
-                                    checked={editedClient.actionsAMener?.includes(option)}
-                                    onCheckedChange={() => handleActionChange(option)}
-                                    onSelect={(e) => e.preventDefault()}
-                                >
-                                    {option}
-                                </DropdownMenuCheckboxItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <div className="flex items-center justify-between">
+                            <Label className="font-semibold text-sm">Actions à mener</Label>
+                             <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="flex items-center gap-1 text-muted-foreground">
+                                        <Edit className="w-3 h-3" />
+                                        Modifier
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-80" align="end">
+                                    <DropdownMenuLabel>Sélectionner les actions</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    {actionOptions.map(option => (
+                                    <DropdownMenuCheckboxItem
+                                        key={option}
+                                        checked={editedClient.actionsAMener?.includes(option)}
+                                        onCheckedChange={() => handleActionChange(option)}
+                                        onSelect={(e) => e.preventDefault()}
+                                    >
+                                        {option}
+                                    </DropdownMenuCheckboxItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+
+                        <div className={cn("mt-2 rounded-lg p-3 min-h-[100px]", 
+                            (!editedClient.actionsAMener || editedClient.actionsAMener.length === 0) 
+                            ? "border border-dashed border-orange-500 flex items-center justify-center" 
+                            : "bg-muted/50"
+                        )}>
+                            {editedClient.actionsAMener && editedClient.actionsAMener.length > 0 ? (
+                                <ul className="space-y-2">
+                                    {editedClient.actionsAMener.map((action) => (
+                                        <li key={action} className="text-sm font-medium flex items-center gap-2">
+                                            <span className="h-1.5 w-1.5 rounded-full bg-sky-500"></span>
+                                            {action}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-sm text-orange-500 text-center">Aucune action sélectionnée.</p>
+                            )}
+                        </div>
                     </div>
                 </div>
             </CardContent>
