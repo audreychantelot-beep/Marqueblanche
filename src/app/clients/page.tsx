@@ -12,7 +12,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser, useFirestore, useMemoFirebase, useCollection, useDoc } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
-import { setDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { cn } from "@/lib/utils";
 import { type Client, allColumns, type Questionnaire } from "@/lib/clients-data";
 import { Input } from "@/components/ui/input";
@@ -104,7 +104,8 @@ function ClientsContent() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isImporting, setIsImporting] = useState(false);
-  const [clientsToImport, setClientsToImport] = useState<Partial<Client>[]>([]);
+  const [importedHeaders, setImportedHeaders] = useState<string[]>([]);
+  const [importedData, setImportedData] = useState<any[][]>([]);
   const [importErrors, setImportErrors] = useState<string[]>([]);
   const { toast } = useToast();
 
@@ -270,57 +271,30 @@ function ClientsContent() {
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         
-        const headerMapping: Record<string, string> = {
-          'Identifiant interne': 'identifiantInterne',
-          'SIREN': 'siren',
-          'Raison sociale': 'raisonSociale',
-          'Forme juridique': 'formeJuridique',
-          'Date de clôture': 'dateDeCloture',
-          'Nom contact': 'contactPrincipal.nom',
-          'Prénom contact': 'contactPrincipal.prenom',
-          'Email contact': 'contactPrincipal.email',
-          'Collaborateur référent': 'missionsActuelles.collaborateurReferent',
-          'Expert-comptable': 'missionsActuelles.expertComptable',
-          'Type de mission': 'missionsActuelles.typeMission',
-          'Code APE': 'activites.codeAPE',
-          'Secteur d’activités': 'activites.secteurActivites',
-          'Régime de TVA': 'activites.regimeTVA',
-          'Régime fiscal': 'activites.regimeFiscal',
-          'Typologie de clientèle': 'activites.typologieClientele'
-        };
+        const jsonData: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        if (jsonData.length > 0) {
+            setImportedHeaders(jsonData[0]);
+            setImportedData(jsonData.slice(1));
+        } else {
+            setImportedHeaders([]);
+            setImportedData([]);
+        }
 
-        const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        const headers: string[] = jsonData[0];
-        const parsedClients = jsonData.slice(1).map(row => {
-          const clientObject: any = {};
-          headers.forEach((header, index) => {
-            const mappedKey = headerMapping[header];
-            if (mappedKey) {
-              const keys = mappedKey.split('.');
-              let current = clientObject;
-              for (let i = 0; i < keys.length - 1; i++) {
-                current[keys[i]] = current[keys[i]] || {};
-                current = current[keys[i]];
-              }
-              current[keys[keys.length - 1]] = row[index];
-            }
-          });
-          return clientObject as Partial<Client>;
-        });
-
-        setClientsToImport(parsedClients);
         setImportErrors([]);
       } catch (error) {
           console.error("Error parsing file:", error);
           setImportErrors(["Le fichier semble corrompu ou n'est pas au format attendu (XLS, XLSX, CSV)."]);
-          setClientsToImport([]);
+          setImportedHeaders([]);
+          setImportedData([]);
       }
       setIsImporting(true);
     };
 
     reader.onerror = () => {
         setImportErrors(["Erreur lors de la lecture du fichier."]);
-        setClientsToImport([]);
+        setImportedHeaders([]);
+        setImportedData([]);
         setIsImporting(true);
     }
 
@@ -328,79 +302,6 @@ function ClientsContent() {
     event.target.value = '';
   };
   
-  const handleImportConfirm = async () => {
-    if (!user || !firestore || clientsToImport.length === 0) return;
-  
-    const validClients = clientsToImport.filter(client => {
-       if (!client.raisonSociale || !client.siren) return false;
-       return true;
-    });
-
-    if (validClients.length === 0) {
-        toast({
-            variant: "destructive",
-            title: "Aucun client valide",
-            description: "Aucun client valide n'a été trouvé dans le fichier à importer.",
-        });
-        return;
-    }
-  
-    const clientsCollectionRef = collection(firestore, 'users', user.uid, 'clients');
-    let importedCount = 0;
-  
-    const importPromises = validClients.map(client => {
-      const newClient: Client = {
-        identifiantInterne: client.identifiantInterne || `client_${Date.now()}_${Math.random()}`,
-        siren: client.siren || "",
-        raisonSociale: client.raisonSociale || "",
-        formeJuridique: client.formeJuridique || "",
-        dateDeCloture: client.dateDeCloture || "",
-        contactPrincipal: {
-          nom: client.contactPrincipal?.nom || "",
-          prenom: client.contactPrincipal?.prenom || "",
-          email: client.contactPrincipal?.email || "",
-        },
-        avatar: `https://picsum.photos/seed/${Math.random()}/40/40`,
-        missionsActuelles: {
-          collaborateurReferent: client.missionsActuelles?.collaborateurReferent || "",
-          expertComptable: client.missionsActuelles?.expertComptable || "",
-          typeMission: client.missionsActuelles?.typeMission || "",
-        },
-        activites: {
-          codeAPE: client.activites?.codeAPE || "",
-          secteurActivites: client.activites?.secteurActivites || "",
-          regimeTVA: client.activites?.regimeTVA || "Débit",
-          regimeFiscal: client.activites?.regimeFiscal || "",
-          typologieClientele: client.activites?.typologieClientele || "B to B",
-        },
-        obligationsLegales: {},
-        questionnaire: {},
-        outils: {},
-        maturiteDigitale: "À définir",
-        cartographieClient: "À définir",
-        actionsAMener: [],
-      };
-      
-      return addDocumentNonBlocking(clientsCollectionRef, newClient)
-        .then(() => {
-          importedCount++;
-        })
-        .catch(err => {
-          console.error("Error importing client:", err);
-        });
-    });
-  
-    await Promise.all(importPromises);
-
-    toast({
-        title: "Importation terminée",
-        description: `${importedCount} sur ${validClients.length} clients ont été importés avec succès.`,
-    });
-  
-    setIsImporting(false);
-    setClientsToImport([]);
-  };
-
   const renderTextFilter = (columnId: string, title: string) => (
     <Popover>
       <PopoverTrigger asChild>
@@ -510,8 +411,8 @@ function ClientsContent() {
       <ImportClientsDialog
         isOpen={isImporting}
         onOpenChange={setIsImporting}
-        clientsToImport={clientsToImport}
-        onImportConfirm={handleImportConfirm}
+        headers={importedHeaders}
+        data={importedData}
         importErrors={importErrors}
       />
       <div className="flex items-center justify-between mb-6">
