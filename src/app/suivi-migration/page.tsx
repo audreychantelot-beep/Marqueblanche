@@ -56,13 +56,17 @@ function SuiviMigrationContent() {
     return migrationClients.filter(client => {
       const {
         identifiantInterne, raisonSociale, expertComptable, collaborateurReferent, dateDeCloture,
-        paramInfoClient, paramBanque, remonteeFEC, remonteeImmobilisations, infoMail, presentationOutil, mandatPA
+        paramInfoClient, paramBanque, remonteeFEC, remonteeImmobilisations, infoMail, presentationOutil, mandatPA,
+        datePrevisionnelleMigration
       } = columnFilters;
 
       if (identifiantInterne && !client.identifiantInterne.toLowerCase().includes(identifiantInterne.toLowerCase())) {
         return false;
       }
       if (raisonSociale && !client.raisonSociale.toLowerCase().includes(raisonSociale.toLowerCase())) {
+        return false;
+      }
+      if (datePrevisionnelleMigration && !client.datePrevisionnelleMigration?.toLowerCase().includes(datePrevisionnelleMigration.toLowerCase())) {
         return false;
       }
       if (expertComptable?.length && !expertComptable.includes(client.missionsActuelles.expertComptable)) {
@@ -142,7 +146,7 @@ function SuiviMigrationContent() {
     setDocumentNonBlocking(clientDocRef, updateData, { merge: true });
   };
   
-  const renderTextFilter = (columnId: 'identifiantInterne' | 'raisonSociale', title: string) => (
+  const renderTextFilter = (columnId: 'identifiantInterne' | 'raisonSociale' | 'datePrevisionnelleMigration', title: string) => (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2 p-2 h-auto text-left justify-start w-full">
@@ -259,7 +263,7 @@ function SuiviMigrationContent() {
                   <TableHead rowSpan={2} className="align-bottom whitespace-nowrap p-0">{renderCheckboxFilter('expertComptable', 'Expert-comptable', filterOptions.expertsComptables)}</TableHead>
                   <TableHead rowSpan={2} className="align-bottom whitespace-nowrap p-0">{renderCheckboxFilter('collaborateurReferent', 'Collaborateur référent', filterOptions.collaborateursReferents)}</TableHead>
                   <TableHead rowSpan={2} className="align-bottom whitespace-nowrap p-0">{renderCheckboxFilter('dateDeCloture', 'Date de clôture', filterOptions.datesDeCloture)}</TableHead>
-                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap px-4">Date prévisionnelle</TableHead>
+                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap p-0">{renderTextFilter('datePrevisionnelleMigration', 'Date prévisionnelle')}</TableHead>
                   <TableHead colSpan={2} className="text-center border-l">1. Création & Paramétrage</TableHead>
                   <TableHead colSpan={2} className="text-center border-l">2. Remontée Données</TableHead>
                   <TableHead colSpan={3} className="text-center border-l">3. Information Client</TableHead>
