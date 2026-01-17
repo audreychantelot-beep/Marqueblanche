@@ -186,7 +186,7 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
                     <div>
                         <Label className="font-semibold text-sm">Actions à mener</Label>
                         <Select onValueChange={handleActionChange} value={editedClient.actionsAMener || ''}>
-                            <SelectTrigger className="w-full mt-2 rounded-lg">
+                            <SelectTrigger className={cn("w-full mt-2 rounded-3xl", !editedClient.actionsAMener && "border border-orange-500 text-orange-500")}>
                                 <SelectValue placeholder="Sélectionner une action..." />
                             </SelectTrigger>
                             <SelectContent>

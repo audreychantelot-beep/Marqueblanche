@@ -146,16 +146,19 @@ export function ClientForm({ client }: ClientFormProps) {
       editedClient.activites.typologieClientele,
     ];
 
-    const filledFields = fields.filter(field => field && String(field).trim() !== '').length;
-    const totalFields = fields.length;
-    const fieldsProgress = (filledFields / totalFields) * 50;
+    const filledInFieldsCount = fields.filter(field => field && String(field).trim() !== '').length;
 
-    const obligationsDefined = editedClient.obligationsLegales && Object.values(editedClient.obligationsLegales).every(val => val !== "À définir" && val !== undefined);
-    const obligationsProgress = obligationsDefined ? 25 : 0;
+    const totalChecklistItems = fields.length + 2; // fields + questionnaire + actionsAMener
+    let completedChecklistItems = filledInFieldsCount;
 
-    const questionnaireProgress = isQuestionnaireCompleted ? 25 : 0;
+    if (isQuestionnaireCompleted) {
+        completedChecklistItems += 1;
+    }
+    if (editedClient.actionsAMener) {
+        completedChecklistItems += 1;
+    }
     
-    return fieldsProgress + obligationsProgress + questionnaireProgress;
+    return (completedChecklistItems / totalChecklistItems) * 100;
   }, [editedClient, isQuestionnaireCompleted]);
   
   if (!editedClient) return null;
