@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useUser, useFirestore, useMemoFirebase, useCollection } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { cn } from "@/lib/utils";
-import { type Client, allColumns } from "@/lib/clients-data";
+import { type Client } from "@/lib/clients-data";
 import { Checkbox } from "@/components/ui/checkbox";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
@@ -40,35 +40,38 @@ function SuiviMigrationContent() {
     router.push(`/clients/${client.id}`);
   };
 
-  const handleStepChange = (client: ClientWithId, step: 'step1' | 'step2' | 'step3', checked: boolean) => {
+  const handleStepChange = (client: ClientWithId, stepPath: string, checked: boolean) => {
     if (!user || !firestore) return;
     const clientDocRef = doc(firestore, 'users', user.uid, 'clients', client.id);
-    const updateData = {
-        migrationSteps: {
-            ...client.migrationSteps,
-            [step]: checked
-        }
+
+    const [mainStep, subStep] = stepPath.split('.') as [('step1' | 'step2' | 'step3'), string];
+    
+    const currentSteps = client.migrationSteps || {
+        step1: { paramInfoClient: false, paramBanque: false },
+        step2: { remonteeFEC: false, remonteeImmobilisations: false },
+        step3: { infoMail: false, presentationOutil: false, mandatPA: false }
     };
+    
+    const newMigrationSteps = JSON.parse(JSON.stringify(currentSteps));
+    
+    if (newMigrationSteps[mainStep]) {
+        (newMigrationSteps[mainStep] as any)[subStep] = checked;
+    }
+
+    const updateData = {
+        migrationSteps: newMigrationSteps
+    };
+
     setDocumentNonBlocking(clientDocRef, updateData, { merge: true });
   };
-
-  const columnOrder: (keyof typeof allColumns | 'step1' | 'step2' | 'step3')[] = useMemo(() => [
-    'identifiantInterne',
-    'raisonSociale',
-    'expertComptable',
-    'collaborateurReferent',
-    'dateDeCloture',
-    'step1',
-    'step2',
-    'step3'
-  ], []);
-
-  const columnLabels = {
-    ...allColumns,
-    step1: "1. Création & Paramétrage",
-    step2: "2. Remontée Données",
-    step3: "3. Information Client",
-  };
+  
+  const staticColumns = [
+    { key: 'identifiantInterne', label: 'Identifiant interne' },
+    { key: 'raisonSociale', label: 'Raison sociale' },
+    { key: 'expertComptable', label: 'Expert-comptable' },
+    { key: 'collaborateurReferent', label: 'Collaborateur référent' },
+    { key: 'dateDeCloture', label: 'Date de clôture' },
+  ];
 
   return (
     <main className="flex flex-col p-4 md:p-6 max-w-full mx-auto w-full">
@@ -90,19 +93,30 @@ function SuiviMigrationContent() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
+                  <TableHead rowSpan={2} className="align-bottom">
                     <span className="sr-only">Actions</span>
                   </TableHead>
-                  {columnOrder.map(key =>
-                    <TableHead key={key} className="whitespace-nowrap">{columnLabels[key as keyof typeof columnLabels]}</TableHead>
-                  )}
+                  {staticColumns.map(col => <TableHead rowSpan={2} key={col.key} className="align-bottom whitespace-nowrap">{col.label}</TableHead>)}
+                  <TableHead colSpan={2} className="text-center border-l">1. Création & Paramétrage</TableHead>
+                  <TableHead colSpan={2} className="text-center border-l">2. Remontée Données</TableHead>
+                  <TableHead colSpan={3} className="text-center border-l">3. Information Client</TableHead>
+                </TableRow>
+                <TableRow>
+                    <TableHead className="text-center border-l">Param. Infos Client</TableHead>
+                    <TableHead className="text-center">Param. Banque</TableHead>
+                    <TableHead className="text-center border-l">FEC</TableHead>
+                    <TableHead className="text-center">Immobilisations</TableHead>
+                    <TableHead className="text-center border-l">Info Mail</TableHead>
+                    <TableHead className="text-center">Présentation Outil</TableHead>
+                    <TableHead className="text-center">Mandat PA</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoadingClients && Array.from({length: 3}).map((_, i) => (
                     <TableRow key={`loading-${i}`}>
                         <TableCell><MoreHorizontal className="h-4 w-4" /></TableCell>
-                        {columnOrder.map(key => <TableCell key={key}>...</TableCell>)}
+                        {staticColumns.map(col => <TableCell key={col.key}>...</TableCell>)}
+                        <TableCell colSpan={7} className="text-center">...</TableCell>
                     </TableRow>
                 ))}
                 {migrationClients && migrationClients.map((client) => (
@@ -122,27 +136,26 @@ function SuiviMigrationContent() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                    {columnOrder.map(key => {
-                      if (key === 'step1' || key === 'step2' || key === 'step3') {
-                        return (
-                          <TableCell key={key} className="text-center" onClick={(e) => e.stopPropagation()}>
-                            <Checkbox
-                                checked={client.migrationSteps?.[key] || false}
-                                onCheckedChange={(checked) => handleStepChange(client, key, !!checked)}
-                            />
-                          </TableCell>
-                        )
-                      }
-                      return (
-                        <TableCell key={key} onClick={() => handleRowClick(client)} className={cn("whitespace-nowrap cursor-pointer", key === 'raisonSociale' && "font-medium")}>
-                            {
-                                key === 'collaborateurReferent' ? client.missionsActuelles.collaborateurReferent
-                                : key === 'expertComptable' ? client.missionsActuelles.expertComptable
-                                : client[key as keyof Pick<Client, 'identifiantInterne' | 'raisonSociale' | 'dateDeCloture'>]
-                            }
-                        </TableCell>
-                      )
-                    })}
+                    
+                    {staticColumns.map(col => (
+                         <TableCell key={col.key} onClick={() => handleRowClick(client)} className={cn("whitespace-nowrap cursor-pointer", col.key === 'raisonSociale' && "font-medium")}>
+                             {
+                                 col.key === 'collaborateurReferent' ? client.missionsActuelles.collaborateurReferent
+                                 : col.key === 'expertComptable' ? client.missionsActuelles.expertComptable
+                                 : client[col.key as keyof Pick<Client, 'identifiantInterne' | 'raisonSociale' | 'dateDeCloture'>]
+                             }
+                         </TableCell>
+                    ))}
+
+                    <TableCell className="text-center border-l" onClick={(e) => e.stopPropagation()}><Checkbox checked={client.migrationSteps?.step1?.paramInfoClient || false} onCheckedChange={(checked) => handleStepChange(client, 'step1.paramInfoClient', !!checked)}/></TableCell>
+                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}><Checkbox checked={client.migrationSteps?.step1?.paramBanque || false} onCheckedChange={(checked) => handleStepChange(client, 'step1.paramBanque', !!checked)}/></TableCell>
+                    
+                    <TableCell className="text-center border-l" onClick={(e) => e.stopPropagation()}><Checkbox checked={client.migrationSteps?.step2?.remonteeFEC || false} onCheckedChange={(checked) => handleStepChange(client, 'step2.remonteeFEC', !!checked)}/></TableCell>
+                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}><Checkbox checked={client.migrationSteps?.step2?.remonteeImmobilisations || false} onCheckedChange={(checked) => handleStepChange(client, 'step2.remonteeImmobilisations', !!checked)}/></TableCell>
+
+                    <TableCell className="text-center border-l" onClick={(e) => e.stopPropagation()}><Checkbox checked={client.migrationSteps?.step3?.infoMail || false} onCheckedChange={(checked) => handleStepChange(client, 'step3.infoMail', !!checked)}/></TableCell>
+                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}><Checkbox checked={client.migrationSteps?.step3?.presentationOutil || false} onCheckedChange={(checked) => handleStepChange(client, 'step3.presentationOutil', !!checked)}/></TableCell>
+                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}><Checkbox checked={client.migrationSteps?.step3?.mandatPA || false} onCheckedChange={(checked) => handleStepChange(client, 'step3.mandatPA', !!checked)}/></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -161,3 +174,5 @@ export default function SuiviMigrationPage() {
     </AppLayout>
   );
 }
+
+    

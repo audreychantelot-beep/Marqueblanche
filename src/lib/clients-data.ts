@@ -75,9 +75,19 @@ export type Client = {
   cartographieClient?: string;
   actionsAMener?: string[];
   migrationSteps?: {
-    step1: boolean;
-    step2: boolean;
-    step3: boolean;
+    step1: {
+        paramInfoClient: boolean;
+        paramBanque: boolean;
+    };
+    step2: {
+        remonteeFEC: boolean;
+        remonteeImmobilisations: boolean;
+    };
+    step3: {
+        infoMail: boolean;
+        presentationOutil: boolean;
+        mandatPA: boolean;
+    };
   };
 };
 
@@ -129,7 +139,11 @@ export const clients: (Client & { id: string })[] = [
         q13: "Non",
       },
       actionsAMener: ["Migration sur l'outil du cabinet"],
-      migrationSteps: { step1: true, step2: false, step3: false },
+      migrationSteps: {
+        step1: { paramInfoClient: true, paramBanque: false },
+        step2: { remonteeFEC: false, remonteeImmobilisations: false },
+        step3: { infoMail: false, presentationOutil: false, mandatPA: false },
+      },
     },
     {
       id: "C002",
@@ -301,3 +315,5 @@ export const clients: (Client & { id: string })[] = [
     obligationsLegales: "Obligations légales",
   };
   
+
+    
