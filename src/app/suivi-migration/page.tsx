@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type ClientWithId = Client & { id: string };
 
@@ -53,7 +54,10 @@ function SuiviMigrationContent() {
   const filteredClients = useMemo(() => {
     if (!migrationClients) return [];
     return migrationClients.filter(client => {
-      const { identifiantInterne, raisonSociale, expertComptable, collaborateurReferent, dateDeCloture } = columnFilters;
+      const {
+        identifiantInterne, raisonSociale, expertComptable, collaborateurReferent, dateDeCloture,
+        paramInfoClient, paramBanque, remonteeFEC, remonteeImmobilisations, infoMail, presentationOutil, mandatPA
+      } = columnFilters;
 
       if (identifiantInterne && !client.identifiantInterne.toLowerCase().includes(identifiantInterne.toLowerCase())) {
         return false;
@@ -70,6 +74,29 @@ function SuiviMigrationContent() {
       if (dateDeCloture?.length && (!client.dateDeCloture || !dateDeCloture.includes(client.dateDeCloture))) {
         return false;
       }
+
+      const steps = client.migrationSteps;
+      if (paramInfoClient === 'oui' && !steps?.step1?.paramInfoClient) return false;
+      if (paramInfoClient === 'non' && steps?.step1?.paramInfoClient) return false;
+
+      if (paramBanque === 'oui' && !steps?.step1?.paramBanque) return false;
+      if (paramBanque === 'non' && steps?.step1?.paramBanque) return false;
+
+      if (remonteeFEC === 'oui' && !steps?.step2?.remonteeFEC) return false;
+      if (remonteeFEC === 'non' && steps?.step2?.remonteeFEC) return false;
+      
+      if (remonteeImmobilisations === 'oui' && !steps?.step2?.remonteeImmobilisations) return false;
+      if (remonteeImmobilisations === 'non' && steps?.step2?.remonteeImmobilisations) return false;
+
+      if (infoMail === 'oui' && !steps?.step3?.infoMail) return false;
+      if (infoMail === 'non' && steps?.step3?.infoMail) return false;
+
+      if (presentationOutil === 'oui' && !steps?.step3?.presentationOutil) return false;
+      if (presentationOutil === 'non' && steps?.step3?.presentationOutil) return false;
+
+      if (mandatPA === 'oui' && !steps?.step3?.mandatPA) return false;
+      if (mandatPA === 'non' && steps?.step3?.mandatPA) return false;
+
       return true;
     });
   }, [migrationClients, columnFilters]);
@@ -168,6 +195,41 @@ function SuiviMigrationContent() {
       </PopoverContent>
     </Popover>
   );
+  
+  const renderStepFilter = (columnId: string, title: string) => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" className="flex items-center gap-2 p-2 h-auto text-left justify-start w-full">
+          {title}
+          {columnFilters[columnId] ? <Filter className="h-3 w-3 text-primary" /> : <Filter className="h-3 w-3 opacity-50" />}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-48">
+        <div className="space-y-2">
+          <Label>Filtrer par {title}</Label>
+          <RadioGroup
+            value={columnFilters[columnId] || 'tous'}
+            onValueChange={value => {
+              setColumnFilters(prev => ({ ...prev, [columnId]: value === 'tous' ? undefined : value }));
+            }}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="tous" id={`${columnId}-tous`} />
+              <Label htmlFor={`${columnId}-tous`} className="font-normal">Tous</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="oui" id={`${columnId}-oui`} />
+              <Label htmlFor={`${columnId}-oui`} className="font-normal">Oui</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="non" id={`${columnId}-non`} />
+              <Label htmlFor={`${columnId}-non`} className="font-normal">Non</Label>
+            </div>
+          </RadioGroup>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
 
   return (
     <main className="flex flex-col p-4 md:p-6 max-w-full mx-auto w-full">
@@ -203,13 +265,13 @@ function SuiviMigrationContent() {
                   <TableHead colSpan={3} className="text-center border-l">3. Information Client</TableHead>
                 </TableRow>
                 <TableRow>
-                    <TableHead className="text-center border-l">Param. Infos Client</TableHead>
-                    <TableHead className="text-center">Param. Banque</TableHead>
-                    <TableHead className="text-center border-l">FEC</TableHead>
-                    <TableHead className="text-center">Immobilisations</TableHead>
-                    <TableHead className="text-center border-l">Info Mail</TableHead>
-                    <TableHead className="text-center">Présentation Outil</TableHead>
-                    <TableHead className="text-center">Mandat PA</TableHead>
+                    <TableHead className="text-center border-l p-0">{renderStepFilter('paramInfoClient', 'Param. Infos Client')}</TableHead>
+                    <TableHead className="text-center p-0">{renderStepFilter('paramBanque', 'Param. Banque')}</TableHead>
+                    <TableHead className="text-center border-l p-0">{renderStepFilter('remonteeFEC', 'FEC')}</TableHead>
+                    <TableHead className="text-center p-0">{renderStepFilter('remonteeImmobilisations', 'Immobilisations')}</TableHead>
+                    <TableHead className="text-center border-l p-0">{renderStepFilter('infoMail', 'Info Mail')}</TableHead>
+                    <TableHead className="text-center p-0">{renderStepFilter('presentationOutil', 'Présentation Outil')}</TableHead>
+                    <TableHead className="text-center p-0">{renderStepFilter('mandatPA', 'Mandat PA')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
