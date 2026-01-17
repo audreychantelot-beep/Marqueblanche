@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, X } from "lucide-react";
+import { MoreHorizontal, Filter } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
 import React, { useMemo, useState } from "react";
@@ -15,7 +15,9 @@ import { type Client } from "@/lib/clients-data";
 import { Checkbox } from "@/components/ui/checkbox";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type ClientWithId = Client & { id: string };
 
@@ -38,43 +40,40 @@ function SuiviMigrationContent() {
     );
   }, [allClients]);
 
-  const [filters, setFilters] = useState({
-    collaborateur: 'all',
-    expertComptable: 'all',
-    dateDeCloture: 'all',
-  });
-
-  const handleFilterChange = (filterName: keyof typeof filters, value: string) => {
-    setFilters(prev => ({ ...prev, [filterName]: value }));
-  };
-
-  const resetFilters = () => {
-    setFilters({
-      collaborateur: 'all',
-      expertComptable: 'all',
-      dateDeCloture: 'all',
-    });
-  };
+  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
 
   const filterOptions = useMemo(() => {
-    if (!migrationClients) return { collaborateurs: [], expertsComptables: [], datesDeCloture: [] };
-    const collaborateurs = [...new Set(migrationClients.map(c => c.missionsActuelles.collaborateurReferent).filter(Boolean))];
+    if (!migrationClients) return { expertsComptables: [], collaborateursReferents: [], datesDeCloture: [] };
     const expertsComptables = [...new Set(migrationClients.map(c => c.missionsActuelles.expertComptable).filter(Boolean))];
+    const collaborateursReferents = [...new Set(migrationClients.map(c => c.missionsActuelles.collaborateurReferent).filter(Boolean))];
     const datesDeCloture = [...new Set(migrationClients.map(c => c.dateDeCloture).filter(Boolean).sort())];
-    return { collaborateurs, expertsComptables, datesDeCloture };
+    return { expertsComptables, collaborateursReferents, datesDeCloture };
   }, [migrationClients]);
 
   const filteredClients = useMemo(() => {
     if (!migrationClients) return [];
     return migrationClients.filter(client => {
-      const matchCollaborateur = filters.collaborateur === 'all' || client.missionsActuelles.collaborateurReferent === filters.collaborateur;
-      const matchExpertComptable = filters.expertComptable === 'all' || client.missionsActuelles.expertComptable === filters.expertComptable;
-      const matchDateDeCloture = filters.dateDeCloture === 'all' || client.dateDeCloture === filters.dateDeCloture;
-      return matchCollaborateur && matchExpertComptable && matchDateDeCloture;
-    });
-  }, [migrationClients, filters]);
+      const { identifiantInterne, raisonSociale, expertComptable, collaborateurReferent, dateDeCloture } = columnFilters;
 
-  const hasActiveFilters = filters.collaborateur !== 'all' || filters.expertComptable !== 'all' || filters.dateDeCloture !== 'all';
+      if (identifiantInterne && !client.identifiantInterne.toLowerCase().includes(identifiantInterne.toLowerCase())) {
+        return false;
+      }
+      if (raisonSociale && !client.raisonSociale.toLowerCase().includes(raisonSociale.toLowerCase())) {
+        return false;
+      }
+      if (expertComptable?.length && !expertComptable.includes(client.missionsActuelles.expertComptable)) {
+        return false;
+      }
+      if (collaborateurReferent?.length && !collaborateurReferent.includes(client.missionsActuelles.collaborateurReferent)) {
+        return false;
+      }
+      if (dateDeCloture?.length && (!client.dateDeCloture || !dateDeCloture.includes(client.dateDeCloture))) {
+        return false;
+      }
+      return true;
+    });
+  }, [migrationClients, columnFilters]);
+
 
   const handleRowClick = (client: ClientWithId) => {
     router.push(`/clients/${client.id}`);
@@ -116,13 +115,59 @@ function SuiviMigrationContent() {
     setDocumentNonBlocking(clientDocRef, updateData, { merge: true });
   };
   
-  const staticColumns = [
-    { key: 'identifiantInterne', label: 'Identifiant interne' },
-    { key: 'raisonSociale', label: 'Raison sociale' },
-    { key: 'expertComptable', label: 'Expert-comptable' },
-    { key: 'collaborateurReferent', label: 'Collaborateur référent' },
-    { key: 'dateDeCloture', label: 'Date de clôture' },
-  ];
+  const renderTextFilter = (columnId: 'identifiantInterne' | 'raisonSociale', title: string) => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" className="flex items-center gap-2 p-2 h-auto text-left justify-start w-full">
+          {title}
+          {columnFilters[columnId] ? <Filter className="h-3 w-3 text-primary" /> : <Filter className="h-3 w-3 opacity-50" />}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-60">
+        <div className="space-y-2">
+          <Label htmlFor={`filter-${columnId}`}>Filtrer par {title}</Label>
+          <Input
+            id={`filter-${columnId}`}
+            placeholder="Rechercher..."
+            value={columnFilters[columnId] || ''}
+            onChange={(e) => setColumnFilters(prev => ({ ...prev, [columnId]: e.target.value || undefined }))}
+          />
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+
+  const renderCheckboxFilter = (columnId: 'expertComptable' | 'collaborateurReferent' | 'dateDeCloture', title: string, options: string[]) => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" className="flex items-center gap-2 p-2 h-auto text-left justify-start w-full">
+          {title}
+          {columnFilters[columnId]?.length ? <Filter className="h-3 w-3 text-primary" /> : <Filter className="h-3 w-3 opacity-50" />}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-60">
+        <div className="space-y-2">
+          <Label>Filtrer par {title}</Label>
+          <ScrollArea className="h-40">
+            {options.map(option => (
+              <div key={option} className="flex items-center space-x-2 p-1">
+                <Checkbox
+                  id={`filter-${columnId}-${option}`}
+                  checked={(columnFilters[columnId] || []).includes(option)}
+                  onCheckedChange={checked => {
+                    const currentSelection = columnFilters[columnId] || [];
+                    const newSelection = checked ? [...currentSelection, option] : currentSelection.filter((item: string) => item !== option);
+                    setColumnFilters(prev => ({ ...prev, [columnId]: newSelection.length ? newSelection : undefined }));
+                  }}
+                />
+                <Label htmlFor={`filter-${columnId}-${option}`} className="font-normal">{option}</Label>
+              </div>
+            ))}
+          </ScrollArea>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
 
   return (
     <main className="flex flex-col p-4 md:p-6 max-w-full mx-auto w-full">
@@ -138,44 +183,6 @@ function SuiviMigrationContent() {
           <CardDescription>
             Liste des clients pour lesquels une migration sur l'outil du cabinet est prévue.
           </CardDescription>
-           <div className="flex items-center gap-4 pt-4">
-                <p className="text-sm font-medium text-muted-foreground">Filtres :</p>
-                <Select value={filters.collaborateur} onValueChange={(value) => handleFilterChange('collaborateur', value)}>
-                    <SelectTrigger className="w-[200px] rounded-3xl bg-muted">
-                        <SelectValue placeholder="Collaborateur" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Tous les collaborateurs</SelectItem>
-                        {filterOptions.collaborateurs.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-
-                <Select value={filters.expertComptable} onValueChange={(value) => handleFilterChange('expertComptable', value)}>
-                    <SelectTrigger className="w-[200px] rounded-3xl bg-muted">
-                        <SelectValue placeholder="Expert-comptable" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Tous les experts-comptables</SelectItem>
-                        {filterOptions.expertsComptables.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-
-                <Select value={filters.dateDeCloture} onValueChange={(value) => handleFilterChange('dateDeCloture', value)}>
-                    <SelectTrigger className="w-[200px] rounded-3xl bg-muted">
-                        <SelectValue placeholder="Date de clôture" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Toutes les dates de clôture</SelectItem>
-                        {filterOptions.datesDeCloture.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-                {hasActiveFilters && (
-                    <Button variant="ghost" onClick={resetFilters}>
-                        <X className="mr-2 h-4 w-4" />
-                        Réinitialiser
-                    </Button>
-                )}
-            </div>
         </CardHeader>
         <CardContent className="flex-1 p-0 overflow-hidden">
           <div className="overflow-x-auto">
@@ -185,8 +192,12 @@ function SuiviMigrationContent() {
                   <TableHead rowSpan={2} className="align-bottom">
                     <span className="sr-only">Actions</span>
                   </TableHead>
-                  {staticColumns.map(col => <TableHead rowSpan={2} key={col.key} className="align-bottom whitespace-nowrap">{col.label}</TableHead>)}
-                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap">Date prévisionnelle</TableHead>
+                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap p-0">{renderTextFilter('identifiantInterne', 'Identifiant interne')}</TableHead>
+                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap p-0">{renderTextFilter('raisonSociale', 'Raison sociale')}</TableHead>
+                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap p-0">{renderCheckboxFilter('expertComptable', 'Expert-comptable', filterOptions.expertsComptables)}</TableHead>
+                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap p-0">{renderCheckboxFilter('collaborateurReferent', 'Collaborateur référent', filterOptions.collaborateursReferents)}</TableHead>
+                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap p-0">{renderCheckboxFilter('dateDeCloture', 'Date de clôture', filterOptions.datesDeCloture)}</TableHead>
+                  <TableHead rowSpan={2} className="align-bottom whitespace-nowrap px-4">Date prévisionnelle</TableHead>
                   <TableHead colSpan={2} className="text-center border-l">1. Création & Paramétrage</TableHead>
                   <TableHead colSpan={2} className="text-center border-l">2. Remontée Données</TableHead>
                   <TableHead colSpan={3} className="text-center border-l">3. Information Client</TableHead>
@@ -205,7 +216,11 @@ function SuiviMigrationContent() {
                 {isLoadingClients && Array.from({length: 3}).map((_, i) => (
                     <TableRow key={`loading-${i}`}>
                         <TableCell><MoreHorizontal className="h-4 w-4" /></TableCell>
-                        {staticColumns.map(col => <TableCell key={col.key}>...</TableCell>)}
+                        <TableCell>...</TableCell>
+                        <TableCell>...</TableCell>
+                        <TableCell>...</TableCell>
+                        <TableCell>...</TableCell>
+                        <TableCell>...</TableCell>
                         <TableCell>...</TableCell>
                         <TableCell colSpan={7} className="text-center">...</TableCell>
                     </TableRow>
@@ -228,15 +243,22 @@ function SuiviMigrationContent() {
                       </DropdownMenu>
                     </TableCell>
                     
-                    {staticColumns.map(col => (
-                         <TableCell key={col.key} onClick={() => handleRowClick(client)} className={cn("whitespace-nowrap cursor-pointer", col.key === 'raisonSociale' && "font-medium")}>
-                             {
-                                 col.key === 'collaborateurReferent' ? client.missionsActuelles.collaborateurReferent
-                                 : col.key === 'expertComptable' ? client.missionsActuelles.expertComptable
-                                 : client[col.key as keyof Pick<Client, 'identifiantInterne' | 'raisonSociale' | 'dateDeCloture'>]
-                             }
-                         </TableCell>
-                    ))}
+                    <TableCell onClick={() => handleRowClick(client)} className={cn("whitespace-nowrap cursor-pointer")}>
+                        {client.identifiantInterne}
+                    </TableCell>
+                     <TableCell onClick={() => handleRowClick(client)} className={cn("whitespace-nowrap cursor-pointer", "font-medium")}>
+                        {client.raisonSociale}
+                    </TableCell>
+                     <TableCell onClick={() => handleRowClick(client)} className={cn("whitespace-nowrap cursor-pointer")}>
+                        {client.missionsActuelles.expertComptable}
+                    </TableCell>
+                     <TableCell onClick={() => handleRowClick(client)} className={cn("whitespace-nowrap cursor-pointer")}>
+                        {client.missionsActuelles.collaborateurReferent}
+                    </TableCell>
+                     <TableCell onClick={() => handleRowClick(client)} className={cn("whitespace-nowrap cursor-pointer")}>
+                        {client.dateDeCloture}
+                    </TableCell>
+                    
                     <TableCell onClick={(e) => e.stopPropagation()}>
                         <Input 
                             type="text" 
