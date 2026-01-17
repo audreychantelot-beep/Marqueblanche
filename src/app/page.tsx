@@ -3,13 +3,8 @@
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import Image from "next/image";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Hand, ChevronLeft, ChevronRight, Users, UserCheck, Clock, X } from "lucide-react";
-import { WeekCalendar } from "@/components/ui/week-calendar";
+import { Hand, Users, UserCheck, Clock, X } from "lucide-react";
 import React, { useState, useMemo } from "react";
-import { getWeek, addWeeks, subWeeks, format } from "date-fns";
-import { fr } from 'date-fns/locale';
 import { Button } from "@/components/ui/button";
 import { collection } from "firebase/firestore";
 import type { Client, Questionnaire } from "@/lib/clients-data";
@@ -80,8 +75,6 @@ const isMigrationComplete = (client: Client) => {
 function DashboardContent() {
   const { user } = useUser();
   const firestore = useFirestore();
-  const dashboardImage = PlaceHolderImages.find(p => p.id === 'dashboard-hero');
-  const [currentDate, setCurrentDate] = useState(new Date());
 
   const clientsQuery = useMemoFirebase(() => {
     if (!user) return null;
@@ -143,16 +136,6 @@ function DashboardContent() {
     return { clientsACompleter, clientsEnMigration, clientsRestantsAMigrer };
   }, [filteredClients]);
 
-  const weekNumber = getWeek(currentDate, { weekStartsOn: 1 });
-
-  const goToPreviousWeek = () => {
-    setCurrentDate(prev => subWeeks(prev, 1));
-  };
-
-  const goToNextWeek = () => {
-    setCurrentDate(prev => addWeeks(prev, 1));
-  };
-
   const hasActiveFilters = filters.collaborateur !== 'all' || filters.expertComptable !== 'all' || filters.dateDeCloture !== 'all';
 
   return (
@@ -206,82 +189,43 @@ function DashboardContent() {
             </div>
         </CardContent>
       </Card>
-      <div className="flex-1 flex gap-6">
-        <div className="w-2/3">
-            <Card className="h-full w-full overflow-hidden flex flex-col rounded-3xl">
-                {dashboardImage && (
-                <div className="h-1/2 w-full relative">
-                    <Image
-                        src={dashboardImage.imageUrl}
-                        alt={dashboardImage.description}
-                        fill
-                        className="object-cover"
-                        data-ai-hint={dashboardImage.imageHint}
-                    />
-                </div>
-                )}
-                <div className="h-1/2 flex flex-col">
-                    <CardHeader>
-                        <div className="flex justify-between items-center">
-                        <CardTitle>Échéances à venir</CardTitle>
-                        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                            <Button variant="ghost" size="icon" onClick={goToPreviousWeek} className="h-6 w-6">
-                                <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            <span>{format(currentDate, 'MMMM yyyy', { locale: fr })}</span>
-                            <Button variant="ghost" size="icon" onClick={goToNextWeek} className="h-6 w-6">
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="flex-1 p-6">
-                        <WeekCalendar 
-                        currentDate={currentDate}
-                        />
-                    </CardContent>
-                </div>
-            </Card>
-        </div>
-
-        <div className="w-1/3 flex flex-col gap-6">
-          <Link href="/clients?filter=a_completer" className="block">
-            <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Clients à compléter</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsACompleter}</div>}
-                <p className="text-xs text-muted-foreground">Profils clients non finalisés</p>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link href="/suivi-migration" className="block">
-            <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Clients en migration</CardTitle>
-                <UserCheck className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsEnMigration}</div>}
-                <p className="text-xs text-muted-foreground">Clients avec le plan de migration</p>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link href="/suivi-migration?filter=restants_a_migrer" className="block">
-            <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Clients restants à migrer</CardTitle>
-                <Clock className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsRestantsAMigrer}</div>}
-                <p className="text-xs text-muted-foreground">Migrations non terminées</p>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Link href="/clients?filter=a_completer" className="block">
+          <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Clients à compléter</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsACompleter}</div>}
+              <p className="text-xs text-muted-foreground">Profils clients non finalisés</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/suivi-migration" className="block">
+          <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Clients en migration</CardTitle>
+              <UserCheck className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsEnMigration}</div>}
+              <p className="text-xs text-muted-foreground">Clients avec le plan de migration</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/suivi-migration?filter=restants_a_migrer" className="block">
+          <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Clients restants à migrer</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              {isLoadingClients ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{dashboardMetrics.clientsRestantsAMigrer}</div>}
+              <p className="text-xs text-muted-foreground">Migrations non terminées</p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </main>
   );
