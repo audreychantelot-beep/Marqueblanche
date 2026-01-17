@@ -61,7 +61,10 @@ function ClientsContent() {
         const mergedColumns = { ...defaultVisibleColumns, ...preferencesData.columns };
         setVisibleColumns(mergedColumns);
         if(preferencesData.order) {
-            setColumnOrder(preferencesData.order);
+            const currentKeys = Object.keys(allColumns);
+            const savedOrder = preferencesData.order.filter((k: string) => currentKeys.includes(k));
+            const newKeys = currentKeys.filter(k => !savedOrder.includes(k));
+            setColumnOrder([...savedOrder, ...newKeys]);
         } else {
             setColumnOrder(defaultColumnOrder);
         }
@@ -130,6 +133,13 @@ function ClientsContent() {
           case 'typologieClientele':
             const clientValueActivite = client.activites[columnKey as keyof Client['activites']];
             return (filterValue as string[]).includes(clientValueActivite);
+          
+          case 'assujettiReforme':
+          case 'eInvoicing':
+          case 'eReportingTransaction':
+          case 'eReportingPaiement':
+            const clientValueObligation = (client.obligationsLegales as any)?.[columnKey] || 'À définir';
+            return (filterValue as string[]).includes(clientValueObligation);
 
           default:
             return true;
@@ -265,13 +275,24 @@ function ClientsContent() {
         return renderCheckboxFilter(key, title, filterOptions.regimesTVA);
       case 'typologieClientele':
         return renderCheckboxFilter(key, title, filterOptions.typologiesClientele);
+      case 'assujettiReforme':
+      case 'eInvoicing':
+      case 'eReportingTransaction':
+      case 'eReportingPaiement':
+        return renderCheckboxFilter(key, title, ['Oui', 'Non', 'À définir']);
       case 'contactPrincipal':
-      case 'obligationsLegales':
       default:
         return <div className="p-2 font-medium">{title}</div>;
     }
   };
 
+  const getObligationBadge = (value: string | undefined) => {
+    const displayValue = value || 'À définir';
+    let variant: 'default' | 'destructive' | 'secondary' | 'outline' = 'secondary';
+    if (displayValue === 'Oui') variant = 'default';
+    if (displayValue === 'Non') variant = 'destructive';
+    return <Badge variant={variant}>{displayValue}</Badge>;
+  };
 
   return (
     <main className="flex flex-col p-4 md:p-6 max-w-full mx-auto w-full">
@@ -395,34 +416,10 @@ function ClientsContent() {
                                 : key === 'regimeFiscal' ? client.activites.regimeFiscal
                                 : key === 'typologieClientele' ? client.activites.typologieClientele
                                 : key === 'dateDeCloture' ? client.dateDeCloture
-                                : key === 'obligationsLegales' ? (
-                                    <ul className="list-none space-y-1 text-xs whitespace-normal">
-                                        <li>
-                                            Assujetti à la réforme:{" "}
-                                            <span className="font-semibold">
-                                                {client.obligationsLegales?.assujettiReforme || 'À définir'}
-                                            </span>
-                                        </li>
-                                        <li>
-                                            E-invoicing:{" "}
-                                            <span className="font-semibold">
-                                                {client.obligationsLegales?.eInvoicing || 'À définir'}
-                                            </span>
-                                        </li>
-                                        <li>
-                                            E-reporting transactions:{" "}
-                                            <span className="font-semibold">
-                                                {client.obligationsLegales?.eReportingTransaction || 'À définir'}
-                                            </span>
-                                        </li>
-                                        <li>
-                                            E-reporting paiement:{" "}
-                                            <span className="font-semibold">
-                                                {client.obligationsLegales?.eReportingPaiement || 'À définir'}
-                                            </span>
-                                        </li>
-                                    </ul>
-                                )
+                                : key === 'assujettiReforme' ? getObligationBadge(client.obligationsLegales?.assujettiReforme)
+                                : key === 'eInvoicing' ? getObligationBadge(client.obligationsLegales?.eInvoicing)
+                                : key === 'eReportingTransaction' ? getObligationBadge(client.obligationsLegales?.eReportingTransaction)
+                                : key === 'eReportingPaiement' ? getObligationBadge(client.obligationsLegales?.eReportingPaiement)
                                 : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'|'questionnaire'|'dateDeCloture'>]
                             }
                         </TableCell>

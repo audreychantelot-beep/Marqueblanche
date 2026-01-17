@@ -314,7 +314,10 @@ export const clients: (Client & { id: string })[] = [
     regimeTVA: "Régime de TVA",
     regimeFiscal: "Régime fiscal",
     typologieClientele: "Typologie de clientèle",
-    obligationsLegales: "Obligations légales",
+    assujettiReforme: "Assujetti réforme",
+    eInvoicing: "E-invoicing",
+    eReportingTransaction: "E-reporting transaction",
+    eReportingPaiement: "E-reporting paiement",
   };
   
 
