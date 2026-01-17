@@ -48,6 +48,7 @@ const emptyClientTemplate: Omit<Client, 'identifiantInterne'> = {
   outils: {},
   maturiteDigitale: "À définir",
   cartographieClient: "À définir",
+  actionsAMener: "",
 };
 
 

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type Client, type Questionnaire } from "@/lib/clients-data";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type ClientWithId = Client & { id: string };
 
@@ -128,6 +129,18 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
         });
     }, [digitalMaturity.level, obligationScore.level, cartographieClient, setEditedClient]);
 
+    const handleActionChange = (value: string) => {
+        setEditedClient(prev => {
+            if (!prev) return null;
+            if (prev.actionsAMener === value) {
+                return prev;
+            }
+            const newClient = JSON.parse(JSON.stringify(prev));
+            newClient.actionsAMener = value;
+            return newClient;
+        });
+    };
+    
     const cartoStyle = getCartographieStyle(cartographieClient);
 
     return (
@@ -168,6 +181,18 @@ export function ClientAnalysis({ editedClient, setEditedClient }: ClientAnalysis
                                 {cartographieClient}
                             </p>
                         </div>
+                    </div>
+                    <div className='border-b'></div>
+                    <div>
+                        <Label className="font-semibold text-sm">Actions à mener</Label>
+                        <Select onValueChange={handleActionChange} value={editedClient.actionsAMener || ''}>
+                            <SelectTrigger className="w-full mt-2 rounded-lg">
+                                <SelectValue placeholder="Sélectionner une action..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="migration">Migration sur l'outil du cabinet</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
             </CardContent>
