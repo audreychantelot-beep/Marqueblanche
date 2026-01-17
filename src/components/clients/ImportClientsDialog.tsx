@@ -14,9 +14,13 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { XCircle, ArrowRight } from 'lucide-react';
+import { XCircle, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { clientImportFields } from '@/lib/clients-data';
+import { clientImportFields, type Client } from '@/lib/clients-data';
+import { useUser, useFirestore } from '@/firebase';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 interface ImportClientsDialogProps {
   isOpen: boolean;
@@ -34,11 +38,14 @@ export function ImportClientsDialog({
   importErrors,
 }: ImportClientsDialogProps) {
   const [mappings, setMappings] = useState<Record<string, string>>({});
+  const [isImporting, setIsImporting] = useState(false);
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const { toast } = useToast();
 
   const handleMappingChange = (header: string, targetField: string) => {
     const newMappings = { ...mappings };
 
-    // Find which header is already using this target and clear its mapping
     if (targetField !== 'ignore' && Object.values(newMappings).includes(targetField)) {
         const existingHeader = Object.keys(newMappings).find(key => newMappings[key] === targetField);
         if (existingHeader) {
@@ -52,6 +59,84 @@ export function ImportClientsDialog({
         newMappings[header] = targetField;
     }
     setMappings(newMappings);
+  };
+  
+  const handleImport = async () => {
+    if (!user || !firestore || data.length === 0 || Object.keys(mappings).length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Importation échouée",
+        description: "Veuillez mapper au moins une colonne et réessayer.",
+      });
+      return;
+    }
+
+    setIsImporting(true);
+    let importedCount = 0;
+    const clientsCollectionRef = collection(firestore, 'users', user.uid, 'clients');
+
+    const headerIndexMap: Record<string, number> = {};
+    headers.forEach((header, index) => {
+      headerIndexMap[header] = index;
+    });
+
+    const importPromises = data.map(async (row) => {
+      const newClient: Partial<Client> & { contactPrincipal?: any; missionsActuelles?: any; activites?: any } = {
+        avatar: `https://picsum.photos/seed/${Math.random()}/40/40`,
+        obligationsLegales: {},
+        questionnaire: {},
+        outils: {},
+        maturiteDigitale: "À définir",
+        cartographieClient: "À définir",
+        actionsAMener: [],
+      };
+      
+      let hasRequiredField = false;
+
+      for (const header in mappings) {
+        const targetField = mappings[header];
+        const cellIndex = headerIndexMap[header];
+        const cellValue = row[cellIndex];
+        
+        if (cellValue !== undefined && cellValue !== null) {
+          const keys = targetField.split('.');
+          let current: any = newClient;
+          for (let i = 0; i < keys.length - 1; i++) {
+            if (current[keys[i]] === undefined) {
+              current[keys[i]] = {};
+            }
+            current = current[keys[i]];
+          }
+          current[keys[keys.length - 1]] = String(cellValue);
+
+          if (targetField === 'raisonSociale' && String(cellValue).trim() !== '') {
+            hasRequiredField = true;
+          }
+        }
+      }
+
+      if (hasRequiredField) {
+        if (!newClient.identifiantInterne) {
+          newClient.identifiantInterne = `client_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        }
+
+        try {
+          await addDocumentNonBlocking(clientsCollectionRef, newClient);
+          importedCount++;
+        } catch (e) {
+          console.error("Error importing a client row:", e);
+        }
+      }
+    });
+
+    await Promise.all(importPromises);
+
+    setIsImporting(false);
+    toast({
+      title: "Importation terminée",
+      description: `${importedCount} client(s) sur ${data.length} ont été importés avec succès.`,
+    });
+    onOpenChange(false);
   };
 
   const usedTargetFields = Object.values(mappings);
@@ -80,7 +165,8 @@ export function ImportClientsDialog({
           </Alert>
         )}
 
-        <div className="flex-1 overflow-auto">
+        <ScrollArea className="flex-1 -mx-6">
+          <div className="overflow-x-auto px-6">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -116,7 +202,8 @@ export function ImportClientsDialog({
                 ))}
               </TableBody>
             </Table>
-        </div>
+          </div>
+        </ScrollArea>
 
         <DialogFooter className="flex-row justify-between items-center w-full">
           <div className="text-sm text-muted-foreground">
@@ -128,8 +215,9 @@ export function ImportClientsDialog({
             <DialogClose asChild>
               <Button variant="outline">Annuler</Button>
             </DialogClose>
-            <Button>
-              Vérifier les données <ArrowRight className="ml-2 h-4 w-4" />
+            <Button onClick={handleImport} disabled={isImporting}>
+              {isImporting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Importer
             </Button>
           </div>
         </DialogFooter>
