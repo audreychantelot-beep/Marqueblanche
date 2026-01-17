@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { MoreHorizontal, Filter } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AppLayout } from "@/components/AppLayout";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser, useFirestore, useMemoFirebase, useCollection } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
@@ -58,6 +58,25 @@ function SuiviMigrationContent() {
   }, [allClients]);
 
   const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
+  
+  useEffect(() => {
+    const initialFilters: Record<string, any> = {};
+    const collaborateur = searchParams.get('collaborateurReferent');
+    const expert = searchParams.get('expertComptable');
+    const cloture = searchParams.get('dateDeCloture');
+
+    if (collaborateur) {
+      initialFilters['collaborateurReferent'] = [collaborateur];
+    }
+    if (expert) {
+      initialFilters['expertComptable'] = [expert];
+    }
+    if (cloture) {
+      initialFilters['dateDeCloture'] = [cloture];
+    }
+
+    setColumnFilters(initialFilters);
+  }, [searchParams]);
 
   const filterOptions = useMemo(() => {
     if (!migrationClients) return { expertsComptables: [], collaborateursReferents: [], datesDeCloture: [] };

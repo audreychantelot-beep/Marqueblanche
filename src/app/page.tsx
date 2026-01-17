@@ -135,6 +135,51 @@ function DashboardContent() {
 
     return { clientsACompleter, clientsEnMigration, clientsRestantsAMigrer };
   }, [filteredClients]);
+  
+  const clientsACompleterLink = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('filter', 'a_completer');
+    if (filters.collaborateur !== 'all') {
+      params.set('collaborateurReferent', filters.collaborateur);
+    }
+    if (filters.expertComptable !== 'all') {
+      params.set('expertComptable', filters.expertComptable);
+    }
+    if (filters.dateDeCloture !== 'all') {
+      params.set('dateDeCloture', filters.dateDeCloture);
+    }
+    return `/clients?${params.toString()}`;
+  }, [filters]);
+
+  const suiviMigrationLink = useMemo(() => {
+    const params = new URLSearchParams();
+    if (filters.collaborateur !== 'all') {
+      params.set('collaborateurReferent', filters.collaborateur);
+    }
+    if (filters.expertComptable !== 'all') {
+      params.set('expertComptable', filters.expertComptable);
+    }
+    if (filters.dateDeCloture !== 'all') {
+      params.set('dateDeCloture', filters.dateDeCloture);
+    }
+    const queryString = params.toString();
+    return `/suivi-migration${queryString ? `?${queryString}` : ''}`;
+  }, [filters]);
+  
+  const restantsAMigrerLink = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('filter', 'restants_a_migrer');
+    if (filters.collaborateur !== 'all') {
+      params.set('collaborateurReferent', filters.collaborateur);
+    }
+    if (filters.expertComptable !== 'all') {
+      params.set('expertComptable', filters.expertComptable);
+    }
+    if (filters.dateDeCloture !== 'all') {
+      params.set('dateDeCloture', filters.dateDeCloture);
+    }
+    return `/suivi-migration?${params.toString()}`;
+  }, [filters]);
 
   const hasActiveFilters = filters.collaborateur !== 'all' || filters.expertComptable !== 'all' || filters.dateDeCloture !== 'all';
 
@@ -187,7 +232,7 @@ function DashboardContent() {
         </CardContent>
       </Card>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link href="/clients?filter=a_completer" className="block">
+        <Link href={clientsACompleterLink} className="block">
           <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Clients à compléter</CardTitle>
@@ -199,7 +244,7 @@ function DashboardContent() {
             </CardContent>
           </Card>
         </Link>
-        <Link href="/suivi-migration" className="block">
+        <Link href={suiviMigrationLink} className="block">
           <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Clients en migration</CardTitle>
@@ -211,7 +256,7 @@ function DashboardContent() {
             </CardContent>
           </Card>
         </Link>
-        <Link href="/suivi-migration?filter=restants_a_migrer" className="block">
+        <Link href={restantsAMigrerLink} className="block">
           <Card className="rounded-3xl hover:bg-muted/50 transition-colors cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Clients restants à migrer</CardTitle>

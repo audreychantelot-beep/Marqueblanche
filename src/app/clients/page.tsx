@@ -110,6 +110,25 @@ function ClientsContent() {
   const { toast } = useToast();
 
   useEffect(() => {
+    const initialFilters: Record<string, any> = {};
+    const collaborateur = searchParams.get('collaborateurReferent');
+    const expert = searchParams.get('expertComptable');
+    const cloture = searchParams.get('dateDeCloture');
+
+    if (collaborateur) {
+      initialFilters['collaborateurReferent'] = [collaborateur];
+    }
+    if (expert) {
+      initialFilters['expertComptable'] = [expert];
+    }
+    if (cloture) {
+      initialFilters['dateDeCloture'] = [cloture];
+    }
+    
+    setColumnFilters(initialFilters);
+  }, [searchParams]);
+
+  useEffect(() => {
     if (!isLoadingPreferences) {
       if (preferencesData) {
         const mergedColumns = { ...defaultVisibleColumns, ...preferencesData.columns };
