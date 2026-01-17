@@ -40,8 +40,12 @@ function SuiviMigrationContent() {
     router.push(`/clients/${client.id}`);
   };
 
-  const visibleColumns = Object.keys(allColumns).reduce((acc, key) => ({ ...acc, [key]: true }), {} as Record<keyof typeof allColumns, boolean>);
-  const columnOrder = Object.keys(allColumns) as (keyof typeof allColumns)[];
+  const columnOrder: (keyof typeof allColumns)[] = useMemo(() => [
+    'identifiantInterne',
+    'raisonSociale',
+    'expertComptable',
+    'collaborateurReferent'
+  ], []);
 
   return (
     <main className="flex flex-col p-4 md:p-6 max-w-full mx-auto w-full">
@@ -67,7 +71,7 @@ function SuiviMigrationContent() {
                     <span className="sr-only">Actions</span>
                   </TableHead>
                   {columnOrder.map(key =>
-                    visibleColumns[key as keyof typeof allColumns] && <TableHead key={key} className="whitespace-nowrap">{allColumns[key as keyof typeof allColumns]}</TableHead>
+                    <TableHead key={key} className="whitespace-nowrap">{allColumns[key]}</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
@@ -75,7 +79,7 @@ function SuiviMigrationContent() {
                 {isLoadingClients && Array.from({length: 3}).map((_, i) => (
                     <TableRow key={`loading-${i}`}>
                         <TableCell><MoreHorizontal className="h-4 w-4" /></TableCell>
-                        {columnOrder.map(key => visibleColumns[key as keyof typeof allColumns] && <TableCell key={key}>...</TableCell>)}
+                        {columnOrder.map(key => <TableCell key={key}>...</TableCell>)}
                     </TableRow>
                 ))}
                 {migrationClients && migrationClients.map((client) => (
@@ -95,34 +99,12 @@ function SuiviMigrationContent() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                    {columnOrder.map(key => visibleColumns[key as keyof typeof allColumns] && (
+                    {columnOrder.map(key => (
                         <TableCell key={key} className={cn("whitespace-nowrap", key === 'raisonSociale' && "font-medium")}>
                             {
-                                key === 'contactPrincipal' ? (
-                                    <div className="flex items-center gap-2">
-                                        <Avatar className="h-9 w-9">
-                                            <AvatarImage src={client.avatar} alt="Avatar" />
-                                            <AvatarFallback>{client.contactPrincipal.prenom.charAt(0)}{client.contactPrincipal.nom.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <div>{client.contactPrincipal.prenom} {client.contactPrincipal.nom}</div>
-                                            <div className="text-muted-foreground text-xs">{client.contactPrincipal.email}</div>
-                                        </div>
-                                    </div>
-                                ) : key === 'typeMission' ? (
-                                    <Badge variant={client.missionsActuelles.typeMission === 'Tenue' ? 'default' : client.missionsActuelles.typeMission === 'Révision' ? 'secondary' : 'outline'}>
-                                        {client.missionsActuelles.typeMission}
-                                    </Badge>
-                                ) : key === 'collaborateurReferent' ? client.missionsActuelles.collaborateurReferent
+                                key === 'collaborateurReferent' ? client.missionsActuelles.collaborateurReferent
                                 : key === 'expertComptable' ? client.missionsActuelles.expertComptable
-                                : key === 'codeAPE' ? client.activites.codeAPE
-                                : key === 'secteurActivites' ? client.activites.secteurActivites
-                                : key === 'regimeTVA' ? client.activites.regimeTVA
-                                : key === 'regimeFiscal' ? client.activites.regimeFiscal
-                                : key === 'typologieClientele' ? client.activites.typologieClientele
-                                : key === 'dateDeCloture' ? client.dateDeCloture
-                                : key === 'obligationsLegales' ? "À définir"
-                                : client[key as keyof Omit<Client, 'contactPrincipal'|'missionsActuelles'|'activites'|'obligationsLegales'|'avatar'|'status'|'questionnaire'|'dateDeCloture'>]
+                                : client[key as keyof Pick<Client, 'identifiantInterne' | 'raisonSociale'>]
                             }
                         </TableCell>
                     ))}
