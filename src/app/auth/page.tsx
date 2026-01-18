@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useAuth, useUser } from '@/firebase';
-import { SignInPage } from '@/components/auth/sign-in-page';
+import { SignInPage, type SignInFormValues } from '@/components/auth/sign-in-page';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AuthPage() {
@@ -12,6 +12,7 @@ export default function AuthPage() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && user) {
@@ -19,14 +20,20 @@ export default function AuthPage() {
     }
   }, [user, isUserLoading, router]);
 
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
+  const handleEmailSignIn = async (values: SignInFormValues) => {
+    setIsSubmitting(true);
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({ title: "Connecté", description: "Bienvenue !" });
       // The useEffect will handle the redirect
     } catch (error: any) {
-      toast({ variant: 'destructive', title: "Erreur de connexion Google", description: error.message });
+      let description = "Une erreur est survenue. Veuillez réessayer.";
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        description = "L'adresse e-mail ou le mot de passe est incorrect.";
+      }
+      toast({ variant: 'destructive', title: "Erreur de connexion", description });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -38,7 +45,8 @@ export default function AuthPage() {
     <SignInPage
       heroImageSrc="https://cdn.dribbble.com/userupload/31301517/file/original-e0100a71afe33d5d96ee9f0a16dc599c.png?resize=1504x1131&vertical=center"
       testimonials={[]}
-      onGoogleSignIn={handleGoogleSignIn}
+      onEmailSignIn={handleEmailSignIn}
+      isSubmitting={isSubmitting}
     />
   );
 }
