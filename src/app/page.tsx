@@ -1,8 +1,27 @@
-// This file is no longer used as a route.
-// The dashboard logic has been moved to src/app/(app)/page.tsx
-// to ensure it is covered by the protected layout.
-// This file can be safely removed in the future.
+'use client';
 
-import Page from "./(app)/page";
+import React, { useEffect } from 'react';
+import { useUser } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import Page from './(app)/page';
 
-export default Page;
+export default function RootPage() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.replace('/auth');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="text-muted-foreground">Chargement...</div>
+      </div>
+    );
+  }
+
+  return <Page />;
+}
