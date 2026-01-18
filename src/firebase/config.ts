@@ -5,4 +5,5 @@ export const firebaseConfig = {
   "authDomain": "",
   "measurementId": "",
   "messagingSenderId": ""
+  
 };
